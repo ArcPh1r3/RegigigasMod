@@ -1,0 +1,74 @@
+﻿using RegigigasMod.SkillStates.BaseStates;
+using RoR2;
+using UnityEngine;
+
+namespace RegigigasMod.SkillStates.Regigigas
+{
+    public class PunchCombo : BaseMeleeAttack
+    {
+        public override void OnEnter()
+        {
+            this.hitboxName = "Punch";
+
+            this.damageType = DamageType.Stun1s;
+            this.damageCoefficient = 2.8f;
+            this.procCoefficient = 1f;
+            this.pushForce = 3500f;
+            this.bonusForce = Vector3.zero;
+            this.baseDuration = 1.8f;
+            this.attackStartTime = 0.37f;
+            this.attackEndTime = 0.5f;
+            this.baseEarlyExitTime = 0.58f;
+            this.hitStopDuration = 0.035f;
+            this.attackRecoil = 1.5f;
+            this.hitHopVelocity = 8f;
+
+            this.swingSoundString = "RegigigasPunchSwing";
+            this.hitSoundString = "prefabs/effects/impacteffects/PodGroundImpact";
+            this.muzzleString = swingIndex % 2 == 0 ? "SwingLeft" : "SwingRight";
+            //this.swingEffectPrefab = Modules.Assets.punchSwingEffect;
+            this.hitEffectPrefab = Resources.Load<GameObject>("prefabs/effects/impacteffects/PodGroundImpact");
+
+            this.impactSound = Modules.Assets.punchSoundDef.index;
+
+            base.OnEnter();
+        }
+
+        protected override void PlayAttackAnimation()
+        {
+            base.PlayAnimation("Gesture, Override", "Punch" + (1 + swingIndex), "Punch.playbackRate", this.duration);
+        }
+
+        protected override void PlaySwingEffect()
+        {
+            //base.PlaySwingEffect();
+        }
+
+        protected override void OnHitEnemyAuthority()
+        {
+            base.OnHitEnemyAuthority();
+        }
+
+        protected override void SetNextState()
+        {
+            int index = this.swingIndex + 1;
+            if (index == 3) index = 1;
+
+            this.outer.SetNextState(new PunchCombo
+            {
+                swingIndex = index
+            });
+        }
+
+        public override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            base.characterBody.isSprinting = false;
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+        }
+    }
+}

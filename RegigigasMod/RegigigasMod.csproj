@@ -122,6 +122,7 @@
 
   <ItemGroup>
     <Folder Include="Modules\Survivors\" />
+    <Folder Include="SkillStates\Regigigas\Misc\" />
   </ItemGroup>
 
   <ItemGroup>

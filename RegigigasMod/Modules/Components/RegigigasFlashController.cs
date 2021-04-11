@@ -32,7 +32,7 @@ namespace RegigigasMod.Modules.Components
 
         private void GetMaterial()
         {
-            this.bodyMat = this.model.GetComponent<ModelSkinController>().skins[this.body.skinIndex].rendererInfos[1].defaultMaterial;
+            this.bodyMat = this.model.GetComponent<CharacterModel>().baseRendererInfos[1].defaultMaterial;
         }
 
         private void FixedUpdate()

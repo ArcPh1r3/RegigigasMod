@@ -6,12 +6,14 @@ namespace RegigigasMod.SkillStates.Regigigas
 {
     public class PunchCombo : BaseMeleeAttack
     {
+        internal static float damageCoefficientOverride = 4.2f;
+
         public override void OnEnter()
         {
             this.hitboxName = "Punch";
 
             this.damageType = DamageType.Stun1s;
-            this.damageCoefficient = 2.8f;
+            this.damageCoefficient = PunchCombo.damageCoefficientOverride;
             this.procCoefficient = 1f;
             this.pushForce = 3500f;
             this.bonusForce = Vector3.zero;
@@ -24,10 +26,10 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.hitHopVelocity = 8f;
 
             this.swingSoundString = "RegigigasPunchSwing";
-            this.hitSoundString = "prefabs/effects/impacteffects/PodGroundImpact";
+            this.hitSoundString = "";
             this.muzzleString = swingIndex % 2 == 0 ? "SwingLeft" : "SwingRight";
             //this.swingEffectPrefab = Modules.Assets.punchSwingEffect;
-            this.hitEffectPrefab = Resources.Load<GameObject>("prefabs/effects/impacteffects/PodGroundImpact");
+            this.hitEffectPrefab = Resources.Load<GameObject>("Prefabs/Effects/ImpactEffects/PodGroundImpact");
 
             this.impactSound = Modules.Assets.punchSoundDef.index;
 

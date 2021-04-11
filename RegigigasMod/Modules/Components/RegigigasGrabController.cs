@@ -51,22 +51,21 @@ namespace RegigigasMod.Modules.Components
                 this.motor.velocity = Vector3.zero;
                 this.motor.rootMotion = Vector3.zero;
 
-                this.motor.Motor.SetPosition(this.pivotTransform.position, true);
+                if (this.pivotTransform) this.motor.Motor.SetPosition(this.pivotTransform.position, true);
             }
 
             if (this.pivotTransform)
             {
                 this.transform.position = this.pivotTransform.position;
+                if (this.modelTransform)
+                {
+                    this.modelTransform.position = this.pivotTransform.position;
+                    this.modelTransform.rotation = this.pivotTransform.rotation;
+                }
             }
             else
             {
                 this.Release();
-            }
-
-            if (this.modelTransform)
-            {
-                this.modelTransform.position = this.pivotTransform.position;
-                this.modelTransform.rotation = this.pivotTransform.rotation;
             }
         }
 
@@ -77,6 +76,8 @@ namespace RegigigasMod.Modules.Components
                 this.gameObject.layer = LayerIndex.fakeActor.intVal;
                 this.motor.Motor.RebuildCollidableLayers();
             }
+
+            this.Release();
         }
 
         public void Release()

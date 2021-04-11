@@ -4,7 +4,6 @@ using R2API;
 using RoR2;
 using RoR2.Skills;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using KinematicCharacterController;
 using RoR2.CharacterAI;
@@ -14,7 +13,10 @@ namespace RegigigasMod.Modules.Enemies
 {
     internal class Regigigas
     {
+        internal static Regigigas instance;
+
         internal static GameObject characterPrefab;
+        internal static GameObject survivorPrefab;
         internal static GameObject displayPrefab;
 
         internal static GameObject bossMaster;
@@ -32,92 +34,124 @@ namespace RegigigasMod.Modules.Enemies
 
         // item display stuffs
         internal static ItemDisplayRuleSet itemDisplayRuleSet;
-        internal static List<ItemDisplayRuleSet.NamedRuleGroup> itemRules;
-        internal static List<ItemDisplayRuleSet.NamedRuleGroup> equipmentRules;
+        internal static List<ItemDisplayRuleSet.KeyAssetRuleGroup> itemDisplayRules;
 
         internal void CreateCharacter()
         {
+            instance = this;
+
             enemyEnabled = Modules.Config.EnemyEnableConfig("Regigigas");
             if (enemyEnabled.Value)
             {
-                #region Body
-                characterPrefab = Modules.Prefabs.CreatePrefab(bodyName, "mdlRegigigas", new BodyInfo
-                {
-                    armor = 0f,
-                    armorGrowth = 0f,
-                    bodyName = bodyName,
-                    bodyNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME",
-                    characterPortrait = Modules.Assets.LoadCharacterIcon("Regigigas"),
-                    crosshair = Modules.Assets.LoadCrosshair("SimpleDot"),
-                    damage = 20f,
-                    healthGrowth = 1260f,
-                    healthRegen = 0f,
-                    jumpCount = 1,
-                    maxHealth = 4200f,
-                    subtitleNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_SUBTITLE",
-                    podPrefab = null,
-                    moveSpeed = 3f,
-                    jumpPower = 35f
-                });
+                characterPrefab = CreateBodyPrefab(false);
+                survivorPrefab = CreateBodyPrefab(true);
 
-                CharacterBody body = characterPrefab.GetComponent<CharacterBody>();
-                body.hideCrosshair = true;
-                body.hullClassification = HullClassification.BeetleQueen;
-                body.bodyFlags = CharacterBody.BodyFlags.None;
-                body.isChampion = true;
+                CharacterBody survivorBody = survivorPrefab.GetComponent<CharacterBody>();
+                survivorBody.baseMaxHealth = 480f;
+                survivorBody.levelMaxHealth = 144f;
 
-                CharacterMotor motor = characterPrefab.GetComponent<CharacterMotor>();
-                motor.mass = 10000f;
+                displayPrefab = Modules.Prefabs.CreateDisplayPrefab("RegigigasDisplay", characterPrefab);
 
-                SfxLocator sfx = characterPrefab.GetComponent<SfxLocator>();
-                sfx.barkSound = "";
-                sfx.landingSound = "Play_gravekeeper_land";
-                sfx.deathSound = "";
-                sfx.fallDamageSound = "";
+                characterEnabled = Modules.Config.CharacterEnableConfig("Regigigas (Playable)");
+                if (characterEnabled.Value) Modules.Prefabs.RegisterNewSurvivor(survivorPrefab, displayPrefab, "REGIGIGAS");
 
-                FootstepHandler footstep = characterPrefab.GetComponentInChildren<FootstepHandler>();
-                footstep.footstepDustPrefab = Resources.Load<GameObject>("Prefabs/GenericHugeFootstepDust");
-                footstep.baseFootstepString = "Play_moonBrother_step";
-                footstep.sprintFootstepOverrideString = "Play_moonBrother_sprint";
+                bossMaster = CreateMaster(characterPrefab, "RegigigasMaster");
+                umbraMaster = CreateMaster(survivorPrefab, "RegigigasMonsterMaster");
 
-                CharacterCameraParams regiParams = ScriptableObject.CreateInstance<CharacterCameraParams>();
-                regiParams.minPitch = -70f;
-                regiParams.maxPitch = 70f;
-                regiParams.wallCushion = 0.1f;
-                regiParams.pivotVerticalOffset = 1.37f;
-                regiParams.standardLocalCameraPos = new Vector3(0f, 10f, -30f);
+                CreateSpawnCard();
 
-                KinematicCharacterMotor characterController = characterPrefab.GetComponent<KinematicCharacterMotor>();
-                characterController.CapsuleRadius = 4f;
-                characterController.CapsuleHeight = 9f;
+                //if (characterEnabled.Value) UnlockablesAPI.AddUnlockable<Achievements.MasteryAchievement>(true);
+            }
 
-                CharacterDirection direction = characterPrefab.GetComponent<CharacterDirection>();
-                direction.turnSpeed = 135f;
+            Hook();
+        }
 
-                Interactor interactor = characterPrefab.GetComponent<Interactor>();
-                interactor.maxInteractionDistance = 8f;
+        private static GameObject CreateBodyPrefab(bool isPlayer)
+        {
+            string name = bodyName;
+            if (isPlayer) name = "RegigigasPlayerBody";
 
-                characterPrefab.GetComponent<CameraTargetParams>().cameraParams = regiParams;
+            string iconName = "Regigigas";
+            if (isPlayer) iconName = "RegigigasPlayer";
 
-                characterPrefab.GetComponent<EntityStateMachine>().mainStateType = new EntityStates.SerializableEntityStateType(typeof(EntityStates.BigCharacterMain));
-                characterPrefab.GetComponent<EntityStateMachine>().initialStateType = new EntityStates.SerializableEntityStateType(typeof(SpawnState));
+            #region Body
+            GameObject newPrefab = Modules.Prefabs.CreatePrefab(name, "mdlRegigigas", new BodyInfo
+            {
+                armor = 40f,
+                armorGrowth = 0f,
+                bodyName = name,
+                bodyNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME",
+                bodyColor = Color.yellow,
+                characterPortrait = Modules.Assets.LoadCharacterIcon(iconName),
+                crosshair = Modules.Assets.LoadCrosshair("SimpleDot"),
+                damage = 20f,
+                healthGrowth = 1260f,
+                healthRegen = 0f,
+                jumpCount = 1,
+                maxHealth = 4200f,
+                subtitleNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_SUBTITLE",
+                podPrefab = null,
+                moveSpeed = 3f,
+                jumpPower = 35f
+            });
 
-                characterPrefab.GetComponent<CharacterDeathBehavior>().deathState = new EntityStates.SerializableEntityStateType(typeof(DeathState));
+            CharacterBody body = newPrefab.GetComponent<CharacterBody>();
+            body.hideCrosshair = true;
+            body.hullClassification = HullClassification.Golem;
+            body.bodyFlags = CharacterBody.BodyFlags.None;
+            body.isChampion = true;
 
-                RegigigasPlugin.Destroy(characterPrefab.GetComponent<SetStateOnHurt>());
+            CharacterMotor motor = newPrefab.GetComponent<CharacterMotor>();
+            motor.mass = 10000f;
 
-                characterPrefab.AddComponent<DeathRewards>().logUnlockableName = "Logs.Parent.0";
-                characterPrefab.AddComponent<Modules.Components.RegigigasController>();
-                characterPrefab.AddComponent<Modules.Components.RegigigasFlashController>();
+            SfxLocator sfx = newPrefab.GetComponent<SfxLocator>();
+            sfx.barkSound = "";
+            sfx.landingSound = "Play_gravekeeper_land";
+            sfx.deathSound = "";
+            sfx.fallDamageSound = "";
 
-                #endregion
+            FootstepHandler footstep = newPrefab.GetComponentInChildren<FootstepHandler>();
+            footstep.footstepDustPrefab = Resources.Load<GameObject>("Prefabs/GenericHugeFootstepDust");
+            footstep.baseFootstepString = "Play_moonBrother_step";
+            footstep.sprintFootstepOverrideString = "Play_moonBrother_sprint";
 
-                #region Model
-                Material bodyMat = Modules.Assets.CreateMaterial("matRegigigas", 0f, Color.white);
+            CharacterCameraParams regiParams = ScriptableObject.CreateInstance<CharacterCameraParams>();
+            regiParams.minPitch = -70f;
+            regiParams.maxPitch = 70f;
+            regiParams.wallCushion = 0.1f;
+            regiParams.pivotVerticalOffset = 1.37f;
+            regiParams.standardLocalCameraPos = new Vector3(0f, 10f, -30f);
 
-                bodyRendererIndex = 1;
+            KinematicCharacterMotor characterController = newPrefab.GetComponent<KinematicCharacterMotor>();
+            characterController.CapsuleRadius = 4f;
+            characterController.CapsuleHeight = 9f;
 
-                Modules.Prefabs.SetupCharacterModel(characterPrefab, new CustomRendererInfo[] {
+            CharacterDirection direction = newPrefab.GetComponent<CharacterDirection>();
+            direction.turnSpeed = 135f;
+
+            Interactor interactor = newPrefab.GetComponent<Interactor>();
+            interactor.maxInteractionDistance = 8f;
+
+            newPrefab.GetComponent<CameraTargetParams>().cameraParams = regiParams;
+
+            newPrefab.GetComponent<EntityStateMachine>().mainStateType = new EntityStates.SerializableEntityStateType(typeof(MainState));
+            newPrefab.GetComponent<EntityStateMachine>().initialStateType = new EntityStates.SerializableEntityStateType(typeof(SpawnState));
+
+            newPrefab.GetComponent<CharacterDeathBehavior>().deathState = new EntityStates.SerializableEntityStateType(typeof(DeathState));
+
+            RegigigasPlugin.Destroy(newPrefab.GetComponent<SetStateOnHurt>());
+
+            if (!isPlayer) newPrefab.AddComponent<DeathRewards>().logUnlockableDef = Resources.Load<UnlockableDef>("UnlockableDefs/Logs.Parent.0");
+            newPrefab.AddComponent<Modules.Components.RegigigasController>();
+            newPrefab.AddComponent<Modules.Components.RegigigasFlashController>();
+            #endregion
+
+            #region Model
+            Material bodyMat = Modules.Assets.CreateMaterial("matRegigigas", 0f, Color.white);
+
+            bodyRendererIndex = 1;
+
+            Modules.Prefabs.SetupCharacterModel(newPrefab, new CustomRendererInfo[] {
                 new CustomRendererInfo
                 {
                     childName = "DummyModel",
@@ -128,26 +162,15 @@ namespace RegigigasMod.Modules.Enemies
                     childName = "Model",
                     material = bodyMat
                 }}, bodyRendererIndex);
-                #endregion
+            #endregion
 
-                displayPrefab = Modules.Prefabs.CreateDisplayPrefab("RegigigasDisplay", characterPrefab);
+            CreateHitboxes(newPrefab);
+            SetupHurtboxes(newPrefab);
+            CreateSkills(newPrefab);
+            CreateSkins(newPrefab);
+            InitializeItemDisplays(newPrefab);
 
-                characterEnabled = Modules.Config.CharacterEnableConfig("Regigigas (Playable)");
-                if (characterEnabled.Value) Modules.Prefabs.RegisterNewSurvivor(characterPrefab, displayPrefab, Color.grey, "REGIGIGAS");
-
-                CreateHitboxes(characterPrefab);
-                SetupHurtboxes();
-                CreateSkills(characterPrefab);
-                CreateSkins();
-                CreateItemDisplays();
-
-                bossMaster = CreateMaster(characterPrefab, "RegigigasMaster");
-                umbraMaster = CreateMaster(characterPrefab, "RegigigasMonsterMaster");
-
-                CreateSpawnCard();
-
-                if (characterEnabled.Value) UnlockablesAPI.AddUnlockable<Achievements.MasteryAchievement>(true);
-            }
+            return newPrefab;
         }
 
         private static void CreateSpawnCard()
@@ -176,14 +199,29 @@ namespace RegigigasMod.Modules.Enemies
                 allowAmbushSpawn = true,
                 preventOverhead = false,
                 minimumStageCompletions = minimumStageCount.Value,
-                requiredUnlockable = "",
-                forbiddenUnlockable = "",
+                spawnDistance = DirectorCore.MonsterSpawnDistance.Close
+            };
+
+            DirectorCard cardGrove = new DirectorCard
+            {
+                spawnCard = characterSpawnCard,
+                selectionWeight = 2,
+                allowAmbushSpawn = true,
+                preventOverhead = false,
+                minimumStageCompletions = minimumStageCount.Value,
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close
             };
 
             DirectorAPI.DirectorCardHolder regigigasCard = new DirectorAPI.DirectorCardHolder
             {
                 Card = card,
+                MonsterCategory = DirectorAPI.MonsterCategory.Champions,
+                InteractableCategory = DirectorAPI.InteractableCategory.None
+            };
+
+            DirectorAPI.DirectorCardHolder regigigasCardGrove = new DirectorAPI.DirectorCardHolder
+            {
+                Card = cardGrove,
                 MonsterCategory = DirectorAPI.MonsterCategory.Champions,
                 InteractableCategory = DirectorAPI.InteractableCategory.None
             };
@@ -202,24 +240,24 @@ namespace RegigigasMod.Modules.Enemies
                 {
                     if (!list.Contains(regigigasCard))
                     {
-                        list.Add(regigigasCard);
+                        list.Add(regigigasCardGrove);
                     }
                 }
             };
         }
 
-        private static void SetupHurtboxes()
+        private static void SetupHurtboxes(GameObject bodyPrefab)
         {
-            HurtBoxGroup hurtboxGroup = characterPrefab.GetComponentInChildren<HurtBoxGroup>();
+            HurtBoxGroup hurtboxGroup = bodyPrefab.GetComponentInChildren<HurtBoxGroup>();
             List<HurtBox> hurtboxes = new List<HurtBox>();
 
-            hurtboxes.Add(characterPrefab.GetComponentInChildren<ChildLocator>().FindChild("MainHurtbox").GetComponent<HurtBox>());
+            hurtboxes.Add(bodyPrefab.GetComponentInChildren<ChildLocator>().FindChild("MainHurtbox").GetComponent<HurtBox>());
 
-            HealthComponent healthComponent = characterPrefab.GetComponent<HealthComponent>();
+            HealthComponent healthComponent = bodyPrefab.GetComponent<HealthComponent>();
 
             short hurtboxIndex = 1;
 
-            foreach (Collider i in characterPrefab.GetComponent<ModelLocator>().modelTransform.GetComponentsInChildren<Collider>())
+            foreach (Collider i in bodyPrefab.GetComponent<ModelLocator>().modelTransform.GetComponentsInChildren<Collider>())
             {
                 if (i.gameObject.name != "MainHurtbox")
                 {
@@ -250,7 +288,6 @@ namespace RegigigasMod.Modules.Enemies
                 RegigigasPlugin.DestroyImmediate(ai);
             }
 
-            newMaster.GetComponent<BaseAI>().minDistanceFromEnemy = 0f;
             newMaster.GetComponent<BaseAI>().fullVision = true;
 
             AISkillDriver revengeDriver = newMaster.AddComponent<AISkillDriver>();
@@ -356,10 +393,7 @@ namespace RegigigasMod.Modules.Enemies
             followDriver.shouldSprint = true;
             #endregion
 
-            MasterCatalog.getAdditionalEntries += delegate (List<GameObject> list)
-            {
-                list.Add(newMaster);
-            };
+            Modules.Prefabs.masterPrefabs.Add(newMaster);
 
             return newMaster;
         }
@@ -378,19 +412,25 @@ namespace RegigigasMod.Modules.Enemies
             Modules.Skills.CreateSkillFamilies(prefab);
 
             string prefix = RegigigasPlugin.developerPrefix;
+            SkillLocator skillLocator = prefab.GetComponent<SkillLocator>();
+
+            skillLocator.passiveSkill.enabled = true;
+            skillLocator.passiveSkill.skillNameToken = prefix + "_REGIGIGAS_BODY_PASSIVE_NAME";
+            skillLocator.passiveSkill.skillDescriptionToken = prefix + "_REGIGIGAS_BODY_PASSIVE_DESCRIPTION";
 
             #region Primary
-            Modules.Skills.AddPrimarySkill(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texBoxingGlovesIcon"), false));
-            Modules.Skills.AddPrimarySkill(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texBoxingGlovesIcon"), false));
+            Modules.Skills.AddPrimarySkill(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
+            Modules.Skills.AddPrimarySkill(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texBrickBreakIcon"), false));
+            Modules.Skills.AddPrimarySkill(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texDrainPunchIcon"), false));
             #endregion
 
             #region Secondary
-            SkillDef earthquakeSkillDef = Modules.Skills.CreateSkillDef(new SkillDefInfo
+            SkillDef earthPowerSkillDef = Modules.Skills.CreateSkillDef(new SkillDefInfo
             {
                 skillName = prefix + "_REGIGIGAS_BODY_SECONDARY_EARTHQUAKE_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_SECONDARY_EARTHQUAKE_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SECONDARY_EARTHQUAKE_DESCRIPTION",
-                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texSecondaryIcon"),
+                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texEarthPowerIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(Stomp)),
                 activationStateMachineName = "Body",
                 baseMaxStock = 1,
@@ -400,17 +440,40 @@ namespace RegigigasMod.Modules.Enemies
                 forceSprintDuringState = false,
                 fullRestockOnAssign = true,
                 interruptPriority = EntityStates.InterruptPriority.Any,
-                isBullets = false,
+                resetCooldownTimerOnUse = false,
                 isCombatSkill = true,
                 mustKeyPress = false,
-                noSprint = true,
+                cancelSprintingOnActivation = true,
                 rechargeStock = 1,
                 requiredStock = 1,
-                shootDelay = 0f,
                 stockToConsume = 1,
             });
 
-            Modules.Skills.AddSecondarySkills(prefab, earthquakeSkillDef);
+            SkillDef ancientPowerSkillDef = Modules.Skills.CreateSkillDef(new SkillDefInfo
+            {
+                skillName = prefix + "_REGIGIGAS_BODY_SECONDARY_ANCIENTPOWER_NAME",
+                skillNameToken = prefix + "_REGIGIGAS_BODY_SECONDARY_ANCIENTPOWER_NAME",
+                skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SECONDARY_ANCIENTPOWER_DESCRIPTION",
+                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texAncientPowerIcon"),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(ChargeAncientPower)),
+                activationStateMachineName = "Weapon",
+                baseMaxStock = 8,
+                baseRechargeInterval = 4f,
+                beginSkillCooldownOnSkillEnd = true,
+                canceledFromSprinting = false,
+                forceSprintDuringState = false,
+                fullRestockOnAssign = true,
+                interruptPriority = EntityStates.InterruptPriority.Skill,
+                resetCooldownTimerOnUse = false,
+                isCombatSkill = true,
+                mustKeyPress = false,
+                cancelSprintingOnActivation = true,
+                rechargeStock = 1,
+                requiredStock = 0,
+                stockToConsume = 0,
+            });
+
+            Modules.Skills.AddSecondarySkills(prefab, earthPowerSkillDef, ancientPowerSkillDef);
             #endregion
 
             #region Utility
@@ -419,7 +482,7 @@ namespace RegigigasMod.Modules.Enemies
                 skillName = prefix + "_REGIGIGAS_BODY_UTILITY_REVENGE_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_UTILITY_REVENGE_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_UTILITY_REVENGE_DESCRIPTION",
-                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texUtilityIcon"),
+                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texRevengeIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(Revenge)),
                 activationStateMachineName = "Body",
                 baseMaxStock = 1,
@@ -429,13 +492,12 @@ namespace RegigigasMod.Modules.Enemies
                 forceSprintDuringState = false,
                 fullRestockOnAssign = true,
                 interruptPriority = EntityStates.InterruptPriority.Any,
-                isBullets = false,
+                resetCooldownTimerOnUse = false,
                 isCombatSkill = false,
                 mustKeyPress = false,
-                noSprint = true,
+                cancelSprintingOnActivation = true,
                 rechargeStock = 1,
                 requiredStock = 1,
-                shootDelay = 0f,
                 stockToConsume = 1
             });
 
@@ -448,23 +510,22 @@ namespace RegigigasMod.Modules.Enemies
                 skillName = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_DESCRIPTION",
-                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texSpecialIcon"),
-                activationState = new EntityStates.SerializableEntityStateType(typeof(EntityStates.Croco.ChainableLeap)),
-                activationStateMachineName = "Weapon",
+                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texGigaImpactIcon"),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(GigaImpact)),
+                activationStateMachineName = "Body",
                 baseMaxStock = 1,
-                baseRechargeInterval = 2f,
-                beginSkillCooldownOnSkillEnd = false,
+                baseRechargeInterval = 24f,
+                beginSkillCooldownOnSkillEnd = true,
                 canceledFromSprinting = false,
                 forceSprintDuringState = false,
                 fullRestockOnAssign = true,
                 interruptPriority = EntityStates.InterruptPriority.Skill,
-                isBullets = false,
+                resetCooldownTimerOnUse = false,
                 isCombatSkill = true,
                 mustKeyPress = false,
-                noSprint = true,
+                cancelSprintingOnActivation = true,
                 rechargeStock = 1,
                 requiredStock = 1,
-                shootDelay = 0f,
                 stockToConsume = 1
             });
 
@@ -472,9 +533,9 @@ namespace RegigigasMod.Modules.Enemies
             #endregion
         }
 
-        private static void CreateSkins()
+        private static void CreateSkins(GameObject prefab)
         {
-            GameObject model = characterPrefab.GetComponentInChildren<ModelLocator>().modelTransform.gameObject;
+            GameObject model = prefab.GetComponentInChildren<ModelLocator>().modelTransform.gameObject;
             CharacterModel characterModel = model.GetComponent<CharacterModel>();
 
             ModelSkinController skinController = model.AddComponent<ModelSkinController>();
@@ -513,23 +574,29 @@ namespace RegigigasMod.Modules.Enemies
             skinController.skins = skins.ToArray();
         }
 
-        private static void CreateItemDisplays()
+        private static void InitializeItemDisplays(GameObject prefab)
         {
-            GameObject model = characterPrefab.GetComponentInChildren<ModelLocator>().modelTransform.gameObject;
-            CharacterModel characterModel = model.GetComponent<CharacterModel>();
+            CharacterModel characterModel = prefab.GetComponentInChildren<CharacterModel>();
 
-            itemDisplayRuleSet = ScriptableObject.CreateInstance<ItemDisplayRuleSet>();
+            if (itemDisplayRuleSet == null)
+            {
+                itemDisplayRuleSet = ScriptableObject.CreateInstance<ItemDisplayRuleSet>();
+                itemDisplayRuleSet.name = "idrs" + bodyName;
+            }
 
-            itemRules = new List<ItemDisplayRuleSet.NamedRuleGroup>();
-            equipmentRules = new List<ItemDisplayRuleSet.NamedRuleGroup>();
+            characterModel.itemDisplayRuleSet = itemDisplayRuleSet;
+        }
 
+        internal static void SetItemDisplays()
+        {
+            itemDisplayRules = new List<ItemDisplayRuleSet.KeyAssetRuleGroup>();
 
             // add item displays here
             //  HIGHLY recommend using KingEnderBrine's ItemDisplayPlacementHelper mod for this
             #region Item Displays
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Jetpack",
+                keyAsset = RoR2Content.Equipment.Jetpack,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -548,9 +615,9 @@ localScale = new Vector3(0.5279F, 0.5279F, 0.5279F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "GoldGat",
+                keyAsset = RoR2Content.Equipment.GoldGat,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -569,9 +636,9 @@ localScale = new Vector3(0.3452F, 0.3452F, 0.3452F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BFG",
+                keyAsset = RoR2Content.Equipment.BFG,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -590,9 +657,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "CritGlasses",
+                keyAsset = RoR2Content.Items.CritGlasses,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -611,9 +678,9 @@ localScale = new Vector3(1.5465F, 0.8873F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Syringe",
+                keyAsset = RoR2Content.Items.Syringe,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -632,9 +699,9 @@ localScale = new Vector3(0.1F, 0.1F, 0.1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Behemoth",
+                keyAsset = RoR2Content.Items.Behemoth,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -653,9 +720,9 @@ localScale = new Vector3(0.1F, 0.1F, 0.1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Missile",
+                keyAsset = RoR2Content.Items.Missile,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -674,9 +741,9 @@ localScale = new Vector3(0.1F, 0.1F, 0.1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Dagger",
+                keyAsset = RoR2Content.Items.Dagger,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -695,9 +762,9 @@ localScale = new Vector3(1.2428F, 1.2428F, 1.2299F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Hoof",
+                keyAsset = RoR2Content.Items.Hoof,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -716,9 +783,9 @@ localScale = new Vector3(0.4506F, 0.4001F, 0.1641F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "ChainLightning",
+                keyAsset = RoR2Content.Items.ChainLightning,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -737,9 +804,9 @@ localScale = new Vector3(0.4749F, 0.4749F, 0.4749F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "GhostOnKill",
+                keyAsset = RoR2Content.Items.GhostOnKill,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -758,9 +825,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Mushroom",
+                keyAsset = RoR2Content.Items.Mushroom,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -779,9 +846,9 @@ localScale = new Vector3(0.2363F, 0.2363F, 0.2363F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "AttackSpeedOnCrit",
+                keyAsset = RoR2Content.Items.AttackSpeedOnCrit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -800,9 +867,9 @@ localScale = new Vector3(0.5666F, 0.5666F, 0.5666F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BleedOnHit",
+                keyAsset = RoR2Content.Items.BleedOnHit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -821,9 +888,9 @@ localScale = new Vector3(2.3065F, 2.3065F, 0.881F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "WardOnLevel",
+                keyAsset = RoR2Content.Items.WardOnLevel,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -842,9 +909,9 @@ localScale = new Vector3(1.4718F, 1.4718F, 1.4718F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "HealOnCrit",
+                keyAsset = RoR2Content.Items.HealOnCrit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -863,9 +930,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "HealWhileSafe",
+                keyAsset = RoR2Content.Items.HealWhileSafe,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -884,9 +951,9 @@ localScale = new Vector3(0.357F, 0.357F, 0.357F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Clover",
+                keyAsset = RoR2Content.Items.Clover,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -905,9 +972,9 @@ localScale = new Vector3(0.2749F, 0.2749F, 0.2749F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BarrierOnOverHeal",
+                keyAsset = RoR2Content.Items.BarrierOnOverHeal,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -926,9 +993,9 @@ localScale = new Vector3(0.4083F, 0.4083F, 0.4083F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "GoldOnHit",
+                keyAsset = RoR2Content.Items.GoldOnHit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -947,9 +1014,9 @@ localScale = new Vector3(2.7392F, 4.1238F, 3.9193F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "WarCryOnMultiKill",
+                keyAsset = RoR2Content.Items.WarCryOnMultiKill,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -968,9 +1035,9 @@ localScale = new Vector3(3.231F, 3.231F, 3.231F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "SprintArmor",
+                keyAsset = RoR2Content.Items.SprintArmor,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -989,9 +1056,9 @@ localScale = new Vector3(0.618F, 0.618F, 0.618F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "IceRing",
+                keyAsset = RoR2Content.Items.IceRing,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1010,9 +1077,9 @@ localScale = new Vector3(0.3627F, 0.3627F, 0.3627F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "FireRing",
+                keyAsset = RoR2Content.Items.FireRing,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1031,9 +1098,9 @@ localScale = new Vector3(0.3627F, 0.3627F, 0.3627F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "UtilitySkillMagazine",
+                keyAsset = RoR2Content.Items.UtilitySkillMagazine,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1062,9 +1129,9 @@ localScale = new Vector3(0.3627F, 0.3627F, 0.3627F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "JumpBoost",
+                keyAsset = RoR2Content.Items.JumpBoost,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1083,9 +1150,9 @@ localScale = new Vector3(0.5253F, 0.5253F, 0.5253F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "ArmorReductionOnHit",
+                keyAsset = RoR2Content.Items.ArmorReductionOnHit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1104,9 +1171,9 @@ localScale = new Vector3(0.1722F, 0.1722F, 0.1722F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "NearbyDamageBonus",
+                keyAsset = RoR2Content.Items.NearbyDamageBonus,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1135,9 +1202,9 @@ localScale = new Vector3(0.1236F, 0.1236F, 0.1236F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "ArmorPlate",
+                keyAsset = RoR2Content.Items.ArmorPlate,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1156,9 +1223,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "CommandMissile",
+                keyAsset = RoR2Content.Equipment.CommandMissile,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1177,9 +1244,9 @@ localScale = new Vector3(1.9801F, 1.9801F, 1.9801F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Feather",
+                keyAsset = RoR2Content.Items.Feather,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1198,9 +1265,9 @@ localScale = new Vector3(0.0285F, 0.0285F, 0.0285F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Crowbar",
+                keyAsset = RoR2Content.Items.Crowbar,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1219,9 +1286,9 @@ localScale = new Vector3(0.1936F, 0.1936F, 0.1936F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "FallBoots",
+                keyAsset = RoR2Content.Items.FallBoots,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1250,9 +1317,9 @@ localScale = new Vector3(0.1485F, 0.1485F, 0.1485F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "ExecuteLowHealthElite",
+                keyAsset = RoR2Content.Items.ExecuteLowHealthElite,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1271,9 +1338,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "EquipmentMagazine",
+                keyAsset = RoR2Content.Items.EquipmentMagazine,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1292,9 +1359,9 @@ localScale = new Vector3(0.2149F, 0.2149F, 0.2149F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "NovaOnHeal",
+                keyAsset = RoR2Content.Items.NovaOnHeal,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1323,9 +1390,9 @@ localScale = new Vector3(-0.5349F, 0.5349F, 0.5349F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Infusion",
+                keyAsset = RoR2Content.Items.Infusion,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1344,9 +1411,9 @@ localScale = new Vector3(0.5253F, 0.5253F, 0.5253F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Medkit",
+                keyAsset = RoR2Content.Items.Medkit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1365,9 +1432,9 @@ localScale = new Vector3(0.4907F, 0.4907F, 0.4907F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Bandolier",
+                keyAsset = RoR2Content.Items.Bandolier,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1386,9 +1453,9 @@ localScale = new Vector3(0.1684F, 0.242F, 0.242F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BounceNearby",
+                keyAsset = RoR2Content.Items.BounceNearby,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1407,9 +1474,9 @@ localScale = new Vector3(0.214F, 0.214F, 0.214F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "IgniteOnKill",
+                keyAsset = RoR2Content.Items.IgniteOnKill,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1428,9 +1495,9 @@ localScale = new Vector3(0.3165F, 0.3165F, 0.3165F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "StunChanceOnHit",
+                keyAsset = RoR2Content.Items.StunChanceOnHit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1449,9 +1516,9 @@ localScale = new Vector3(0.5672F, 0.5672F, 0.5672F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Firework",
+                keyAsset = RoR2Content.Items.Firework,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1470,9 +1537,9 @@ localScale = new Vector3(0.1194F, 0.1194F, 0.1194F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "LunarDagger",
+                keyAsset = RoR2Content.Items.LunarDagger,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1491,9 +1558,9 @@ localScale = new Vector3(0.3385F, 0.3385F, 0.3385F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Knurl",
+                keyAsset = RoR2Content.Items.Knurl,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1512,9 +1579,9 @@ localScale = new Vector3(0.0848F, 0.0848F, 0.0848F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BeetleGland",
+                keyAsset = RoR2Content.Items.BeetleGland,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1533,9 +1600,9 @@ localScale = new Vector3(0.0553F, 0.0553F, 0.0553F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "SprintBonus",
+                keyAsset = RoR2Content.Items.SprintBonus,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1554,9 +1621,9 @@ localScale = new Vector3(0.1655F, 0.1655F, 0.1655F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "SecondarySkillMagazine",
+                keyAsset = RoR2Content.Items.SecondarySkillMagazine,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1575,9 +1642,9 @@ localScale = new Vector3(0.0441F, 0.0441F, 0.0441F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "StickyBomb",
+                keyAsset = RoR2Content.Items.StickyBomb,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1596,9 +1663,9 @@ localScale = new Vector3(0.0736F, 0.0736F, 0.0736F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "TreasureCache",
+                keyAsset = RoR2Content.Items.TreasureCache,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1617,9 +1684,9 @@ localScale = new Vector3(0.4092F, 0.4092F, 0.4092F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BossDamageBonus",
+                keyAsset = RoR2Content.Items.BossDamageBonus,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1638,9 +1705,9 @@ localScale = new Vector3(0.2279F, 0.2279F, 0.2279F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "SlowOnHit",
+                keyAsset = RoR2Content.Items.SlowOnHit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1659,9 +1726,9 @@ localScale = new Vector3(0.0687F, 0.0687F, 0.0687F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "ExtraLife",
+                keyAsset = RoR2Content.Items.ExtraLife,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1680,9 +1747,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "KillEliteFrenzy",
+                keyAsset = RoR2Content.Items.KillEliteFrenzy,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1701,9 +1768,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "RepeatHeal",
+                keyAsset = RoR2Content.Items.RepeatHeal,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1722,9 +1789,9 @@ localScale = new Vector3(0.1511F, 0.1511F, 0.1511F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "AutoCastEquipment",
+                keyAsset = RoR2Content.Items.AutoCastEquipment,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1743,9 +1810,9 @@ localScale = new Vector3(0.4208F, 0.4208F, 0.4208F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "IncreaseHealing",
+                keyAsset = RoR2Content.Items.IncreaseHealing,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1774,9 +1841,9 @@ localScale = new Vector3(0.3395F, 0.3395F, -0.3395F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "TitanGoldDuringTP",
+                keyAsset = RoR2Content.Items.TitanGoldDuringTP,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1795,9 +1862,9 @@ localScale = new Vector3(0.1191F, 0.1191F, 0.1191F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "SprintWisp",
+                keyAsset = RoR2Content.Items.SprintWisp,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1816,9 +1883,9 @@ localScale = new Vector3(0.1385F, 0.1385F, 0.1385F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BarrierOnKill",
+                keyAsset = RoR2Content.Items.BarrierOnKill,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1837,9 +1904,9 @@ localScale = new Vector3(0.1841F, 0.1841F, 0.1841F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "TPHealingNova",
+                keyAsset = RoR2Content.Items.TPHealingNova,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1858,9 +1925,9 @@ localScale = new Vector3(0.2731F, 0.2731F, 0.0273F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "LunarUtilityReplacement",
+                keyAsset = RoR2Content.Items.LunarUtilityReplacement,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1879,9 +1946,9 @@ localScale = new Vector3(0.2833F, 0.2833F, 0.2833F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Thorns",
+                keyAsset = RoR2Content.Items.Thorns,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1900,9 +1967,9 @@ localScale = new Vector3(1.8655F, 1.8655F, 1.8655F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "LunarPrimaryReplacement",
+                keyAsset = RoR2Content.Items.LunarPrimaryReplacement,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1971,9 +2038,9 @@ localScale = new Vector3(0.6787F, 0.6787F, 0.6787F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "NovaOnLowHealth",
+                keyAsset = RoR2Content.Items.NovaOnLowHealth,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -1992,9 +2059,9 @@ localScale = new Vector3(0.1035F, 0.1035F, 0.1035F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "LunarTrinket",
+                keyAsset = RoR2Content.Items.LunarTrinket,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2013,9 +2080,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Plant",
+                keyAsset = RoR2Content.Items.Plant,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2034,9 +2101,9 @@ localScale = new Vector3(0.0429F, 0.0429F, 0.0429F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Bear",
+                keyAsset = RoR2Content.Items.Bear,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2055,9 +2122,9 @@ localScale = new Vector3(0.2034F, 0.2034F, 0.2034F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "DeathMark",
+                keyAsset = RoR2Content.Items.DeathMark,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2076,9 +2143,9 @@ localScale = new Vector3(-0.0375F, -0.0341F, -0.0464F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "ExplodeOnDeath",
+                keyAsset = RoR2Content.Items.ExplodeOnDeath,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2097,9 +2164,9 @@ localScale = new Vector3(0.0283F, 0.0283F, 0.0283F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Seed",
+                keyAsset = RoR2Content.Items.Seed,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2118,9 +2185,9 @@ localScale = new Vector3(0.0275F, 0.0275F, 0.0275F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "SprintOutOfCombat",
+                keyAsset = RoR2Content.Items.SprintOutOfCombat,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2139,9 +2206,9 @@ localScale = new Vector3(0.2845F, 0.2845F, 0.2845F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "CooldownOnCrit",
+                keyAsset = RoR2Content.Items.CooldownOnCrit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2160,9 +2227,9 @@ localScale = new Vector3(0.8005F, 0.8005F, 0.8005F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Phasing",
+                keyAsset = RoR2Content.Items.Phasing,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2181,9 +2248,9 @@ localScale = new Vector3(0.1454F, 0.2399F, 0.16F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "PersonalShield",
+                keyAsset = RoR2Content.Items.PersonalShield,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2202,9 +2269,9 @@ localScale = new Vector3(0.1057F, 0.1057F, 0.1057F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "ShockNearby",
+                keyAsset = RoR2Content.Items.ShockNearby,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2223,9 +2290,9 @@ localScale = new Vector3(0.3229F, 0.3229F, 0.3229F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "ShieldOnly",
+                keyAsset = RoR2Content.Items.ShieldOnly,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2254,9 +2321,9 @@ localScale = new Vector3(0.3521F, 0.3521F, -0.3521F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "AlienHead",
+                keyAsset = RoR2Content.Items.AlienHead,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2275,9 +2342,9 @@ localScale = new Vector3(0.6701F, 0.6701F, 0.6701F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "HeadHunter",
+                keyAsset = RoR2Content.Items.HeadHunter,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2296,9 +2363,9 @@ localScale = new Vector3(0.4851F, 0.1617F, 0.1617F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "EnergizedOnEquipmentUse",
+                keyAsset = RoR2Content.Items.EnergizedOnEquipmentUse,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2317,9 +2384,9 @@ localScale = new Vector3(0.2732F, 0.2732F, 0.2732F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "RegenOnKill",
+                keyAsset = RoR2Content.Items.FlatHealth,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2338,9 +2405,9 @@ localScale = new Vector3(0.1245F, 0.1155F, 0.1155F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Tooth",
+                keyAsset = RoR2Content.Items.Tooth,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2359,9 +2426,9 @@ localScale = new Vector3(7.5452F, 7.5452F, 7.5452F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Pearl",
+                keyAsset = RoR2Content.Items.Pearl,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2380,9 +2447,9 @@ localScale = new Vector3(0.1F, 0.1F, 0.1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "ShinyPearl",
+                keyAsset = RoR2Content.Items.ShinyPearl,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2401,9 +2468,9 @@ localScale = new Vector3(0.1F, 0.1F, 0.1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BonusGoldPackOnKill",
+                keyAsset = RoR2Content.Items.BonusGoldPackOnKill,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2422,9 +2489,9 @@ localScale = new Vector3(0.0475F, 0.0475F, 0.0475F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Squid",
+                keyAsset = RoR2Content.Items.Squid,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2443,9 +2510,9 @@ localScale = new Vector3(0.2235F, 0.3016F, 0.3528F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Icicle",
+                keyAsset = RoR2Content.Items.Icicle,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2464,9 +2531,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Talisman",
+                keyAsset = RoR2Content.Items.Talisman,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2485,9 +2552,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "LaserTurbine",
+                keyAsset = RoR2Content.Items.LaserTurbine,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2506,9 +2573,9 @@ localScale = new Vector3(0.2159F, 0.2159F, 0.2159F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "FocusConvergence",
+                keyAsset = RoR2Content.Items.FocusConvergence,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2527,9 +2594,9 @@ localScale = new Vector3(0.1F, 0.1F, 0.1F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Incubator",
+                keyAsset = RoR2Content.Items.Incubator,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2548,9 +2615,9 @@ localScale = new Vector3(0.0528F, 0.0528F, 0.0528F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "FireballsOnHit",
+                keyAsset = RoR2Content.Items.FireballsOnHit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2569,9 +2636,9 @@ localScale = new Vector3(0.0761F, 0.0761F, 0.0761F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "SiphonOnLowHealth",
+                keyAsset = RoR2Content.Items.SiphonOnLowHealth,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2590,9 +2657,9 @@ localScale = new Vector3(0.0385F, 0.0385F, 0.0385F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BleedOnHitAndExplode",
+                keyAsset = RoR2Content.Items.BleedOnHitAndExplode,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2611,9 +2678,9 @@ localScale = new Vector3(0.0486F, 0.0486F, 0.0486F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "MonstersOnShrineUse",
+                keyAsset = RoR2Content.Items.MonstersOnShrineUse,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2632,9 +2699,9 @@ localScale = new Vector3(0.0246F, 0.0246F, 0.0246F),
                 }
             });
 
-            itemRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "RandomDamageZone",
+                keyAsset = RoR2Content.Items.RandomDamageZone,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2653,9 +2720,9 @@ localScale = new Vector3(0.0465F, 0.0465F, 0.0465F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Fruit",
+                keyAsset = RoR2Content.Equipment.Fruit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2674,9 +2741,9 @@ localScale = new Vector3(0.2118F, 0.2118F, 0.2118F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "AffixRed",
+                keyAsset = RoR2Content.Equipment.AffixRed,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2705,9 +2772,9 @@ localScale = new Vector3(-0.5F, 0.5F, 0.5F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "AffixBlue",
+                keyAsset = RoR2Content.Equipment.AffixBlue,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2736,9 +2803,9 @@ localScale = new Vector3(0.5F, 0.5F, 0.5F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "AffixWhite",
+                keyAsset = RoR2Content.Equipment.AffixWhite,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2757,9 +2824,9 @@ localScale = new Vector3(0.1371F, 0.1371F, 0.1371F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "AffixPoison",
+                keyAsset = RoR2Content.Equipment.AffixPoison,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2778,9 +2845,9 @@ localScale = new Vector3(0.3183F, 0.3183F, 0.3183F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "AffixHaunted",
+                keyAsset = RoR2Content.Equipment.AffixHaunted,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2799,9 +2866,9 @@ localScale = new Vector3(0.4073F, 0.4073F, 0.4073F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "CritOnUse",
+                keyAsset = RoR2Content.Equipment.CritOnUse,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2820,9 +2887,9 @@ localScale = new Vector3(0.2326F, 0.2326F, 0.2326F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "DroneBackup",
+                keyAsset = RoR2Content.Equipment.DroneBackup,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2841,9 +2908,9 @@ localScale = new Vector3(0.2641F, 0.2641F, 0.2641F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Lightning",
+                keyAsset = RoR2Content.Equipment.Lightning,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2862,9 +2929,9 @@ localScale = new Vector3(2.1862F, 2.1862F, 2.1862F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "BurnNearby",
+                keyAsset = RoR2Content.Equipment.BurnNearby,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2883,9 +2950,9 @@ localScale = new Vector3(0.0307F, 0.0307F, 0.0307F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "CrippleWard",
+                keyAsset = RoR2Content.Equipment.CrippleWard,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2904,9 +2971,9 @@ localScale = new Vector3(0.2812F, 0.2812F, 0.2812F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "QuestVolatileBattery",
+                keyAsset = RoR2Content.Equipment.QuestVolatileBattery,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2925,9 +2992,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "GainArmor",
+                keyAsset = RoR2Content.Equipment.GainArmor,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2946,9 +3013,9 @@ localScale = new Vector3(0.6279F, 0.6279F, 0.6279F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Recycle",
+                keyAsset = RoR2Content.Equipment.Recycle,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2967,9 +3034,9 @@ localScale = new Vector3(0.3304F, 0.3304F, 0.3304F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "FireBallDash",
+                keyAsset = RoR2Content.Equipment.FireBallDash,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2988,9 +3055,9 @@ localScale = new Vector3(0.1891F, 0.1891F, 0.1891F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Cleanse",
+                keyAsset = RoR2Content.Equipment.Cleanse,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3009,9 +3076,9 @@ localScale = new Vector3(0.0821F, 0.0821F, 0.0821F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Tonic",
+                keyAsset = RoR2Content.Equipment.Tonic,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3030,9 +3097,9 @@ localScale = new Vector3(0.1252F, 0.1252F, 0.1252F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Gateway",
+                keyAsset = RoR2Content.Equipment.Gateway,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3051,9 +3118,9 @@ localScale = new Vector3(0.0982F, 0.0982F, 0.0982F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Meteor",
+                keyAsset = RoR2Content.Equipment.Meteor,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3072,9 +3139,9 @@ localScale = new Vector3(1F, 1F, 1F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Saw",
+                keyAsset = RoR2Content.Equipment.Saw,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3093,9 +3160,9 @@ localScale = new Vector3(0.1F, 0.1F, 0.1F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Blackhole",
+                keyAsset = RoR2Content.Equipment.Blackhole,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3114,9 +3181,9 @@ localScale = new Vector3(0.5F, 0.5F, 0.5F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "Scanner",
+                keyAsset = RoR2Content.Equipment.Scanner,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3135,9 +3202,9 @@ localScale = new Vector3(0.0861F, 0.0861F, 0.0861F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "DeathProjectile",
+                keyAsset = RoR2Content.Equipment.DeathProjectile,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3156,9 +3223,9 @@ localScale = new Vector3(0.0596F, 0.0596F, 0.0596F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "LifestealOnHit",
+                keyAsset = RoR2Content.Equipment.LifestealOnHit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3177,9 +3244,9 @@ localScale = new Vector3(0.1246F, 0.1246F, 0.1246F),
                 }
             });
 
-            equipmentRules.Add(new ItemDisplayRuleSet.NamedRuleGroup
+            itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                name = "TeamWarCry",
+                keyAsset = RoR2Content.Equipment.TeamWarCry,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3199,12 +3266,8 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
             });
             #endregion
 
-            ItemDisplayRuleSet.NamedRuleGroup[] item = itemRules.ToArray();
-            ItemDisplayRuleSet.NamedRuleGroup[] equip = equipmentRules.ToArray();
-            itemDisplayRuleSet.namedItemRuleGroups = item;
-            itemDisplayRuleSet.namedEquipmentRuleGroups = equip;
-
-            characterModel.itemDisplayRuleSet = itemDisplayRuleSet;
+            itemDisplayRuleSet.keyAssetRuleGroups = itemDisplayRules.ToArray();
+            itemDisplayRuleSet.GenerateRuntimeValues();
         }
 
         private static CharacterModel.RendererInfo[] SkinRendererInfos(CharacterModel.RendererInfo[] defaultRenderers, Material[] materials)
@@ -3215,6 +3278,42 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
             newRendererInfos[1].defaultMaterial = materials[0];
 
             return newRendererInfos;
+        }
+
+        private static void Hook()
+        {
+            On.RoR2.HealthComponent.TakeDamage += HealthComponent_TakeDamage;
+        }
+
+        private static void HealthComponent_TakeDamage(On.RoR2.HealthComponent.orig_TakeDamage orig, HealthComponent self, DamageInfo damageInfo)
+        {
+            bool isHealing = false;
+
+            if (self)
+            {
+                if (damageInfo.attacker)
+                {
+                    CharacterBody attackerBody = damageInfo.attacker.GetComponent<CharacterBody>();
+                    if (attackerBody)
+                    {
+                        if (attackerBody.baseNameToken == RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME")
+                        {
+                            if (damageInfo.damageType.HasFlag(DamageType.BlightOnHit))
+                            {
+                                damageInfo.damageType = DamageType.Generic;
+                                isHealing = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            orig(self, damageInfo);
+
+            if (isHealing && !damageInfo.rejected)
+            {
+                damageInfo.attacker.GetComponent<HealthComponent>().Heal(damageInfo.damage * 0.5f, default(ProcChainMask));
+            }
         }
     }
 }

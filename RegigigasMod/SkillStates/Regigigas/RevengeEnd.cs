@@ -13,11 +13,11 @@ namespace RegigigasMod.SkillStates.Regigigas
         public static float baseDuration = 6f;
         public float storedDamage;
 
-        public static float maxDamagePercentage = 0.6f;
+        public static float maxDamagePercentage = 0.4f;
         public static float minDamagePercentage = 0f;
 
-        public static float maxRadius = 64f;
-        public static float minRadius = 16f;
+        public static float maxRadius = 80f;
+        public static float minRadius = 12f;
 
         private float shockwaveRadius;
         private float shockwaveTime;
@@ -40,7 +40,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.shockwaveRadius = Util.Remap(healthPercentage, 0f, 1f, RevengeEnd.minRadius, RevengeEnd.maxRadius);
 
             base.PlayAnimation("FullBody, Override", "RevengeEnd", "Revenge.playbackRate", this.duration);
-            this.soundID = Util.PlayScaledSound(ChargeMegaNova.chargingSoundString, base.gameObject, this.attackSpeedStat);
+            this.soundID = Util.PlayAttackSpeedSound(ChargeMegaNova.chargingSoundString, base.gameObject, this.attackSpeedStat);
 
             ChildLocator childLocator = base.GetModelChildLocator();
             if (childLocator)
@@ -134,6 +134,11 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             if (this.modelAnimator) this.modelAnimator.SetFloat(AnimationParameters.aimWeight, 1f);
             if (this.chargeEffectInstance) EntityState.Destroy(this.chargeEffectInstance);
+        }
+
+        public override InterruptPriority GetMinimumInterruptPriority()
+        {
+            return InterruptPriority.Frozen;
         }
     }
 }

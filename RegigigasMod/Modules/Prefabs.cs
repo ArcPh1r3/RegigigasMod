@@ -13,23 +13,32 @@ namespace RegigigasMod.Modules
         // cache this just to give our ragdolls the same physic material as vanilla stuff
         private static PhysicMaterial ragdollMaterial;
 
-        internal static void RegisterNewSurvivor(GameObject bodyPrefab, GameObject displayPrefab, Color charColor, string namePrefix, string unlockString)
-        {
-            SurvivorDef survivorDef = new SurvivorDef
-            {
-                name = RegigigasPlugin.developerPrefix + "_" + namePrefix + "_BODY_NAME",
-                unlockableName = unlockString,
-                descriptionToken = RegigigasPlugin.developerPrefix + "_" + namePrefix + "_BODY_DESCRIPTION",
-                primaryColor = charColor,
-                bodyPrefab = bodyPrefab,
-                displayPrefab = displayPrefab,
-                outroFlavorToken = RegigigasPlugin.developerPrefix + "_" + namePrefix + "_BODY_OUTRO_FLAVOR",
-            };
+        internal static List<SurvivorDef> survivorDefinitions = new List<SurvivorDef>();
+        internal static List<GameObject> bodyPrefabs = new List<GameObject>();
+        internal static List<GameObject> masterPrefabs = new List<GameObject>();
+        internal static List<GameObject> projectilePrefabs = new List<GameObject>();
 
-            SurvivorAPI.AddSurvivor(survivorDef);
+        internal static void RegisterNewSurvivor(GameObject bodyPrefab, GameObject displayPrefab, string namePrefix, UnlockableDef unlockableDef)
+        {
+            string fullNameString = RegigigasPlugin.developerPrefix + "_" + namePrefix + "_BODY_NAME";
+            string fullDescString = RegigigasPlugin.developerPrefix + "_" + namePrefix + "_BODY_DESCRIPTION";
+            string fullOutroString = RegigigasPlugin.developerPrefix + "_" + namePrefix + "_BODY_OUTRO_FLAVOR";
+            string fullFailureString = RegigigasPlugin.developerPrefix + "_" + namePrefix + "_BODY_OUTRO_FAILURE";
+
+            SurvivorDef survivorDef = ScriptableObject.CreateInstance<SurvivorDef>();
+            survivorDef.bodyPrefab = bodyPrefab;
+            survivorDef.displayPrefab = displayPrefab;
+            survivorDef.displayNameToken = fullNameString;
+            survivorDef.descriptionToken = fullDescString;
+            survivorDef.outroFlavorToken = fullOutroString;
+            survivorDef.mainEndingEscapeFailureFlavorToken = fullFailureString;
+            survivorDef.desiredSortPosition = 100f;
+            survivorDef.unlockableDef = unlockableDef;
+
+            survivorDefinitions.Add(survivorDef);
         }
 
-        internal static void RegisterNewSurvivor(GameObject bodyPrefab, GameObject displayPrefab, Color charColor, string namePrefix) { RegisterNewSurvivor(bodyPrefab, displayPrefab, charColor, namePrefix, ""); }
+        internal static void RegisterNewSurvivor(GameObject bodyPrefab, GameObject displayPrefab, string namePrefix) { RegisterNewSurvivor(bodyPrefab, displayPrefab, namePrefix, null); }
 
         internal static GameObject CreateDisplayPrefab(string modelName, GameObject prefab)
         {
@@ -53,12 +62,12 @@ namespace RegigigasMod.Modules
             #region CharacterBody
             CharacterBody bodyComponent = newPrefab.GetComponent<CharacterBody>();
 
-            bodyComponent.bodyIndex = -1;
             bodyComponent.name = bodyInfo.bodyName;
             bodyComponent.baseNameToken = bodyInfo.bodyNameToken;
             bodyComponent.subtitleNameToken = bodyInfo.subtitleNameToken;
             bodyComponent.portraitIcon = bodyInfo.characterPortrait;
             bodyComponent.crosshairPrefab = bodyInfo.crosshair;
+            bodyComponent.bodyColor = bodyInfo.bodyColor;
 
             bodyComponent.bodyFlags = CharacterBody.BodyFlags.ImmuneToExecutes;
             bodyComponent.rootMotionInMainState = false;
@@ -115,10 +124,7 @@ namespace RegigigasMod.Modules
             SetupRagdoll(model);
             SetupAimAnimator(newPrefab, model);
 
-            BodyCatalog.getAdditionalEntries += delegate (List<GameObject> list)
-            {
-                list.Add(newPrefab);
-            };
+            bodyPrefabs.Add(newPrefab);
 
             return newPrefab;
         }
@@ -128,10 +134,7 @@ namespace RegigigasMod.Modules
             GameObject newMaster = PrefabAPI.InstantiateClone(Resources.Load<GameObject>("Prefabs/CharacterMasters/" + masterToCopy + "MonsterMaster"), masterName, true);
             newMaster.GetComponent<CharacterMaster>().bodyPrefab = bodyPrefab;
 
-            MasterCatalog.getAdditionalEntries += delegate (List<GameObject> list)
-            {
-                list.Add(newMaster);
-            };
+            masterPrefabs.Add(newMaster);
         }
 
         #region ModelSetup
@@ -350,6 +353,7 @@ internal class BodyInfo
     internal string bodyName = "";
     internal string bodyNameToken = "";
     internal string subtitleNameToken = "";
+    internal Color bodyColor = Color.white;
 
     internal Texture characterPortrait = null;
 

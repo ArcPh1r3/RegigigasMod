@@ -37,7 +37,7 @@ namespace RegigigasMod.SkillStates.BaseStates
         public float duration;
         private bool hasFired;
         private float hitPauseTimer;
-        private OverlapAttack attack;
+        protected OverlapAttack attack;
         private bool inHitPause;
         private bool hasHopped;
         private float stopwatch;
@@ -126,7 +126,7 @@ namespace RegigigasMod.SkillStates.BaseStates
             if (!this.hasFired)
             {
                 this.hasFired = true;
-                Util.PlayScaledSound(this.swingSoundString, base.gameObject, this.attackSpeedStat);
+                Util.PlayAttackSpeedSound(this.swingSoundString, base.gameObject, this.attackSpeedStat);
 
                 if (base.isAuthority)
                 {

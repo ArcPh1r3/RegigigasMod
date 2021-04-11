@@ -19,17 +19,14 @@ namespace RegigigasMod.Modules
         {
             CreateEarthPowerWave();
 
-            ProjectileCatalog.getAdditionalEntries += list =>
-            {
-                list.Add(earthPowerWave);
-            };
+            Modules.Prefabs.projectilePrefabs.Add(earthPowerWave);
         }
 
         private static void CreateEarthPowerWave()
         {
             earthPowerWave = CloneProjectilePrefab("BrotherUltLineProjectileRotateLeft", "EarthPowerProjectile");
 
-            earthPowerWave.GetComponent<ProjectileDamage>().damageType = DamageType.Generic;
+            earthPowerWave.GetComponent<ProjectileDamage>().damageType = DamageType.IgniteOnHit;
 
             RegigigasPlugin.DestroyImmediate(earthPowerWave.GetComponent<RotateAroundAxis>());
 
@@ -40,7 +37,7 @@ namespace RegigigasMod.Modules
             PostProcessProfile magmaWormPP = Resources.Load<GameObject>("Prefabs/CharacterBodies/MagmaWormBody").GetComponentInChildren<PostProcessVolume>().sharedProfile;
             Material matMagmaOpaqueLarge = Resources.Load<GameObject>("Prefabs/ProjectileGhosts/MagmaOrbGhost").transform.Find("Particles").Find("SpitCore").GetComponent<ParticleSystemRenderer>().material;
             Material matMagmaOpaqueDirectional = Resources.Load<GameObject>("Prefabs/Effects/MagmaWormBurrow").transform.Find("ParticleLoop").Find("Magma, Directional").GetComponent<ParticleSystemRenderer>().material;
-            Material titanPredictionEffect = Resources.Load<GameObject>("Prefabs/Effects/TitanPredictionFistEffect").transform.Find("GroundSlamIndicator").GetComponent<MeshRenderer>().material;
+            Material titanPredictionEffect = Resources.Load<GameObject>("Prefabs/Projectiles/TitanPreFistProjectile").transform.Find("TeamAreaIndicator, GroundOnly").GetComponent<TeamAreaIndicator>().teamMaterialPairs[0].sharedMaterial;
             Material matSpiteBombPredictionEffect = Resources.Load<GameObject>("Prefabs/Effects/SpiteBombDelayEffect").transform.Find("Nova Sphere").GetComponent<ParticleSystemRenderer>().material;
 
             waveGhost.transform.Find("Size").Find("IndicatorFX").GetComponent<MeshRenderer>().material = titanPredictionEffect;

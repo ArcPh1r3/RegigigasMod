@@ -4,6 +4,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Modules\Survivors\Henry.cs~RF6221a098.TMP" />
     <None Remove="regigigas" />
@@ -13,6 +21,11 @@
   <ItemGroup>
     <EmbeddedResource Include="regigigas" />
     <EmbeddedResource Include="RegigigasBank.bnk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Modules\Survivors\" />
+    <Folder Include="SkillStates\Regigigas\Misc\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -118,11 +131,6 @@
     <Reference Include="Zio">
       <HintPath>libs\Zio.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Modules\Survivors\" />
-    <Folder Include="SkillStates\Regigigas\Misc\" />
   </ItemGroup>
 
   <ItemGroup>

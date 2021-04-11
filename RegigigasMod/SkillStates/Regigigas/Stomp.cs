@@ -10,7 +10,7 @@ namespace RegigigasMod.SkillStates.Regigigas
     public class Stomp : BaseRegiSkillState
     {
         public static float baseDuration = 4f;
-        public static float damageCoefficient = 12f;
+        public static float damageCoefficient = 6f;
 
         private float stompTime;
         private bool hasStomped;
@@ -58,6 +58,9 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.hasStomped = true;
 
             Util.PlaySound("RegigigasStomp", base.gameObject);
+            Util.PlaySound("Play_parent_attack1_slam", base.gameObject);
+
+            EffectManager.SimpleMuzzleFlash(Resources.Load<GameObject>("Prefabs/Effects/ImpactEffects/PodGroundImpact"), base.gameObject, "FootR", false);
 
             if (base.isAuthority)
             {
@@ -78,6 +81,11 @@ namespace RegigigasMod.SkillStates.Regigigas
         public override void OnExit()
         {
             base.OnExit();
+        }
+
+        public override InterruptPriority GetMinimumInterruptPriority()
+        {
+            return InterruptPriority.PrioritySkill;
         }
     }
 }

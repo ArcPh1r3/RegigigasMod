@@ -4,6 +4,7 @@ using R2API.Utils;
 using RoR2;
 using System.Security;
 using System.Security.Permissions;
+using UnityEngine;
 
 [module: UnverifiableCode]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
@@ -16,21 +17,15 @@ namespace RegigigasMod
     [R2APISubmoduleDependency(new string[]
     {
         "PrefabAPI",
-        "SurvivorAPI",
-        "LoadoutAPI",
-        "BuffAPI",
         "LanguageAPI",
-        "SoundAPI",
-        "EffectAPI",
-        "UnlockablesAPI",
-        "ResourcesAPI"
+        "SoundAPI"
     })]
 
     public class RegigigasPlugin : BaseUnityPlugin
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.0.5";
+        public const string MODVERSION = "1.1.0";
 
         public const string developerPrefix = "ROB";
 
@@ -51,6 +46,13 @@ namespace RegigigasMod
             new Modules.Enemies.Regigigas().CreateCharacter();
 
             Hook();
+
+            new Modules.ContentPacks().CreateContentPack();
+        }
+
+        private void Start()
+        {
+            Modules.Enemies.Regigigas.SetItemDisplays();
         }
 
         private void Hook()

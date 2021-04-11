@@ -5,8 +5,6 @@ using System;
 
 namespace RegigigasMod.Modules.Achievements
 {
-    [R2APISubmoduleDependency(nameof(UnlockablesAPI))]
-
     public class MasteryAchievement : ModdedUnlockableAndAchievement<CustomSpriteProvider>
     {
         public override String AchievementIdentifier { get; } = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_MONSOONUNLOCKABLE_ACHIEVEMENT_ID";
@@ -17,7 +15,7 @@ namespace RegigigasMod.Modules.Achievements
         public override String UnlockableNameToken { get; } = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_MONSOONUNLOCKABLE_UNLOCKABLE_NAME";
         protected override CustomSpriteProvider SpriteProvider { get; } = new CustomSpriteProvider("@Regigigas:Assets/Regigigas/Icons/texMasteryAchievement.png");
 
-        public override int LookUpRequiredBodyIndex()
+        public override BodyIndex LookUpRequiredBodyIndex()
         {
             return BodyCatalog.FindBodyIndex(Modules.Enemies.Regigigas.bodyName);
         }

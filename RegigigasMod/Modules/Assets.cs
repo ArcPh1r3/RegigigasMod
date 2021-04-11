@@ -16,7 +16,12 @@ namespace RegigigasMod.Modules
         internal static Shader hotpoo = Resources.Load<Shader>("Shaders/Deferred/HGStandard");
         internal static Material commandoMat;
 
+        internal static GameObject drainPunchChargeEffect;
+
         internal static NetworkSoundEventDef punchSoundDef;
+
+        internal static List<EffectDef> effectDefs = new List<EffectDef>();
+        internal static List<NetworkSoundEventDef> networkSoundEventDefs = new List<NetworkSoundEventDef>();
 
         internal static void PopulateAssets()
         {
@@ -25,8 +30,6 @@ namespace RegigigasMod.Modules
                 using (var assetStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("RegigigasMod.regigigas"))
                 {
                     mainAssetBundle = AssetBundle.LoadFromStream(assetStream);
-                    var provider = new AssetBundleResourcesProvider("@Regigigas", mainAssetBundle);
-                    ResourcesAPI.AddProvider(provider);
                 }
             }
 
@@ -37,6 +40,8 @@ namespace RegigigasMod.Modules
                 SoundAPI.SoundBanks.Add(array);
             }
 
+            drainPunchChargeEffect = LoadEffect("DrainPunchChargeEffect", true);
+
             punchSoundDef = CreateNetworkSoundEventDef("RegigigasPunchImpact");
         }
 
@@ -46,10 +51,7 @@ namespace RegigigasMod.Modules
             networkSoundEventDef.akId = AkSoundEngine.GetIDFromString(eventName);
             networkSoundEventDef.eventName = eventName;
 
-            NetworkSoundEventCatalog.getSoundEventDefs += delegate (List<NetworkSoundEventDef> list)
-            {
-                list.Add(networkSoundEventDef);
-            };
+            networkSoundEventDefs.Add(networkSoundEventDef);
 
             return networkSoundEventDef;
         }
@@ -99,10 +101,20 @@ namespace RegigigasMod.Modules
 
         private static GameObject LoadEffect(string resourceName)
         {
-            return LoadEffect(resourceName, "");
+            return LoadEffect(resourceName, "", false);
         }
 
         private static GameObject LoadEffect(string resourceName, string soundName)
+        {
+            return LoadEffect(resourceName, soundName, false);
+        }
+
+        private static GameObject LoadEffect(string resourceName, bool parentToTransform)
+        {
+            return LoadEffect(resourceName, "", parentToTransform);
+        }
+
+        private static GameObject LoadEffect(string resourceName, string soundName, bool parentToTransform)
         {
             GameObject newEffect = mainAssetBundle.LoadAsset<GameObject>(resourceName);
 
@@ -112,13 +124,30 @@ namespace RegigigasMod.Modules
             var effect = newEffect.AddComponent<EffectComponent>();
             effect.applyScale = false;
             effect.effectIndex = EffectIndex.Invalid;
-            effect.parentToReferencedTransform = true;
+            effect.parentToReferencedTransform = parentToTransform;
             effect.positionAtReferencedTransform = true;
             effect.soundName = soundName;
 
-            EffectAPI.AddEffect(newEffect);
+            AddNewEffectDef(newEffect, soundName);
 
             return newEffect;
+        }
+
+        private static void AddNewEffectDef(GameObject effectPrefab)
+        {
+            AddNewEffectDef(effectPrefab, "");
+        }
+
+        private static void AddNewEffectDef(GameObject effectPrefab, string soundName)
+        {
+            EffectDef newEffectDef = new EffectDef();
+            newEffectDef.prefab = effectPrefab;
+            newEffectDef.prefabEffectComponent = effectPrefab.GetComponent<EffectComponent>();
+            newEffectDef.prefabName = effectPrefab.name;
+            newEffectDef.prefabVfxAttributes = effectPrefab.GetComponent<VFXAttributes>();
+            newEffectDef.spawnSoundEventName = soundName;
+
+            effectDefs.Add(newEffectDef);
         }
 
         public static Material CreateMaterial(string materialName, float emission, Color emissionColor, float normalStrength)

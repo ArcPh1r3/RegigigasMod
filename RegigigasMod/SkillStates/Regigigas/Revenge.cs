@@ -15,11 +15,13 @@ namespace RegigigasMod.SkillStates.Regigigas
         private float storedDamage;
         private float duration;
         private Animator modelAnimator;
+        private GameObject chargeEffectInstance;
+        private Transform areaIndicator;
 
         public override void OnEnter()
         {
             base.OnEnter();
-            this.duration = Revenge.baseDuration / this.attackSpeedStat;
+            this.duration = Revenge.baseDuration;// / this.attackSpeedStat;
             this.lastHealth = base.healthComponent.combinedHealth;
             this.modelAnimator = base.GetModelAnimator();
 
@@ -40,6 +42,18 @@ namespace RegigigasMod.SkillStates.Regigigas
             }
 
             if (this.modelAnimator) this.modelAnimator.SetFloat(AnimationParameters.aimWeight, 0f);
+
+            this.chargeEffectInstance = GameObject.Instantiate(new EntityStates.ImpBossMonster.BlinkState().blinkDestinationPrefab, base.gameObject.transform);
+            this.chargeEffectInstance.transform.position = base.characterBody.corePosition;
+            this.chargeEffectInstance.GetComponent<ScaleParticleSystemDuration>().newDuration = this.duration;
+            this.areaIndicator = this.chargeEffectInstance.transform.Find("Particles").Find("AreaIndicator");
+        }
+
+        private void UpdateRadius()
+        {
+            float healthPercentage = this.storedDamage / base.healthComponent.fullCombinedHealth;
+            float radius = Util.Remap(healthPercentage, 0f, 1f, RevengeEnd.minRadius, RevengeEnd.maxRadius);
+            this.areaIndicator.localScale = Vector3.one * radius;
         }
 
         public override void FixedUpdate()
@@ -49,6 +63,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             float diff = this.lastHealth - base.healthComponent.combinedHealth;
             if (diff > 0) this.storedDamage += diff;
             this.lastHealth = base.healthComponent.combinedHealth;
+
+            if (this.areaIndicator) this.UpdateRadius();
 
             if (base.isAuthority && base.fixedAge >= this.duration)
             {
@@ -63,6 +79,13 @@ namespace RegigigasMod.SkillStates.Regigigas
         public override void OnExit()
         {
             base.OnExit();
+
+            if (this.chargeEffectInstance) EntityState.Destroy(this.chargeEffectInstance);
+        }
+
+        public override InterruptPriority GetMinimumInterruptPriority()
+        {
+            return InterruptPriority.Frozen;
         }
     }
 }

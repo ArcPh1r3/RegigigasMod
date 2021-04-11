@@ -26,7 +26,7 @@ namespace RegigigasMod.Modules
                 ProjectileGhostReplacements = new SkinDef.ProjectileGhostReplacement[0],
                 RendererInfos = rendererInfos,
                 RootObject = root,
-                UnlockableName = unlockName
+                UnlockableDef = null
             };
 
             SkinDef skin = LoadoutAPI.CreateNewSkinDef(skinDefInfo);

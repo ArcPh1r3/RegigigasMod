@@ -108,5 +108,10 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             base.OnExit();
         }
+
+        public override InterruptPriority GetMinimumInterruptPriority()
+        {
+            return InterruptPriority.PrioritySkill;
+        }
     }
 }

@@ -16,6 +16,7 @@ namespace RegigigasMod.Modules
             desc = desc + "< ! > ." + Environment.NewLine + Environment.NewLine;
 
             string outro = "..and so it left, leaving irreparable damage in its wake.";
+            string outroFailure = "..and so it vanished, returning to its eternal slumber.";
 
             string lore = "There is an enduring legend that states this Pokémon towed continents with ropes.";
 
@@ -24,10 +25,16 @@ namespace RegigigasMod.Modules
             LanguageAPI.Add(prefix + "SUBTITLE", "Weary Colossus");
             LanguageAPI.Add(prefix + "LORE", lore);
             LanguageAPI.Add(prefix + "OUTRO_FLAVOR", outro);
+            LanguageAPI.Add(prefix + "OUTRO_FAILURE", outroFailure);
 
             #region Skins
             LanguageAPI.Add(prefix + "DEFAULT_SKIN_NAME", "Default");
             LanguageAPI.Add(prefix + "MONSOON_SKIN_NAME", "Shiny");
+            #endregion
+
+            #region Passive
+            LanguageAPI.Add(prefix + "PASSIVE_NAME", "Slow Start");
+            LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"For the first 30 seconds upon starting a stage, <style=cIsHealth>stats are halved.</style>");
             #endregion
 
             #region Primary
@@ -35,12 +42,18 @@ namespace RegigigasMod.Modules
             LanguageAPI.Add(prefix + "PRIMARY_GRAB_DESCRIPTION", $"Grab a nearby enemy and crush them for <style=cIsHealth>50% of their max health</style>, then throw them away. BUGGED FOR NON HOSTS");
 
             LanguageAPI.Add(prefix + "PRIMARY_PUNCH_NAME", "Brick Break");
-            LanguageAPI.Add(prefix + "PRIMARY_PUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>280% damage</style>.");
+            LanguageAPI.Add(prefix + "PRIMARY_PUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>{SkillStates.Regigigas.PunchCombo.damageCoefficientOverride * 100f}% damage</style>.");
+
+            LanguageAPI.Add(prefix + "PRIMARY_DRAINPUNCH_NAME", "Drain Punch");
+            LanguageAPI.Add(prefix + "PRIMARY_DRAINPUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>{SkillStates.Regigigas.DrainPunch.damageCoefficientOverride * 100f}% damage</style>, <style=cIsHealing>healing for 50% of damage dealt</style>.");
             #endregion
 
             #region Secondary
             LanguageAPI.Add(prefix + "SECONDARY_EARTHQUAKE_NAME", "Earth Power");
-            LanguageAPI.Add(prefix + "SECONDARY_EARTHQUAKE_DESCRIPTION", $"Stomp really really hard for <style=cIsDamage>{100f * 9}% damage</style>.");
+            LanguageAPI.Add(prefix + "SECONDARY_EARTHQUAKE_DESCRIPTION", $"Stomp really really hard for <style=cIsDamage>{100f * SkillStates.Regigigas.Stomp.damageCoefficient}% damage</style>.");
+
+            LanguageAPI.Add(prefix + "SECONDARY_ANCIENTPOWER_NAME", "Ancient Power");
+            LanguageAPI.Add(prefix + "SECONDARY_ANCIENTPOWER_DESCRIPTION", $"Charge up a barrage of rocks for <style=cIsDamage>{100f * SkillStates.Regigigas.FireAncientPower.damageCoefficient}% damage</style> each. Costs <style=cIsHealth>10% max health</style> for each rock if out of stock.");
             #endregion
 
             #region Utility

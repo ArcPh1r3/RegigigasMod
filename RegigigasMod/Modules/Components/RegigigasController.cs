@@ -27,7 +27,7 @@ namespace RegigigasMod.Modules.Components
             {
                 if (this.characterBody.master.inventory)
                 {
-                    if (this.characterBody.master.inventory.GetItemCount(ItemIndex.LunarPrimaryReplacement) > 0)
+                    if (this.characterBody.master.inventory.GetItemCount(RoR2Content.Items.LunarPrimaryReplacement) > 0)
                     {
                         this.characterBody.hideCrosshair = false;
                     }

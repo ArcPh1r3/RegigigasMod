@@ -18,14 +18,15 @@ namespace RegigigasMod
     {
         "PrefabAPI",
         "LanguageAPI",
-        "SoundAPI"
+        "SoundAPI",
+        "LoadoutAPI"
     })]
 
     public class RegigigasPlugin : BaseUnityPlugin
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.1.0";
+        public const string MODVERSION = "1.1.1";
 
         public const string developerPrefix = "ROB";
 
@@ -37,6 +38,7 @@ namespace RegigigasMod
 
             Modules.Assets.PopulateAssets();
             //Modules.Config.ReadConfig();
+            Modules.CameraParams.InitializeParams();
             Modules.States.RegisterStates();
             Modules.Buffs.RegisterBuffs();
             Modules.Projectiles.RegisterProjectiles();
@@ -47,10 +49,12 @@ namespace RegigigasMod
 
             Hook();
 
-            new Modules.ContentPacks().CreateContentPack();
+            new Modules.ContentPacks().Initialize();
+
+            RoR2.ContentManagement.ContentManager.onContentPacksAssigned += LateSetup;
         }
 
-        private void Start()
+        private void LateSetup(global::HG.ReadOnlyArray<RoR2.ContentManagement.ReadOnlyContentPack> obj)
         {
             Modules.Enemies.Regigigas.SetItemDisplays();
         }

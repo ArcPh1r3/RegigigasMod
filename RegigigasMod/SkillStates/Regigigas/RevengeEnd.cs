@@ -134,6 +134,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             if (this.modelAnimator) this.modelAnimator.SetFloat(AnimationParameters.aimWeight, 1f);
             if (this.chargeEffectInstance) EntityState.Destroy(this.chargeEffectInstance);
+            base.cameraTargetParams.cameraParams = Modules.CameraParams.defaultCameraParams;
         }
 
         public override InterruptPriority GetMinimumInterruptPriority()

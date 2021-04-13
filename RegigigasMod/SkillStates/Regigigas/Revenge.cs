@@ -47,6 +47,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.chargeEffectInstance.transform.position = base.characterBody.corePosition;
             this.chargeEffectInstance.GetComponent<ScaleParticleSystemDuration>().newDuration = this.duration;
             this.areaIndicator = this.chargeEffectInstance.transform.Find("Particles").Find("AreaIndicator");
+
+            base.cameraTargetParams.cameraParams = Modules.CameraParams.chargeCameraParams;
         }
 
         private void UpdateRadius()

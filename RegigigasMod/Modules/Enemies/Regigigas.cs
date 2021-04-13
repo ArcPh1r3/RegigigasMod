@@ -115,12 +115,7 @@ namespace RegigigasMod.Modules.Enemies
             footstep.baseFootstepString = "Play_moonBrother_step";
             footstep.sprintFootstepOverrideString = "Play_moonBrother_sprint";
 
-            CharacterCameraParams regiParams = ScriptableObject.CreateInstance<CharacterCameraParams>();
-            regiParams.minPitch = -70f;
-            regiParams.maxPitch = 70f;
-            regiParams.wallCushion = 0.1f;
-            regiParams.pivotVerticalOffset = 1.37f;
-            regiParams.standardLocalCameraPos = new Vector3(0f, 10f, -30f);
+            CharacterCameraParams regiParams = Modules.CameraParams.defaultCameraParams;
 
             KinematicCharacterMotor characterController = newPrefab.GetComponent<KinematicCharacterMotor>();
             characterController.CapsuleRadius = 4f;

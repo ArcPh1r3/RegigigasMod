@@ -33,6 +33,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         public override void FixedUpdate()
         {
             base.FixedUpdate();
+            base.StartAimMode(0.5f);
             this.throwStopwatch -= Time.fixedDeltaTime;
 
             if (this.throwStopwatch <= 0f)
@@ -45,6 +46,14 @@ namespace RegigigasMod.SkillStates.Regigigas
                 this.outer.SetNextStateToMain();
                 return;
             }
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+
+            base.cameraTargetParams.cameraParams = Modules.CameraParams.defaultCameraParams;
+            base.characterBody.hideCrosshair = true;
         }
 
         private void ThrowRock()

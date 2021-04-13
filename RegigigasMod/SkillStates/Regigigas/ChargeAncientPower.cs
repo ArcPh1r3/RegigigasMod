@@ -25,11 +25,15 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.rockStopwatch = this.startDuration + this.rockTimer;
 
             base.PlayAnimation("Gesture, Override", "ChargeAncientPower", "AncientPower.playbackRate", this.startDuration);
+
+            base.cameraTargetParams.cameraParams = Modules.CameraParams.aimCameraParams;
+            base.characterBody.hideCrosshair = false;
         }
 
         public override void FixedUpdate()
         {
             base.FixedUpdate();
+            base.StartAimMode(0.5f);
             this.rockStopwatch -= Time.fixedDeltaTime;
 
             if (this.rockStopwatch <= 0f)

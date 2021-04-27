@@ -88,6 +88,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                     {
                         this.grabController = target.healthComponent.body.gameObject.AddComponent<RegigigasGrabController>();
                         this.grabController.pivotTransform = this.grabTransform;
+                        this.grabController.grabberHealthComponent = base.healthComponent;
                         this.grabTarget = target;
                         return;
                     }

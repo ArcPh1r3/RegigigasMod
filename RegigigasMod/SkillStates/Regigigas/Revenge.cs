@@ -49,6 +49,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.areaIndicator = this.chargeEffectInstance.transform.Find("Particles").Find("AreaIndicator");
 
             base.cameraTargetParams.cameraParams = Modules.CameraParams.chargeCameraParams;
+            this.chargeEffectInstance.GetComponentInChildren<PostProcessDuration>().maxDuration = this.duration;
         }
 
         private void UpdateRadius()
@@ -72,7 +73,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 this.outer.SetNextState(new RevengeEnd()
                 {
-                    storedDamage = 2f * this.storedDamage
+                    storedDamage = 3f * this.storedDamage
                 });
                 return;
             }

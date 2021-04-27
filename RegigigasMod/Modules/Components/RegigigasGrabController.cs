@@ -6,6 +6,7 @@ namespace RegigigasMod.Modules.Components
     public class RegigigasGrabController : MonoBehaviour
     {
         public Transform pivotTransform;
+        public HealthComponent grabberHealthComponent;
 
         private Rigidbody rb;
         private CharacterBody body;
@@ -66,6 +67,14 @@ namespace RegigigasMod.Modules.Components
             else
             {
                 this.Release();
+            }
+
+            if (this.grabberHealthComponent)
+            {
+                if (!this.grabberHealthComponent.alive)
+                {
+                    this.Release();
+                }
             }
         }
 

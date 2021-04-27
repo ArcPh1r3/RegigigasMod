@@ -26,7 +26,7 @@ namespace RegigigasMod
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.1.1";
+        public const string MODVERSION = "1.2.2";
 
         public const string developerPrefix = "ROB";
 
@@ -73,6 +73,14 @@ namespace RegigigasMod
                 if (self.HasBuff(Modules.Buffs.armorBuff))
                 {
                     self.armor += 500f;
+                }
+
+                if (self.HasBuff(Modules.Buffs.slowStartBuff))
+                {
+                    self.armor += 20f;
+                    self.moveSpeed *= 0.5f;
+                    self.attackSpeed *= 0.5f;
+                    self.damage *= 0.5f;
                 }
             }
         }

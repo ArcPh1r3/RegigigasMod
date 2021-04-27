@@ -8,6 +8,9 @@ using UnityEngine;
 using KinematicCharacterController;
 using RoR2.CharacterAI;
 using RoR2.Navigation;
+using RegigigasMod.Modules.Misc;
+using RoR2.Orbs;
+using UnityEngine.Networking;
 
 namespace RegigigasMod.Modules.Enemies
 {
@@ -36,13 +39,24 @@ namespace RegigigasMod.Modules.Enemies
         internal static ItemDisplayRuleSet itemDisplayRuleSet;
         internal static List<ItemDisplayRuleSet.KeyAssetRuleGroup> itemDisplayRules;
 
+        // orb
+        internal static GameObject slowStartOrb;
+
+        internal static UnlockableDef masteryUnlockableDef;
+
         internal void CreateCharacter()
         {
             instance = this;
 
             enemyEnabled = Modules.Config.EnemyEnableConfig("Regigigas");
-            if (enemyEnabled.Value)
+            characterEnabled = Modules.Config.CharacterEnableConfig("Regigigas (Playable)");
+
+            if (enemyEnabled.Value || characterEnabled.Value)
             {
+                CreateOrb();
+
+                if (characterEnabled.Value) masteryUnlockableDef = Modules.Unlockables.AddUnlockable<Achievements.MasteryAchievement>(true);
+
                 characterPrefab = CreateBodyPrefab(false);
                 survivorPrefab = CreateBodyPrefab(true);
 
@@ -52,18 +66,30 @@ namespace RegigigasMod.Modules.Enemies
 
                 displayPrefab = Modules.Prefabs.CreateDisplayPrefab("RegigigasDisplay", characterPrefab);
 
-                characterEnabled = Modules.Config.CharacterEnableConfig("Regigigas (Playable)");
                 if (characterEnabled.Value) Modules.Prefabs.RegisterNewSurvivor(survivorPrefab, displayPrefab, "REGIGIGAS");
 
                 bossMaster = CreateMaster(characterPrefab, "RegigigasMaster");
                 umbraMaster = CreateMaster(survivorPrefab, "RegigigasMonsterMaster");
 
-                CreateSpawnCard();
-
-                //if (characterEnabled.Value) UnlockablesAPI.AddUnlockable<Achievements.MasteryAchievement>(true);
+                if (enemyEnabled.Value) CreateSpawnCard();
             }
 
             Hook();
+        }
+
+        private static void CreateOrb()
+        {
+            slowStartOrb = PrefabAPI.InstantiateClone(Resources.Load<GameObject>("Prefabs/Effects/OrbEffects/InfusionOrbEffect"), "SlowStartOrbEffect", true);
+            if (!slowStartOrb.GetComponent<NetworkIdentity>()) slowStartOrb.AddComponent<NetworkIdentity>();
+
+            Material titanPredictionEffect = Resources.Load<GameObject>("Prefabs/Projectiles/TitanPreFistProjectile").transform.Find("TeamAreaIndicator, GroundOnly").GetComponent<TeamAreaIndicator>().teamMaterialPairs[0].sharedMaterial;
+            //Material globMat = new EntityStates.TitanMonster.FireMegaLaser().laserPrefab.transform.Find("End").Find("EndEffect").Find("Particles").Find("Glob").GetComponent<ParticleSystemRenderer>().material;
+
+            slowStartOrb.transform.Find("TrailParent").Find("Trail").GetComponent<TrailRenderer>().widthMultiplier = 3f;
+            slowStartOrb.transform.Find("VFX").Find("Core").GetComponent<ParticleSystemRenderer>().material = titanPredictionEffect;
+            slowStartOrb.transform.Find("VFX").localScale = Vector3.one * 3f;
+
+            Modules.Assets.AddNewEffectDef(slowStartOrb);
         }
 
         private static GameObject CreateBodyPrefab(bool isPlayer)
@@ -77,22 +103,23 @@ namespace RegigigasMod.Modules.Enemies
             #region Body
             GameObject newPrefab = Modules.Prefabs.CreatePrefab(name, "mdlRegigigas", new BodyInfo
             {
-                armor = 40f,
+                armor = 20f,
                 armorGrowth = 0f,
                 bodyName = name,
                 bodyNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME",
                 bodyColor = Color.yellow,
                 characterPortrait = Modules.Assets.LoadCharacterIcon(iconName),
                 crosshair = Modules.Assets.LoadCrosshair("SimpleDot"),
-                damage = 20f,
+                damage = 40f,
                 healthGrowth = 1260f,
                 healthRegen = 0f,
                 jumpCount = 1,
                 maxHealth = 4200f,
                 subtitleNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_SUBTITLE",
                 podPrefab = null,
-                moveSpeed = 3f,
-                jumpPower = 35f
+                moveSpeed = 6f,
+                jumpPower = 35f,
+                attackSpeed = 2f
             });
 
             CharacterBody body = newPrefab.GetComponent<CharacterBody>();
@@ -136,7 +163,17 @@ namespace RegigigasMod.Modules.Enemies
 
             RegigigasPlugin.Destroy(newPrefab.GetComponent<SetStateOnHurt>());
 
-            if (!isPlayer) newPrefab.AddComponent<DeathRewards>().logUnlockableDef = Resources.Load<UnlockableDef>("UnlockableDefs/Logs.Parent.0");
+            if (!isPlayer)
+            {
+                DeathRewards deathRewards = newPrefab.AddComponent<DeathRewards>();
+                deathRewards.logUnlockableDef = Resources.Load<UnlockableDef>("UnlockableDefs/Logs.Parent.0");
+                deathRewards.bossPickup = new SerializablePickupIndex
+                {
+                    pickupName = "ItemIndex.Pearl"
+                };
+                newPrefab.AddComponent<Components.RegigigasShinyComponent>();
+            }
+
             newPrefab.AddComponent<Modules.Components.RegigigasController>();
             newPrefab.AddComponent<Modules.Components.RegigigasFlashController>();
             #endregion
@@ -561,7 +598,7 @@ namespace RegigigasMod.Modules.Enemies
                 }),
                 mainRenderer,
                 model,
-                RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_MONSOONUNLOCKABLE_REWARD_ID");
+                masteryUnlockableDef);
 
             skins.Add(masterySkin);
             #endregion
@@ -1083,10 +1120,10 @@ localScale = new Vector3(0.3627F, 0.3627F, 0.3627F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayFireRing"),
-childName = "LowerArmL",
-localPos = new Vector3(0.0352F, 0.282F, -0.1223F),
-localAngles = new Vector3(274.3965F, 90F, 270F),
-localScale = new Vector3(0.3627F, 0.3627F, 0.3627F),
+childName = "LowerArmR",
+localPos = new Vector3(0F, 0.387F, 0F),
+localAngles = new Vector3(90F, 0F, 0F),
+localScale = new Vector3(1.6394F, 1.6394F, 1.6394F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1178,9 +1215,9 @@ localScale = new Vector3(0.1722F, 0.1722F, 0.1722F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayDiamond"),
 childName = "HandL",
-localPos = new Vector3(-0.002F, 0.1828F, 0F),
+localPos = new Vector3(-0.0984F, 0.3897F, 0F),
 localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(0.1236F, 0.1236F, 0.1236F),
+localScale = new Vector3(0.3879F, 0.3879F, 0.3879F),
                             limbMask = LimbFlags.None
                         },
                         new ItemDisplayRule
@@ -1188,9 +1225,9 @@ localScale = new Vector3(0.1236F, 0.1236F, 0.1236F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayDiamond"),
 childName = "HandR",
-localPos = new Vector3(-0.002F, 0.1828F, 0F),
+localPos = new Vector3(-0.0984F, 0.3897F, 0F),
 localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(0.1236F, 0.1236F, 0.1236F),
+localScale = new Vector3(0.3879F, 0.3879F, 0.3879F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1889,10 +1926,10 @@ localScale = new Vector3(0.1385F, 0.1385F, 0.1385F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayBrooch"),
-childName = "Chest",
-localPos = new Vector3(-0.0097F, -0.0058F, -0.0847F),
-localAngles = new Vector3(0F, 0F, 84.3456F),
-localScale = new Vector3(0.1841F, 0.1841F, 0.1841F),
+childName = "Head",
+localPos = new Vector3(0F, -0.0341F, 0.7026F),
+localAngles = new Vector3(60.0987F, 0F, 0F),
+localScale = new Vector3(1F, 1F, 1F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3278,6 +3315,7 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
         private static void Hook()
         {
             On.RoR2.HealthComponent.TakeDamage += HealthComponent_TakeDamage;
+            GlobalEventManager.onCharacterDeathGlobal += GlobalEventManager_onCharacterDeathGlobal;
         }
 
         private static void HealthComponent_TakeDamage(On.RoR2.HealthComponent.orig_TakeDamage orig, HealthComponent self, DamageInfo damageInfo)
@@ -3308,6 +3346,38 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
             if (isHealing && !damageInfo.rejected)
             {
                 damageInfo.attacker.GetComponent<HealthComponent>().Heal(damageInfo.damage * 0.5f, default(ProcChainMask));
+            }
+        }
+
+        private static void GlobalEventManager_onCharacterDeathGlobal(DamageReport damageReport)
+        {
+            // make shiny regi drop irradiant pearl
+            CharacterMaster victim = damageReport.victimMaster;
+            if (victim)
+            {
+                Components.RegigigasDropComponent dropComponent = victim.gameObject.GetComponent<Components.RegigigasDropComponent>();
+                if (dropComponent)
+                {
+                    PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(dropComponent.itemDropDef.itemIndex), damageReport.victimBody.corePosition, Vector3.up * 20f);
+                }
+
+                // slow start 10 kills
+                if (damageReport.attackerBody)
+                {
+                    if (damageReport.attackerBody.HasBuff(Modules.Buffs.slowStartBuff))
+                    {
+                        Components.SlowStartController slowStart = damageReport.attacker.GetComponent<Components.SlowStartController>();
+                        if (slowStart)
+                        {
+                            //slowStart.GrantKill();
+
+                            SlowStartOrb slowStartOrb = new SlowStartOrb();
+                            slowStartOrb.origin = damageReport.victimBody.transform.position;
+                            slowStartOrb.target = Util.FindBodyMainHurtBox(damageReport.attackerBody);
+                            OrbManager.instance.AddOrb(slowStartOrb);
+                        }
+                    }
+                }
             }
         }
     }

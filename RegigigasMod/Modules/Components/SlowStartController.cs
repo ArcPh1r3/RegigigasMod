@@ -1,5 +1,6 @@
 ﻿using RoR2;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace RegigigasMod.Modules.Components
 {
@@ -7,33 +8,86 @@ namespace RegigigasMod.Modules.Components
     {
         public Transform pivotTransform;
 
+        private int killsNeeded;
+        private bool isEnemy;
+        private bool inSlowStart;
         private float stopwatch;
         private CharacterBody body;
 
         private void Awake()
         {
             this.body = this.GetComponent<CharacterBody>();
+            this.inSlowStart = true;
+            this.killsNeeded = 10;
             this.stopwatch = 120f;
-            if (this.GetComponent<TeamComponent>().teamIndex == TeamIndex.Player) this.stopwatch = 30f;
+
+            if (this.GetComponent<TeamComponent>().teamIndex != TeamIndex.Player)
+            {
+                this.isEnemy = true;
+            }
+
+            if (NetworkServer.active)
+            {
+                if (this.isEnemy)
+                {
+                    this.body.AddBuff(Modules.Buffs.slowStartBuff);
+                }
+                else
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        if (this.body.GetBuffCount(Modules.Buffs.slowStartBuff) < 10) this.body.AddBuff(Modules.Buffs.slowStartBuff);
+                    }
+                }
+            }
+        }
+
+        private void ActivateSlowStart()
+        {
+            Animator anim = this.GetComponent<ModelLocator>().modelTransform.GetComponent<Animator>();
+            anim.SetLayerWeight(anim.GetLayerIndex("Body, Smooth"), 1f);
+
+            this.body.GetComponent<RegigigasFlashController>().Flash();
+        }
+
+        public void GrantKill()
+        {
+            if (this.isEnemy) return;
+
+            //this.killsNeeded--;
+
+            //if (this.killsNeeded <= 0)
+            //{
+            //    if (NetworkServer.active) this.body.RemoveBuff(Modules.Buffs.slowStartBuff);
+            //}
+
+            if (NetworkServer.active) this.body.RemoveBuff(Modules.Buffs.slowStartBuff);
         }
 
         private void FixedUpdate()
         {
-            this.stopwatch -= Time.fixedDeltaTime;
-            if (this.stopwatch <= 0f)
+            if (this.isEnemy)
             {
-                this.body.baseDamage *= 2f;
-                this.body.baseMoveSpeed *= 2f;
-                this.body.baseAttackSpeed *= 2f;
-                this.body.baseArmor *= 0.5f;
-                this.body.RecalculateStats();
-
-                Animator anim = this.GetComponent<ModelLocator>().modelTransform.GetComponent<Animator>();
-                anim.SetLayerWeight(anim.GetLayerIndex("Body, Smooth"), 1f);
-
-                this.body.GetComponent<RegigigasFlashController>().Flash();
-
-                Destroy(this);
+                this.stopwatch -= Time.fixedDeltaTime;
+                if (this.stopwatch <= 0f)
+                {
+                    if (NetworkServer.active) this.body.RemoveBuff(Modules.Buffs.slowStartBuff);
+                    this.ActivateSlowStart();
+                    Destroy(this);
+                }
+            }
+            else
+            {
+                if (this.inSlowStart)
+                {
+                    if (!this.body.HasBuff(Modules.Buffs.slowStartBuff))
+                    {
+                        this.inSlowStart = false;
+                        //if (NetworkServer.active) this.body.RemoveBuff(Modules.Buffs.slowStartBuff);
+                        this.ActivateSlowStart();
+                        Destroy(this);
+                    }
+                }
             }
         }
     }

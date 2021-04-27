@@ -6,14 +6,14 @@ namespace RegigigasMod.SkillStates.Regigigas
 {
     public class GigaImpact : BaseRegiSkillState
     {
-        public static float baseDuration = 5.5f;
+        public static float baseDuration = 6f;
 
         public static float impactAttackRadius = 12f;
         public static float impactAttackForce = 500f;
         public static float impactAttackBonusForce = -1000f;
         public static float impactAttackDamageCoefficient = 32f;
 
-        public static float blastAttackRadius = 48f;
+        public static float blastAttackRadius = 64f;
         public static float blastAttackForce = 8000f;
         public static float blastAttackBonusForce = 1000f;
         public static float blastAttackDamageCoefficient = 4f;
@@ -100,7 +100,6 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 EffectManager.SimpleMuzzleFlash(Resources.Load<GameObject>("prefabs/effects/impacteffects/GrandparentDeathEffect"), base.gameObject, "HandR", false);
             }
-            new EntityStates.GrandParentBoss.DeathState().PlayDeathSound();
 
             if (base.isAuthority)
             {
@@ -108,7 +107,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 blastAttack.attacker = base.gameObject;
                 blastAttack.inflictor = base.gameObject;
                 blastAttack.teamIndex = TeamComponent.GetObjectTeam(blastAttack.attacker);
-                blastAttack.position = base.FindModelChild("HandR").position;
+                blastAttack.position = base.characterBody.corePosition;
                 blastAttack.procCoefficient = 0f;
                 blastAttack.radius = GigaImpact.blastAttackRadius;
                 blastAttack.baseForce = GigaImpact.blastAttackForce;

@@ -13,7 +13,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         public static float baseTimeBetweenRocks = 0.15f;
 
         public static float damageCoefficient = 4f;
-        public static float throwForce = 100f;
+        public static float throwForce = 140f;
         public static float projectileForce = 5f;
 
         private float throwStopwatch;
@@ -72,7 +72,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                     base.gameObject, 
                     this.damageStat * FireAncientPower.damageCoefficient, 
                     FireAncientPower.projectileForce, 
-                    Util.CheckRoll(this.critStat, base.characterBody.master), 
+                    base.RollCrit(), 
                     DamageColorIndex.Default, 
                     null, 
                     FireAncientPower.throwForce);

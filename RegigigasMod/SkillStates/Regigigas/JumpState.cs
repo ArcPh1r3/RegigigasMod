@@ -30,7 +30,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         public override void FixedUpdate()
         {
             base.FixedUpdate();
-            if (this.animator) this.animator.SetBool("isGrounded", this.isGrounded);
+            if (this.animator) this.animator.SetBool("isGrounded", false);
 
             if (base.fixedAge >= this.duration / 2f && base.isAuthority && !this.hasInputJump)
             {

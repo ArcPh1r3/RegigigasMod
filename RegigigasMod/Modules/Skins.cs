@@ -9,10 +9,10 @@ namespace RegigigasMod.Modules
     {
         public static SkinDef CreateSkinDef(string skinName, Sprite skinIcon, CharacterModel.RendererInfo[] rendererInfos, SkinnedMeshRenderer mainRenderer, GameObject root)
         {
-            return CreateSkinDef(skinName, skinIcon, rendererInfos, mainRenderer, root, "");
+            return CreateSkinDef(skinName, skinIcon, rendererInfos, mainRenderer, root, null);
         }
 
-        public static SkinDef CreateSkinDef(string skinName, Sprite skinIcon, CharacterModel.RendererInfo[] rendererInfos, SkinnedMeshRenderer mainRenderer, GameObject root, string unlockName)
+        public static SkinDef CreateSkinDef(string skinName, Sprite skinIcon, CharacterModel.RendererInfo[] rendererInfos, SkinnedMeshRenderer mainRenderer, GameObject root, UnlockableDef unlockableDef)
         {
             LoadoutAPI.SkinDefInfo skinDefInfo = new LoadoutAPI.SkinDefInfo
             {
@@ -26,7 +26,7 @@ namespace RegigigasMod.Modules
                 ProjectileGhostReplacements = new SkinDef.ProjectileGhostReplacement[0],
                 RendererInfos = rendererInfos,
                 RootObject = root,
-                UnlockableDef = null
+                UnlockableDef = unlockableDef
             };
 
             SkinDef skin = LoadoutAPI.CreateNewSkinDef(skinDefInfo);

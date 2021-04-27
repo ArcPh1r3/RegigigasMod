@@ -3,21 +3,19 @@ using EntityStates.VagrantMonster;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
-using RegigigasMod.Modules.Components;
-using System.Linq;
 
 namespace RegigigasMod.SkillStates.Regigigas
 {
     public class RevengeEnd : BaseRegiSkillState
     {
-        public static float baseDuration = 6f;
+        public static float baseDuration = 5f;
         public float storedDamage;
 
-        public static float maxDamagePercentage = 0.4f;
+        public static float maxDamagePercentage = 0.3f;
         public static float minDamagePercentage = 0f;
 
         public static float maxRadius = 80f;
-        public static float minRadius = 12f;
+        public static float minRadius = 24f;
 
         private float shockwaveRadius;
         private float shockwaveTime;
@@ -56,8 +54,6 @@ namespace RegigigasMod.SkillStates.Regigigas
                 }
             }
 
-            if (NetworkServer.active) base.characterBody.RemoveBuff(Modules.Buffs.armorBuff);
-
             base.flashController.Flash();
         }
 
@@ -82,6 +78,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             if (!this.hasFired)
             {
                 this.hasFired = true;
+
+                if (NetworkServer.active) base.characterBody.RemoveBuff(Modules.Buffs.armorBuff);
 
                 AkSoundEngine.StopPlayingID(this.soundID);
 

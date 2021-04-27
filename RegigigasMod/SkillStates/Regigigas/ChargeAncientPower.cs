@@ -55,6 +55,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 else
                 {
                     base.PlayAnimation("Gesture, Override", "BufferEmpty");
+                    base.cameraTargetParams.cameraParams = Modules.CameraParams.defaultCameraParams;
                     this.outer.SetNextStateToMain();
                     return;
                 }

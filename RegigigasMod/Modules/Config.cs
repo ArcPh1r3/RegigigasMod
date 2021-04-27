@@ -1,13 +1,18 @@
 ﻿using BepInEx.Configuration;
-using UnityEngine;
 
 namespace RegigigasMod.Modules
 {
-    public static class Config
+    internal static class Config
     {
-        public static void ReadConfig()
-        {
+        internal static ConfigEntry<float> _shinySpawnRate;
 
+        internal static float shinySpawnRate;
+
+        internal static void ReadConfig()
+        {
+            _shinySpawnRate = RegigigasPlugin.instance.Config.Bind<float>(new ConfigDefinition("Regigigas", "Shiny Chance"), 0.01220703125f, new ConfigDescription("Chance for spawned Regigigas to be shiny and drop Irradiant Pearls"));
+
+            shinySpawnRate = _shinySpawnRate.Value;
         }
 
         internal static ConfigEntry<bool> EnemyEnableConfig(string characterName)

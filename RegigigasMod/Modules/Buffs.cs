@@ -12,11 +12,15 @@ namespace RegigigasMod.Modules
         // regigigas armor buff
         internal static BuffDef armorBuff;
 
+        // regigigas slow start debuff
+        internal static BuffDef slowStartBuff;
+
         internal static List<BuffDef> buffDefs = new List<BuffDef>();
 
         internal static void RegisterBuffs()
         {
             armorBuff = AddNewBuff("RegigigasArmorBuff", Resources.Load<Sprite>("Textures/BuffIcons/texBuffGenericShield"), Color.grey, false, false);
+            slowStartBuff = AddNewBuff("RegigigasSlowStartDebuff", Resources.Load<Sprite>("Textures/BuffIcons/texBuffSlow50Icon"), Color.grey, true, false);
         }
 
         // simple helper method

@@ -133,12 +133,12 @@ namespace RegigigasMod.Modules
             return newEffect;
         }
 
-        private static void AddNewEffectDef(GameObject effectPrefab)
+        internal static void AddNewEffectDef(GameObject effectPrefab)
         {
             AddNewEffectDef(effectPrefab, "");
         }
 
-        private static void AddNewEffectDef(GameObject effectPrefab, string soundName)
+        internal static void AddNewEffectDef(GameObject effectPrefab, string soundName)
         {
             EffectDef newEffectDef = new EffectDef();
             newEffectDef.prefab = effectPrefab;

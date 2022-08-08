@@ -89,6 +89,16 @@ namespace RegigigasMod.Modules
             return rendererInfos;
         }
 
+        public static GameObject LoadSurvivorModel(string modelName) {
+            GameObject model = mainAssetBundle.LoadAsset<GameObject>(modelName);
+            if (model == null) {
+                Log.Error("Trying to load a null model- check to see if the name in your code matches the name of the object in Unity");
+                return null;
+            }
+
+            return PrefabAPI.InstantiateClone(model, model.name, false);
+        }
+
         internal static Texture LoadCharacterIcon(string characterName)
         {
             return mainAssetBundle.LoadAsset<Texture>("tex" + characterName + "Icon");

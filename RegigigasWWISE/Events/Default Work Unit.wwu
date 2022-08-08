@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{0E6DDC47-9831-4C9F-9E50-5872B4A7E01C}" SchemaVersion="97">
+	<Events>
+		<WorkUnit Name="Default Work Unit" ID="{0E6DDC47-9831-4C9F-9E50-5872B4A7E01C}" PersistMode="Standalone">
+			<ChildrenList>
+				<Event Name="RegigigasCry" ID="{DD0F2687-49D9-421F-8608-6618887AA813}">
+					<ChildrenList>
+						<Action Name="" ID="{232B3D1A-0475-42D3-9BFD-F330106A68B8}" ShortID="561576613">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RegigigasCry" ID="{5EAAEA63-235D-4DCA-BA18-3191B9173D80}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="RegigigasFlash" ID="{53FBD214-F20B-4F67-8C6A-D81112959385}">
+					<ChildrenList>
+						<Action Name="" ID="{950D6AED-0008-4294-BD3E-426A4DC1ACCB}" ShortID="5467838">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RegigigasFlash" ID="{F07FE7B6-8330-4FCD-BEA5-C136DA598C9E}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="RegigigasPunchImpact" ID="{98B5A76E-2AD4-432C-8494-4B19710FCEE5}">
+					<ChildrenList>
+						<Action Name="" ID="{6BAA7D4A-B0B8-44FC-95EA-802EBA777A96}" ShortID="295122392">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RegigigasPunchImpact" ID="{DE9533DE-CCB1-4818-A8BB-612DC159B071}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="RegigigasPunchSwing" ID="{370B6FF3-004E-43F6-94C0-5258524B19C7}">
+					<ChildrenList>
+						<Action Name="" ID="{B74583F6-AA1B-42C5-BEC9-E50B26960DE4}" ShortID="772093563">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RegigigasPunchSwing" ID="{B51838F2-04D7-4188-A20E-CD90EC911FE0}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="RegigigasSpawn" ID="{B61A1B2B-51EB-4543-BCAB-5FE8EAFD3071}">
+					<ChildrenList>
+						<Action Name="" ID="{1654ED20-23F2-4FCE-A7E6-9E6684245755}" ShortID="598056986">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RegigigasSpawn" ID="{1B97654A-A929-4D07-B72B-66C35E13F319}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="RegigigasStomp" ID="{9380588B-0A96-43F6-A121-EAFC242B5A59}">
+					<ChildrenList>
+						<Action Name="" ID="{21289A40-CD44-4A18-8517-AEFD0060310F}" ShortID="469045769">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RegigigasStomp" ID="{8C64BEBB-987F-4491-82D6-0C2BB5F6FC38}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="UNUNUN" ID="{C7A163AB-5C9C-4E7A-8252-C192F5282149}">
+					<ChildrenList>
+						<Action Name="" ID="{A339D285-F7C0-4FAE-9BA2-2BFCB8919858}" ShortID="1044446267">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="UNUNUN" ID="{D76A7728-43E8-479B-A91D-F239194CE6A9}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>

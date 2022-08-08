@@ -108,7 +108,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                         baseDamage = this.storedDamage,
                         baseForce = FireMegaNova.novaForce,
                         bonusForce = Vector3.zero,
-                        attackerFiltering = AttackerFiltering.NeverHit,
+                        attackerFiltering = AttackerFiltering.NeverHitSelf,
                         crit = base.RollCrit(),
                         damageColorIndex = DamageColorIndex.Default,
                         damageType = DamageType.Generic,

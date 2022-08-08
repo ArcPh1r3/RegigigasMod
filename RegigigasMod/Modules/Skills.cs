@@ -6,176 +6,123 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RegigigasMod.Modules
-{
-    internal static class Skills
-    {
+namespace RegigigasMod.Modules {
+
+    internal static class Skills {
         internal static List<SkillFamily> skillFamilies = new List<SkillFamily>();
         internal static List<SkillDef> skillDefs = new List<SkillDef>();
 
-        internal static void AddSkillFamily(SkillFamily t)
-        {
-            skillFamilies.Add(t);
-        }
+        #region genericskills
+        public static void CreateSkillFamilies(GameObject targetPrefab, int families = 15, bool destroyExisting = true) {
 
-        internal static void AddSkillDef(SkillDef t)
-        {
-            skillDefs.Add(t);
-        }
-
-        internal static void CreateSkillFamilies(GameObject targetPrefab)
-        {
-            foreach (GenericSkill obj in targetPrefab.GetComponentsInChildren<GenericSkill>())
-            {
-                RegigigasPlugin.DestroyImmediate(obj);
+            if (destroyExisting) {
+                foreach (GenericSkill obj in targetPrefab.GetComponentsInChildren<GenericSkill>()) {
+                    UnityEngine.Object.DestroyImmediate(obj);
+                }
             }
 
             SkillLocator skillLocator = targetPrefab.GetComponent<SkillLocator>();
 
-            skillLocator.primary = targetPrefab.AddComponent<GenericSkill>();
-            SkillFamily primaryFamily = ScriptableObject.CreateInstance<SkillFamily>();
-            primaryFamily.variants = new SkillFamily.Variant[0];
-            skillLocator.primary._skillFamily = primaryFamily;
-            AddSkillFamily(primaryFamily);
-
-            skillLocator.secondary = targetPrefab.AddComponent<GenericSkill>();
-            SkillFamily secondaryFamily = ScriptableObject.CreateInstance<SkillFamily>();
-            secondaryFamily.variants = new SkillFamily.Variant[0];
-            skillLocator.secondary._skillFamily = secondaryFamily;
-            AddSkillFamily(secondaryFamily);
-
-            skillLocator.utility = targetPrefab.AddComponent<GenericSkill>();
-            SkillFamily utilityFamily = ScriptableObject.CreateInstance<SkillFamily>();
-            utilityFamily.variants = new SkillFamily.Variant[0];
-            skillLocator.utility._skillFamily = utilityFamily;
-            AddSkillFamily(utilityFamily);
-
-            skillLocator.special = targetPrefab.AddComponent<GenericSkill>();
-            SkillFamily specialFamily = ScriptableObject.CreateInstance<SkillFamily>();
-            specialFamily.variants = new SkillFamily.Variant[0];
-            skillLocator.special._skillFamily = specialFamily;
-            AddSkillFamily(specialFamily);
-        }
-
-        // this could all be a lot cleaner but at least it's simple and easy to work with
-        internal static void AddPrimarySkill(GameObject targetPrefab, SkillDef skillDef)
-        {
-            SkillLocator skillLocator = targetPrefab.GetComponent<SkillLocator>();
-
-            SkillFamily skillFamily = skillLocator.primary.skillFamily;
-
-            Array.Resize(ref skillFamily.variants, skillFamily.variants.Length + 1);
-            skillFamily.variants[skillFamily.variants.Length - 1] = new SkillFamily.Variant
-            {
-                skillDef = skillDef,
-                viewableNode = new ViewablesCatalog.Node(skillDef.skillNameToken, false, null)
-            };
-        }
-
-        internal static void AddSecondarySkill(GameObject targetPrefab, SkillDef skillDef)
-        {
-            SkillLocator skillLocator = targetPrefab.GetComponent<SkillLocator>();
-
-            SkillFamily skillFamily = skillLocator.secondary.skillFamily;
-
-            Array.Resize(ref skillFamily.variants, skillFamily.variants.Length + 1);
-            skillFamily.variants[skillFamily.variants.Length - 1] = new SkillFamily.Variant
-            {
-                skillDef = skillDef,
-                viewableNode = new ViewablesCatalog.Node(skillDef.skillNameToken, false, null)
-            };
-        }
-
-        internal static void AddSecondarySkills(GameObject targetPrefab, params SkillDef[] skillDefs)
-        {
-            foreach (SkillDef i in skillDefs)
-            {
-                AddSecondarySkill(targetPrefab, i);
+            if ((families & (1 << 0)) != 0) {
+                skillLocator.primary = CreateGenericSkillWithSkillFamily(targetPrefab, "Primary");
+            }
+            if ((families & (1 << 1)) != 0) {
+                skillLocator.secondary = CreateGenericSkillWithSkillFamily(targetPrefab, "Secondary");
+            }
+            if ((families & (1 << 2)) != 0) {
+                skillLocator.utility = CreateGenericSkillWithSkillFamily(targetPrefab, "Utility");
+            }
+            if ((families & (1 << 3)) != 0) {
+                skillLocator.special = CreateGenericSkillWithSkillFamily(targetPrefab, "Special");
             }
         }
 
-        internal static void AddUtilitySkill(GameObject targetPrefab, SkillDef skillDef)
-        {
-            SkillLocator skillLocator = targetPrefab.GetComponent<SkillLocator>();
+        public static GenericSkill CreateGenericSkillWithSkillFamily(GameObject targetPrefab, string familyName, bool hidden = false) {
 
-            SkillFamily skillFamily = skillLocator.utility.skillFamily;
+            GenericSkill skill = targetPrefab.AddComponent<GenericSkill>();
+            skill.skillName = familyName;
+            skill.hideInCharacterSelect = hidden;
+
+            SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
+            (newFamily as ScriptableObject).name = targetPrefab.name + familyName + "Family";
+            newFamily.variants = new SkillFamily.Variant[0];
+
+            skill._skillFamily = newFamily;
+
+            skillFamilies.Add(newFamily);
+            return skill;
+        }
+        #endregion
+
+        #region skillfamilies
+
+        //everything calls this
+        public static void AddSkillToFamily(SkillFamily skillFamily, SkillDef skillDef, UnlockableDef unlockableDef = null) {
 
             Array.Resize(ref skillFamily.variants, skillFamily.variants.Length + 1);
-            skillFamily.variants[skillFamily.variants.Length - 1] = new SkillFamily.Variant
-            {
+
+            skillFamily.variants[skillFamily.variants.Length - 1] = new SkillFamily.Variant {
                 skillDef = skillDef,
+                unlockableDef = unlockableDef,
                 viewableNode = new ViewablesCatalog.Node(skillDef.skillNameToken, false, null)
             };
         }
 
-        internal static void AddUtilitySkills(GameObject targetPrefab, params SkillDef[] skillDefs)
-        {
-            foreach (SkillDef i in skillDefs)
-            {
-                AddUtilitySkill(targetPrefab, i);
+        public static void AddSkillsToFamily(SkillFamily skillFamily, params SkillDef[] skillDefs) {
+
+            foreach (SkillDef skillDef in skillDefs) {
+                AddSkillToFamily(skillFamily, skillDef);
             }
         }
-
-        internal static void AddSpecialSkill(GameObject targetPrefab, SkillDef skillDef)
-        {
-            SkillLocator skillLocator = targetPrefab.GetComponent<SkillLocator>();
-
-            SkillFamily skillFamily = skillLocator.special.skillFamily;
-
-            Array.Resize(ref skillFamily.variants, skillFamily.variants.Length + 1);
-            skillFamily.variants[skillFamily.variants.Length - 1] = new SkillFamily.Variant
-            {
-                skillDef = skillDef,
-                viewableNode = new ViewablesCatalog.Node(skillDef.skillNameToken, false, null)
-            };
+        public static void AddPrimarySkills(GameObject targetPrefab, params SkillDef[] skillDefs) {
+            AddSkillsToFamily(targetPrefab.GetComponent<SkillLocator>().primary.skillFamily, skillDefs);
+        }
+        public static void AddSecondarySkills(GameObject targetPrefab, params SkillDef[] skillDefs) {
+            AddSkillsToFamily(targetPrefab.GetComponent<SkillLocator>().secondary.skillFamily, skillDefs);
+        }
+        public static void AddUtilitySkills(GameObject targetPrefab, params SkillDef[] skillDefs) {
+            AddSkillsToFamily(targetPrefab.GetComponent<SkillLocator>().utility.skillFamily, skillDefs);
+        }
+        public static void AddSpecialSkills(GameObject targetPrefab, params SkillDef[] skillDefs) {
+            AddSkillsToFamily(targetPrefab.GetComponent<SkillLocator>().special.skillFamily, skillDefs);
         }
 
-        internal static void AddSpecialSkills(GameObject targetPrefab, params SkillDef[] skillDefs)
-        {
-            foreach (SkillDef i in skillDefs)
-            {
-                AddSpecialSkill(targetPrefab, i);
+        /// <summary>
+        /// pass in an amount of unlockables equal to or less than skill variants, null for skills that aren't locked
+        /// <code>
+        /// AddUnlockablesToFamily(skillLocator.primary, null, skill2UnlockableDef, null, skill4UnlockableDef);
+        /// </code>
+        /// </summary>
+        public static void AddUnlockablesToFamily(SkillFamily skillFamily, params UnlockableDef[] unlockableDefs) {
+
+            for (int i = 0; i < unlockableDefs.Length; i++) {
+                SkillFamily.Variant variant = skillFamily.variants[i];
+                variant.unlockableDef = unlockableDefs[i];
+                skillFamily.variants[i] = variant;
             }
         }
+        #endregion
 
-        internal static SkillDef CreatePrimarySkillDef(SerializableEntityStateType state, string stateMachine, string skillNameToken, string skillDescriptionToken, Sprite skillIcon, bool agile)
-        {
-            SkillDef skillDef = ScriptableObject.CreateInstance<SkillDef>();
+        #region skilldefs
+        public static SkillDef CreateSkillDef(SkillDefInfo skillDefInfo) {
 
-            skillDef.skillName = skillNameToken;
-            skillDef.skillNameToken = skillNameToken;
-            skillDef.skillDescriptionToken = skillDescriptionToken;
-            skillDef.icon = skillIcon;
+            return CreateSkillDef<SkillDef>(skillDefInfo);
+        }
 
-            skillDef.activationState = state;
-            skillDef.activationStateMachineName = stateMachine;
-            skillDef.baseMaxStock = 1;
-            skillDef.baseRechargeInterval = 0;
-            skillDef.beginSkillCooldownOnSkillEnd = false;
-            skillDef.canceledFromSprinting = false;
-            skillDef.forceSprintDuringState = false;
-            skillDef.fullRestockOnAssign = true;
-            skillDef.interruptPriority = InterruptPriority.Any;
-            skillDef.resetCooldownTimerOnUse = false;
-            skillDef.isCombatSkill = true;
-            skillDef.mustKeyPress = false;
-            skillDef.cancelSprintingOnActivation = !agile;
-            skillDef.rechargeStock = 1;
-            skillDef.requiredStock = 0;
-            skillDef.stockToConsume = 0;
+        public static T CreateSkillDef<T>(SkillDefInfo skillDefInfo) where T : SkillDef {
 
-            if (agile) skillDef.keywordTokens = new string[] { "KEYWORD_AGILE" };
+            T skillDef = ScriptableObject.CreateInstance<T>();
 
-            AddSkillDef(skillDef);
+            popuplateSKillDef(skillDefInfo, skillDef);
+
+            skillDefs.Add(skillDef);
 
             return skillDef;
         }
 
-        internal static SkillDef CreateSkillDef(SkillDefInfo skillDefInfo)
-        {
-            SkillDef skillDef = ScriptableObject.CreateInstance<SkillDef>();
-
+        private static void popuplateSKillDef(SkillDefInfo skillDefInfo, SkillDef skillDef) {
             skillDef.skillName = skillDefInfo.skillName;
+            (skillDef as ScriptableObject).name = skillDefInfo.skillName;
             skillDef.skillNameToken = skillDefInfo.skillNameToken;
             skillDef.skillDescriptionToken = skillDefInfo.skillDescriptionToken;
             skillDef.icon = skillDefInfo.skillIcon;
@@ -198,37 +145,105 @@ namespace RegigigasMod.Modules
             skillDef.stockToConsume = skillDefInfo.stockToConsume;
 
             skillDef.keywordTokens = skillDefInfo.keywordTokens;
-
-            AddSkillDef(skillDef);
-
-            return skillDef;
         }
+
+        internal static SkillDef CreatePrimarySkillDef(SerializableEntityStateType state, string stateMachine, string skillNameToken, string skillDescriptionToken, Sprite skillIcon, bool agile) {
+
+            SkillDefInfo info = new SkillDefInfo(skillNameToken, skillNameToken, skillDescriptionToken, skillIcon, state, stateMachine, agile);
+
+            return CreateSkillDef(info);
+        }
+        #endregion skilldefs
     }
 }
 
-internal class SkillDefInfo
-{
-    public string skillName;
-    public string skillNameToken;
-    public string skillDescriptionToken;
-    public Sprite skillIcon;
+    /// <summary>
+    /// class for easily creating skilldefs with default values, and with a field for UnlockableDef
+    /// </summary>
+    internal class SkillDefInfo {
 
-    public SerializableEntityStateType activationState;
-    public string activationStateMachineName;
-    public int baseMaxStock;
-    public float baseRechargeInterval;
-    public bool beginSkillCooldownOnSkillEnd;
-    public bool canceledFromSprinting;
-    public bool forceSprintDuringState;
-    public bool fullRestockOnAssign;
-    public InterruptPriority interruptPriority;
-    public bool resetCooldownTimerOnUse;
-    public bool isCombatSkill;
-    public bool mustKeyPress;
-    public bool cancelSprintingOnActivation;
-    public int rechargeStock;
-    public int requiredStock;
-    public int stockToConsume;
+        public string skillName;
+        public string skillNameToken;
+        public string skillDescriptionToken;
+        public string[] keywordTokens = new string[0];
+        public Sprite skillIcon;
 
-    public string[] keywordTokens;
-}
+        public SerializableEntityStateType activationState;
+        public InterruptPriority interruptPriority;
+        public string activationStateMachineName;
+
+        public float baseRechargeInterval;
+
+        public int baseMaxStock = 1;
+        public int rechargeStock = 1;
+        public int requiredStock = 1;
+        public int stockToConsume = 1;
+
+        public bool isCombatSkill = true;
+        public bool canceledFromSprinting;
+        public bool forceSprintDuringState;
+        public bool cancelSprintingOnActivation = true;
+
+        public bool beginSkillCooldownOnSkillEnd;
+        public bool fullRestockOnAssign = true;
+        public bool resetCooldownTimerOnUse;
+        public bool mustKeyPress;
+
+        #region building
+        public SkillDefInfo() { }
+
+        public SkillDefInfo(string skillName,
+                              string skillNameToken,
+                              string skillDescriptionToken,
+                              Sprite skillIcon,
+
+                              SerializableEntityStateType activationState,
+                              string activationStateMachineName,
+                              InterruptPriority interruptPriority,
+                              bool isCombatSkill,
+
+                              float baseRechargeInterval) {
+            this.skillName = skillName;
+            this.skillNameToken = skillNameToken;
+            this.skillDescriptionToken = skillDescriptionToken;
+            this.skillIcon = skillIcon;
+            this.activationState = activationState;
+            this.activationStateMachineName = activationStateMachineName;
+            this.interruptPriority = interruptPriority;
+            this.isCombatSkill = isCombatSkill;
+            this.baseRechargeInterval = baseRechargeInterval;
+        }
+        /// <summary>
+        /// Creates a skilldef for a typical primary.
+        /// <para>combat skill, cooldown: 0, required stock: 0, InterruptPriority: Any</para>
+        /// </summary>
+        public SkillDefInfo(string skillName,
+                              string skillNameToken,
+                              string skillDescriptionToken,
+                              Sprite skillIcon,
+
+                              SerializableEntityStateType activationState,
+                              string activationStateMachineName = "Weapon",
+                              bool agile = false) {
+
+            this.skillName = skillName;
+            this.skillNameToken = skillNameToken;
+            this.skillDescriptionToken = skillDescriptionToken;
+            this.skillIcon = skillIcon;
+
+            this.activationState = activationState;
+            this.activationStateMachineName = activationStateMachineName;
+
+            this.interruptPriority = InterruptPriority.Any;
+            this.isCombatSkill = true;
+            this.baseRechargeInterval = 0;
+
+            this.requiredStock = 0;
+            this.stockToConsume = 0;
+
+            this.cancelSprintingOnActivation = !agile;
+
+            if (agile) this.keywordTokens = new string[] { "KEYWORD_AGILE" };
+        }
+        #endregion construction complete
+    }

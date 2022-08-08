@@ -86,7 +86,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 blastAttack.baseDamage = GigaImpact.impactAttackDamageCoefficient * this.damageStat;
                 blastAttack.falloffModel = BlastAttack.FalloffModel.SweetSpot;
                 blastAttack.damageColorIndex = DamageColorIndex.Item;
-                blastAttack.attackerFiltering = AttackerFiltering.NeverHit;
+                blastAttack.attackerFiltering = AttackerFiltering.NeverHitSelf;
                 blastAttack.Fire();
             }
         }
@@ -115,7 +115,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 blastAttack.baseDamage = GigaImpact.blastAttackDamageCoefficient * this.damageStat;
                 blastAttack.falloffModel = BlastAttack.FalloffModel.Linear;
                 blastAttack.damageColorIndex = DamageColorIndex.Item;
-                blastAttack.attackerFiltering = AttackerFiltering.NeverHit;
+                blastAttack.attackerFiltering = AttackerFiltering.NeverHitSelf;
                 blastAttack.Fire();
             }
         }

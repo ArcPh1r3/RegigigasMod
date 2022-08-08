@@ -19,6 +19,7 @@ namespace RegigigasMod
         "PrefabAPI",
         "LanguageAPI",
         "SoundAPI",
+        "DirectorAPI",
         "LoadoutAPI"
     })]
 
@@ -26,7 +27,7 @@ namespace RegigigasMod
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.2.2";
+        public const string MODVERSION = "1.3.0";
 
         public const string developerPrefix = "ROB";
 
@@ -36,6 +37,8 @@ namespace RegigigasMod
         {
             instance = this;
 
+            Log.Init(Logger);
+            Modules.Config.ReadConfig();
             Modules.Assets.PopulateAssets();
             //Modules.Config.ReadConfig();
             Modules.CameraParams.InitializeParams();

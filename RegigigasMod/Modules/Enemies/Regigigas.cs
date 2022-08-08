@@ -181,7 +181,7 @@ namespace RegigigasMod.Modules.Enemies
             newPrefab.AddComponent<Modules.Components.RegigigasController>();
             newPrefab.AddComponent<Modules.Components.RegigigasFlashController>();
             #endregion
-
+            
             #region Model
             Material bodyMat = Modules.Assets.CreateMaterial("matRegigigas", 0f, Color.white);
 
@@ -312,23 +312,56 @@ namespace RegigigasMod.Modules.Enemies
 
             HealthComponent healthComponent = bodyPrefab.GetComponent<HealthComponent>();
 
-            short hurtboxIndex = 1;
-
             foreach (Collider i in bodyPrefab.GetComponent<ModelLocator>().modelTransform.GetComponentsInChildren<Collider>())
             {
                 if (i.gameObject.name != "MainHurtbox")
                 {
-                    HurtBox j = i.gameObject.AddComponent<HurtBox>();
-                    j.gameObject.layer = LayerIndex.entityPrecise.intVal;
-                    j.healthComponent = healthComponent;
-                    j.isBullseye = false;
-                    j.damageModifier = HurtBox.DamageModifier.Normal;
-                    j.hurtBoxGroup = hurtboxGroup;
-                    j.indexInGroup = hurtboxIndex;
-                    hurtboxIndex++;
+                    HurtBox hurtbox = i.gameObject.AddComponent<HurtBox>();
+                    hurtbox.gameObject.layer = LayerIndex.entityPrecise.intVal;
+                    hurtbox.healthComponent = healthComponent;
+                    hurtbox.isBullseye = false;
+                    hurtbox.damageModifier = HurtBox.DamageModifier.Normal;
+                    hurtbox.hurtBoxGroup = hurtboxGroup;
 
-                    hurtboxes.Add(j);
+                    hurtboxes.Add(hurtbox);
                 }
+            }
+
+            //creating weakpoint hitboxes from code becuase the unity project is lost
+            Vector3[] eyeSpots = new Vector3[] {
+                
+                new Vector3(0,  -0.0341f, 0.7026f),
+                
+                //all his eyes made it way too easy to hit
+                //also these are for chest not head
+                //new Vector3(0,  1.0314f, 0.7869f),//top
+                //new Vector3(0,  0.6466f, 0.7848f),//bottom
+                //new Vector3(0.1653f, 0.8316f, 0.6549f),//left
+                //new Vector3(-0.1653f, 0.8316f, 0.6549f),//right
+
+                //new Vector3(0,  0.3124f, 0.8173f),
+                //new Vector3(0, -0.0335f, 0.7869f),
+                //new Vector3(0, -0.3514f, 0.7100f),
+            };
+
+            Transform chest = bodyPrefab.GetComponentInChildren<ChildLocator>().FindChild("Head");
+
+            HurtBox eyeHurtbox = UnityEngine.Object.Instantiate(hurtboxes[0], chest);
+            eyeHurtbox.isSniperTarget = true;
+            CapsuleCollider collider = eyeHurtbox.transform.GetComponent<CapsuleCollider>();
+            collider.radius = 0.2f;
+            collider.height = collider.radius * 2;
+
+            eyeHurtbox.transform.localPosition = eyeSpots[0];
+
+            hurtboxes.Add(eyeHurtbox);
+
+            for (int i = 1; i < eyeSpots.Length; i++) {
+
+                eyeHurtbox = UnityEngine.Object.Instantiate(eyeHurtbox, chest);
+                eyeHurtbox.transform.localPosition = eyeSpots[i];
+
+                hurtboxes.Add(eyeHurtbox);
             }
 
             hurtboxGroup.hurtBoxes = hurtboxes.ToArray();

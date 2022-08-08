@@ -80,6 +80,17 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="RegigigasSpecial" ID="{8D8770AA-385B-4771-8496-710F07209C0D}">
+					<ChildrenList>
+						<Action Name="" ID="{9CCBE8F8-6414-46CE-8959-58EDF57A7C1F}" ShortID="695570804">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RegigigasSpecial" ID="{1F614DBF-B542-4018-A486-0C036262E48D}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

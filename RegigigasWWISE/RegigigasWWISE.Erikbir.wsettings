@@ -3,9 +3,10 @@
 	<UserProjectSettingsInfo>
 		<UserProjectSettings Name="" ID="{4CF1BD86-4FB8-4E94-B077-7DF27D5A69C4}">
 			<PropertyList>
-				<Property Name="AudioFilesImporter\Path" Type="string" Value="E:\Abbas's stuff VII I think\1337 haxx\ror2lol\Chikara ga minegitte kuru\RegigigasMod\RegigigasWWISE\RegigigasWWISE\Originals\SFX\"/>
+				<Property Name="AudioFilesImporter\Path" Type="string" Value="E:\Abbas's stuff VII I think\1337 haxx\ror2lol\Chikara ga minegitte kuru\RegigigasMod\RegigigasWWISE\Originals\SFX\"/>
 				<Property Name="Event Action List\{370B6FF3-004E-43F6-94C0-5258524B19C7}\x64_Expand States" Type="string" Value=""/>
 				<Property Name="Event Action List\{53FBD214-F20B-4F67-8C6A-D81112959385}\x64_Expand States" Type="string" Value=""/>
+				<Property Name="Event Action List\{8D8770AA-385B-4771-8496-710F07209C0D}\x64_Expand States" Type="string" Value=""/>
 				<Property Name="Event Action List\{9380588B-0A96-43F6-A121-EAFC242B5A59}\x64_Expand States" Type="string" Value=""/>
 				<Property Name="Event Action List\{98B5A76E-2AD4-432C-8494-4B19710FCEE5}\x64_Expand States" Type="string" Value=""/>
 				<Property Name="Event Action List\{B61A1B2B-51EB-4543-BCAB-5FE8EAFD3071}\x64_Expand States" Type="string" Value=""/>

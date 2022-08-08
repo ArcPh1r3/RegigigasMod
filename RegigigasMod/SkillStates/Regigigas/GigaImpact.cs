@@ -64,7 +64,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             if (this.hasFired) return;
             this.hasFired = true;
 
-            Util.PlaySound("Play_parent_attack1_slam", base.gameObject);
+            Util.PlaySound(EntityStates.ParentMonster.GroundSlam.attackSoundString, base.gameObject);
             if (EntityStates.BeetleGuardMonster.GroundSlam.slamEffectPrefab)
             {
                 EffectManager.SimpleMuzzleFlash(EntityStates.BeetleGuardMonster.GroundSlam.slamEffectPrefab, base.gameObject, "HandR", false);

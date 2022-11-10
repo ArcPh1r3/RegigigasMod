@@ -1,8 +1,8 @@
 ﻿using RoR2;
 using UnityEngine;
 
-namespace RegigigasMod.Modules
-{
+namespace RegigigasMod.Modules {
+
     internal static class CameraParams
     {
         internal static CharacterCameraParams defaultCameraParams;

@@ -56,7 +56,7 @@ namespace RegigigasMod.Modules.Enemies
             {
                 CreateOrb();
 
-                if (characterEnabled.Value) masteryUnlockableDef = Modules.Unlockables.AddUnlockable<Achievements.MasteryAchievement>(true);
+                if (characterEnabled.Value) masteryUnlockableDef = R2API.UnlockableAPI.AddUnlockable<Achievements.MasteryAchievement>();
 
                 characterPrefab = CreateBodyPrefab(false);
                 survivorPrefab = CreateBodyPrefab(true);
@@ -3372,10 +3372,43 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
 
         private static void Hook()
         {
-            On.RoR2.HealthComponent.TakeDamage += HealthComponent_TakeDamage;
+            //On.RoR2.HealthComponent.TakeDamage += HealthComponent_TakeDamage;
             GlobalEventManager.onCharacterDeathGlobal += GlobalEventManager_onCharacterDeathGlobal;
+
+            On.RoR2.CharacterBody.AddBuff_BuffIndex += CharacterBody_AddBuff_BuffIndex;
+            On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += CharacterBody_AddTimedBuff_BuffDef_float;
         }
 
+        private static void CharacterBody_AddTimedBuff_BuffDef_float(On.RoR2.CharacterBody.orig_AddTimedBuff_BuffDef_float orig, CharacterBody self, BuffDef buffDef, float duration) {
+
+            if(CheckRegigigasImmune(self, (buffDef != null) ? buffDef.buffIndex : BuffIndex.None)) {
+                buffDef = null;
+            }
+
+            orig(self, buffDef, duration);
+        }
+
+        private static void CharacterBody_AddBuff_BuffIndex(On.RoR2.CharacterBody.orig_AddBuff_BuffIndex orig, CharacterBody self, BuffIndex buffType) {
+
+            if (CheckRegigigasImmune(self, buffType)) {
+                buffType = BuffIndex.None;
+            }
+
+            orig(self, buffType);
+        }
+
+        private static bool CheckRegigigasImmune(CharacterBody self, BuffIndex buffIndex) {
+            if(self.baseNameToken == RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME") {
+                if (buffIndex == RoR2Content.Buffs.Slow50.buffIndex ||
+                    buffIndex == RoR2Content.Buffs.Slow60.buffIndex ||
+                    buffIndex == RoR2Content.Buffs.Slow80.buffIndex) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        //two getcomponents on takedamage how dare you
         private static void HealthComponent_TakeDamage(On.RoR2.HealthComponent.orig_TakeDamage orig, HealthComponent self, DamageInfo damageInfo)
         {
             bool isHealing = false;
@@ -3409,14 +3442,15 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
 
         private static void GlobalEventManager_onCharacterDeathGlobal(DamageReport damageReport)
         {
-            // make shiny regi drop irradiant pearl
             CharacterMaster victim = damageReport.victimMaster;
             if (victim)
             {
-                Components.RegigigasDropComponent dropComponent = victim.gameObject.GetComponent<Components.RegigigasDropComponent>();
-                if (dropComponent)
-                {
-                    PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(dropComponent.itemDropDef.itemIndex), damageReport.victimBody.corePosition, Vector3.up * 20f);
+                // make shiny regi drop irradiant pearl
+                if (damageReport.victimBodyIndex == BodyCatalog.FindBodyIndex("RegigigasBody")) {
+                    Components.RegigigasDropComponent dropComponent = victim.gameObject.GetComponent<Components.RegigigasDropComponent>();
+                    if (dropComponent) {
+                        PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(dropComponent.itemDropDef.itemIndex), damageReport.victimBody.corePosition, Vector3.up * 20f);
+                    }
                 }
 
                 // slow start 10 kills

@@ -46,11 +46,6 @@ namespace RegigigasMod.SkillStates.Regigigas
             //base.PlaySwingEffect();
         }
 
-        protected override void OnHitEnemyAuthority()
-        {
-            base.OnHitEnemyAuthority();
-        }
-
         protected override void SetNextState()
         {
             int index = this.swingIndex + 1;

@@ -174,7 +174,7 @@ namespace RegigigasMod.Modules
 
             if (Modules.Assets.mainAssetBundle.LoadAsset<GameObject>(modelName) == null)
             {
-                Debug.LogError("Trying to load a null model- check to see if the name in your code matches the name of the object in Unity");
+                Log.Error("Trying to load a null model- check to see if the name in your code matches the name of the object in Unity");
                 return null;
             }
 
@@ -258,7 +258,7 @@ namespace RegigigasMod.Modules
 
             if (!childLocator.FindChild("MainHurtbox"))
             {
-                Debug.LogError("Could not set up main hurtbox: make sure you have a transform pair in your prefab's ChildLocator component called 'MainHurtbox'");
+                Log.Error("Could not set up main hurtbox: make sure you have a transform pair in your prefab's ChildLocator component called 'MainHurtbox'");
                 return;
             }
 

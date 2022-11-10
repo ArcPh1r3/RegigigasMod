@@ -100,7 +100,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 EffectManager.SimpleMuzzleFlash(Resources.Load<GameObject>("prefabs/effects/impacteffects/GrandparentDeathEffect"), base.gameObject, "HandR", false);
             }
-
+            
             if (base.isAuthority)
             {
                 BlastAttack blastAttack = new BlastAttack();

@@ -69,7 +69,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 
                 float num = 360f / baseProjectileCount;
                 Vector3 normalized = Vector3.ProjectOnPlane(UnityEngine.Random.onUnitSphere, Vector3.up).normalized;
-                Vector3 footPosition = base.characterBody.footPosition;
+                Vector3 footPosition = this.FindModelChild("FootR").position;
 
                 GameObject prefab = Modules.Projectiles.earthPowerWave;
 

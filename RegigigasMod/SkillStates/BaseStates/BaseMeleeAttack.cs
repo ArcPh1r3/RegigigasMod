@@ -2,6 +2,7 @@
 using RoR2;
 using RoR2.Audio;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -44,6 +45,8 @@ namespace RegigigasMod.SkillStates.BaseStates
         protected Animator animator;
         private BaseState.HitStopCachedState hitStopCachedState;
         private Vector3 storedVelocity;
+
+        protected List<HurtBox> hitResults = new List<HurtBox>();
 
         public override void OnEnter()
         {
@@ -137,7 +140,8 @@ namespace RegigigasMod.SkillStates.BaseStates
 
             if (base.isAuthority)
             {
-                if (this.attack.Fire())
+                hitResults.Clear();
+                if (this.attack.Fire(hitResults))
                 {
                     this.OnHitEnemyAuthority();
                 }

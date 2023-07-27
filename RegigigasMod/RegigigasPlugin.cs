@@ -19,14 +19,18 @@ namespace RegigigasMod
         "PrefabAPI",
         "LanguageAPI",
         "SoundAPI",
-        "LoadoutAPI"
+        "DirectorAPI",
+        "LoadoutAPI",
+        "UnlockableAPI",
+        "NetworkingAPI",
+        "RecalculateStatsAPI",
     })]
 
     public class RegigigasPlugin : BaseUnityPlugin
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.2.2";
+        public const string MODVERSION = "1.3.3";
 
         public const string developerPrefix = "ROB";
 
@@ -36,6 +40,8 @@ namespace RegigigasMod
         {
             instance = this;
 
+            Log.Init(Logger);
+            Modules.Config.ReadConfig();
             Modules.Assets.PopulateAssets();
             //Modules.Config.ReadConfig();
             Modules.CameraParams.InitializeParams();
@@ -44,6 +50,7 @@ namespace RegigigasMod
             Modules.Projectiles.RegisterProjectiles();
             Modules.Tokens.AddTokens();
             Modules.ItemDisplays.PopulateDisplays();
+            Modules.NetMessages.RegisterNetworkMessages();
 
             new Modules.Enemies.Regigigas().CreateCharacter();
 
@@ -61,28 +68,44 @@ namespace RegigigasMod
 
         private void Hook()
         {
-            On.RoR2.CharacterBody.RecalculateStats += CharacterBody_RecalculateStats;
+            //On.RoR2.CharacterBody.RecalculateStats += CharacterBody_RecalculateStats;
+            R2API.RecalculateStatsAPI.GetStatCoefficients += RecalculateStatsAPI_GetStatCoefficients;
+        }
+
+        private void RecalculateStatsAPI_GetStatCoefficients(CharacterBody sender, R2API.RecalculateStatsAPI.StatHookEventArgs args) {
+
+            if (sender.HasBuff(Modules.Buffs.armorBuff)) {
+
+                args.armorAdd += 500f;
+            }
+
+            if (sender.HasBuff(Modules.Buffs.slowStartBuff)) {
+
+                args.armorAdd += 20f;
+                args.moveSpeedReductionMultAdd += 1f; //movespeed *= 0.5f // 1 + 1 = divide by 2?
+                args.attackSpeedMultAdd -= 0.5f; //attackSpeed *= 0.5f;
+                args.damageMultAdd -= 0.5f; //damage *= 0.5f;
+            }
         }
 
         private void CharacterBody_RecalculateStats(On.RoR2.CharacterBody.orig_RecalculateStats orig, CharacterBody self)
         {
             orig(self);
+            //if (self)
+            //{
+            //    if (self.HasBuff(Modules.Buffs.armorBuff))
+            //    {
+            //        self.armor += 500f;
+            //    }
 
-            if (self)
-            {
-                if (self.HasBuff(Modules.Buffs.armorBuff))
-                {
-                    self.armor += 500f;
-                }
-
-                if (self.HasBuff(Modules.Buffs.slowStartBuff))
-                {
-                    self.armor += 20f;
-                    self.moveSpeed *= 0.5f;
-                    self.attackSpeed *= 0.5f;
-                    self.damage *= 0.5f;
-                }
-            }
+            //    if (self.HasBuff(Modules.Buffs.slowStartBuff))
+            //    {
+            //        self.armor += 20f;
+            //        self.moveSpeed *= 0.5f;
+            //        self.attackSpeed *= 0.5f;
+            //        self.damage *= 0.5f;
+            //    }
+            //}
         }
     }
 }

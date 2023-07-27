@@ -64,7 +64,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             if (this.hasFired) return;
             this.hasFired = true;
 
-            Util.PlaySound("Play_parent_attack1_slam", base.gameObject);
+            Util.PlaySound(EntityStates.ParentMonster.GroundSlam.attackSoundString, base.gameObject);
             if (EntityStates.BeetleGuardMonster.GroundSlam.slamEffectPrefab)
             {
                 EffectManager.SimpleMuzzleFlash(EntityStates.BeetleGuardMonster.GroundSlam.slamEffectPrefab, base.gameObject, "HandR", false);
@@ -86,7 +86,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 blastAttack.baseDamage = GigaImpact.impactAttackDamageCoefficient * this.damageStat;
                 blastAttack.falloffModel = BlastAttack.FalloffModel.SweetSpot;
                 blastAttack.damageColorIndex = DamageColorIndex.Item;
-                blastAttack.attackerFiltering = AttackerFiltering.NeverHit;
+                blastAttack.attackerFiltering = AttackerFiltering.NeverHitSelf;
                 blastAttack.Fire();
             }
         }
@@ -100,7 +100,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 EffectManager.SimpleMuzzleFlash(Resources.Load<GameObject>("prefabs/effects/impacteffects/GrandparentDeathEffect"), base.gameObject, "HandR", false);
             }
-
+            
             if (base.isAuthority)
             {
                 BlastAttack blastAttack = new BlastAttack();
@@ -115,7 +115,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 blastAttack.baseDamage = GigaImpact.blastAttackDamageCoefficient * this.damageStat;
                 blastAttack.falloffModel = BlastAttack.FalloffModel.Linear;
                 blastAttack.damageColorIndex = DamageColorIndex.Item;
-                blastAttack.attackerFiltering = AttackerFiltering.NeverHit;
+                blastAttack.attackerFiltering = AttackerFiltering.NeverHitSelf;
                 blastAttack.Fire();
             }
         }

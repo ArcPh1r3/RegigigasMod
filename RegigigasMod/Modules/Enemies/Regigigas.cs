@@ -11,6 +11,7 @@ using RoR2.Navigation;
 using RegigigasMod.Modules.Misc;
 using RoR2.Orbs;
 using UnityEngine.Networking;
+using UnityEngine.AddressableAssets;
 
 namespace RegigigasMod.Modules.Enemies
 {
@@ -55,7 +56,7 @@ namespace RegigigasMod.Modules.Enemies
             {
                 CreateOrb();
 
-                if (characterEnabled.Value) masteryUnlockableDef = Modules.Unlockables.AddUnlockable<Achievements.MasteryAchievement>(true);
+                if (characterEnabled.Value) masteryUnlockableDef = R2API.UnlockableAPI.AddUnlockable<Achievements.MasteryAchievement>();
 
                 characterPrefab = CreateBodyPrefab(false);
                 survivorPrefab = CreateBodyPrefab(true);
@@ -127,6 +128,7 @@ namespace RegigigasMod.Modules.Enemies
             body.hullClassification = HullClassification.Golem;
             body.bodyFlags = CharacterBody.BodyFlags.None;
             body.isChampion = true;
+            body.preferredInitialStateType = new EntityStates.SerializableEntityStateType(typeof(SpawnState));
 
             CharacterMotor motor = newPrefab.GetComponent<CharacterMotor>();
             motor.mass = 10000f;
@@ -157,7 +159,9 @@ namespace RegigigasMod.Modules.Enemies
             newPrefab.GetComponent<CameraTargetParams>().cameraParams = regiParams;
 
             newPrefab.GetComponent<EntityStateMachine>().mainStateType = new EntityStates.SerializableEntityStateType(typeof(MainState));
-            newPrefab.GetComponent<EntityStateMachine>().initialStateType = new EntityStates.SerializableEntityStateType(typeof(SpawnState));
+
+            var state = isPlayer ? typeof(EntityStates.SpawnTeleporterState) : typeof(SpawnState);
+            newPrefab.GetComponent<EntityStateMachine>().initialStateType = new EntityStates.SerializableEntityStateType(state);
 
             newPrefab.GetComponent<CharacterDeathBehavior>().deathState = new EntityStates.SerializableEntityStateType(typeof(DeathState));
 
@@ -177,7 +181,7 @@ namespace RegigigasMod.Modules.Enemies
             newPrefab.AddComponent<Modules.Components.RegigigasController>();
             newPrefab.AddComponent<Modules.Components.RegigigasFlashController>();
             #endregion
-
+            
             #region Model
             Material bodyMat = Modules.Assets.CreateMaterial("matRegigigas", 0f, Color.white);
 
@@ -228,54 +232,75 @@ namespace RegigigasMod.Modules.Enemies
             {
                 spawnCard = characterSpawnCard,
                 selectionWeight = 1,
-                allowAmbushSpawn = true,
                 preventOverhead = false,
                 minimumStageCompletions = minimumStageCount.Value,
                 spawnDistance = DirectorCore.MonsterSpawnDistance.Close
             };
-
-            DirectorCard cardGrove = new DirectorCard
-            {
-                spawnCard = characterSpawnCard,
-                selectionWeight = 2,
-                allowAmbushSpawn = true,
-                preventOverhead = false,
-                minimumStageCompletions = minimumStageCount.Value,
-                spawnDistance = DirectorCore.MonsterSpawnDistance.Close
-            };
-
             DirectorAPI.DirectorCardHolder regigigasCard = new DirectorAPI.DirectorCardHolder
             {
                 Card = card,
                 MonsterCategory = DirectorAPI.MonsterCategory.Champions,
-                InteractableCategory = DirectorAPI.InteractableCategory.None
             };
 
-            DirectorAPI.DirectorCardHolder regigigasCardGrove = new DirectorAPI.DirectorCardHolder
-            {
-                Card = cardGrove,
+            //DirectorCard cardGrove = new DirectorCard
+            //{
+            //    spawnCard = characterSpawnCard,
+            //    selectionWeight = 2,
+            //    preventOverhead = false,
+            //    minimumStageCompletions = minimumStageCount.Value,
+            //    spawnDistance = DirectorCore.MonsterSpawnDistance.Close
+            //};
+            //DirectorAPI.DirectorCardHolder regigigasCardGrove = new DirectorAPI.DirectorCardHolder
+            //{
+            //    Card = cardGrove,
+            //    MonsterCategory = DirectorAPI.MonsterCategory.Champions,
+            //};
+
+            DirectorCard cardLoop = new DirectorCard {
+                spawnCard = characterSpawnCard,
+                selectionWeight = 1,
+                preventOverhead = false,
+                minimumStageCompletions = 5,
+                spawnDistance = DirectorCore.MonsterSpawnDistance.Close
+            };
+            DirectorAPI.DirectorCardHolder regigigasCardLoop = new DirectorAPI.DirectorCardHolder {
+                Card = cardLoop,
                 MonsterCategory = DirectorAPI.MonsterCategory.Champions,
-                InteractableCategory = DirectorAPI.InteractableCategory.None
             };
 
-            DirectorAPI.MonsterActions += delegate (List<DirectorAPI.DirectorCardHolder> list, DirectorAPI.StageInfo stage)
-            {
-                if (stage.stage == DirectorAPI.Stage.SirensCall || stage.stage == DirectorAPI.Stage.RallypointDelta || stage.stage == DirectorAPI.Stage.GildedCoast || stage.stage == DirectorAPI.Stage.TitanicPlains || stage.stage == DirectorAPI.Stage.VoidCell || stage.stage == DirectorAPI.Stage.AbandonedAqueduct || stage.stage == DirectorAPI.Stage.WetlandAspect)
-                {
-                    if (!list.Contains(regigigasCard))
-                    {
-                        list.Add(regigigasCard);
-                    }
-                }
+            DirectorCardCategorySelection dissonanceSpawns = Addressables.LoadAssetAsync<DirectorCardCategorySelection>("RoR2/Base/MixEnemy/dccsMixEnemy.asset").WaitForCompletion();
+            dissonanceSpawns.AddCard(0, card);  //0 is Champions
 
-                if (stage.stage == DirectorAPI.Stage.Custom && stage.CustomStageName == "rootjungle")
-                {
-                    if (!list.Contains(regigigasCard))
-                    {
-                        list.Add(regigigasCardGrove);
-                    }
-                }
-            };
+            foreach (StageSpawnInfo ssi in Config.StageList) {
+                DirectorAPI.DirectorCardHolder toAdd = ssi.GetMinStages() == 0 ? regigigasCard : regigigasCardLoop;
+
+                DirectorAPI.Helpers.AddNewMonsterToStage(toAdd, false, DirectorAPI.ParseInternalStageName(ssi.GetStageName()), ssi.GetStageName());
+            }
+
+            //DirectorAPI.MonsterActions += delegate (List<DirectorAPI.DirectorCardHolder> list, DirectorAPI.StageInfo stage)
+            //{
+            //    if (stage.stage == DirectorAPI.Stage.SirensCall 
+            //    || stage.stage == DirectorAPI.Stage.RallypointDelta 
+            //    || stage.stage == DirectorAPI.Stage.GildedCoast 
+            //    || stage.stage == DirectorAPI.Stage.TitanicPlains 
+            //    || stage.stage == DirectorAPI.Stage.VoidCell 
+            //    || stage.stage == DirectorAPI.Stage.AbandonedAqueduct 
+            //    || stage.stage == DirectorAPI.Stage.WetlandAspect)
+            //    {
+            //        if (!list.Contains(regigigasCard))
+            //        {
+            //            list.Add(regigigasCard);
+            //        }
+            //    }
+
+            //    if (stage.stage == DirectorAPI.Stage.Custom && stage.CustomStageName == "rootjungle")
+            //    {
+            //        if (!list.Contains(regigigasCard))
+            //        {
+            //            list.Add(regigigasCardGrove);
+            //        }
+            //    }
+            //};
         }
 
         private static void SetupHurtboxes(GameObject bodyPrefab)
@@ -287,23 +312,56 @@ namespace RegigigasMod.Modules.Enemies
 
             HealthComponent healthComponent = bodyPrefab.GetComponent<HealthComponent>();
 
-            short hurtboxIndex = 1;
-
             foreach (Collider i in bodyPrefab.GetComponent<ModelLocator>().modelTransform.GetComponentsInChildren<Collider>())
             {
                 if (i.gameObject.name != "MainHurtbox")
                 {
-                    HurtBox j = i.gameObject.AddComponent<HurtBox>();
-                    j.gameObject.layer = LayerIndex.entityPrecise.intVal;
-                    j.healthComponent = healthComponent;
-                    j.isBullseye = false;
-                    j.damageModifier = HurtBox.DamageModifier.Normal;
-                    j.hurtBoxGroup = hurtboxGroup;
-                    j.indexInGroup = hurtboxIndex;
-                    hurtboxIndex++;
+                    HurtBox hurtbox = i.gameObject.AddComponent<HurtBox>();
+                    hurtbox.gameObject.layer = LayerIndex.entityPrecise.intVal;
+                    hurtbox.healthComponent = healthComponent;
+                    hurtbox.isBullseye = false;
+                    hurtbox.damageModifier = HurtBox.DamageModifier.Normal;
+                    hurtbox.hurtBoxGroup = hurtboxGroup;
 
-                    hurtboxes.Add(j);
+                    hurtboxes.Add(hurtbox);
                 }
+            }
+
+            //creating weakpoint hitboxes from code becuase the unity project is lost
+            Vector3[] eyeSpots = new Vector3[] {
+                
+                new Vector3(0,  -0.0341f, 0.7026f),
+                
+                //all his eyes made it way too easy to hit
+                //also these are for chest not head
+                //new Vector3(0,  1.0314f, 0.7869f),//top
+                //new Vector3(0,  0.6466f, 0.7848f),//bottom
+                //new Vector3(0.1653f, 0.8316f, 0.6549f),//left
+                //new Vector3(-0.1653f, 0.8316f, 0.6549f),//right
+
+                //new Vector3(0,  0.3124f, 0.8173f),
+                //new Vector3(0, -0.0335f, 0.7869f),
+                //new Vector3(0, -0.3514f, 0.7100f),
+            };
+
+            Transform chest = bodyPrefab.GetComponentInChildren<ChildLocator>().FindChild("Head");
+
+            HurtBox eyeHurtbox = UnityEngine.Object.Instantiate(hurtboxes[0], chest);
+            eyeHurtbox.isSniperTarget = true;
+            CapsuleCollider collider = eyeHurtbox.transform.GetComponent<CapsuleCollider>();
+            collider.radius = 0.2f;
+            collider.height = collider.radius * 2;
+
+            eyeHurtbox.transform.localPosition = eyeSpots[0];
+
+            hurtboxes.Add(eyeHurtbox);
+
+            for (int i = 1; i < eyeSpots.Length; i++) {
+
+                eyeHurtbox = UnityEngine.Object.Instantiate(eyeHurtbox, chest);
+                eyeHurtbox.transform.localPosition = eyeSpots[i];
+
+                hurtboxes.Add(eyeHurtbox);
             }
 
             hurtboxGroup.hurtBoxes = hurtboxes.ToArray();
@@ -451,9 +509,9 @@ namespace RegigigasMod.Modules.Enemies
             skillLocator.passiveSkill.skillDescriptionToken = prefix + "_REGIGIGAS_BODY_PASSIVE_DESCRIPTION";
 
             #region Primary
-            Modules.Skills.AddPrimarySkill(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
-            Modules.Skills.AddPrimarySkill(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texBrickBreakIcon"), false));
-            Modules.Skills.AddPrimarySkill(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texDrainPunchIcon"), false));
+            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
+            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texBrickBreakIcon"), false));
+            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texDrainPunchIcon"), false));
             #endregion
 
             #region Secondary
@@ -533,7 +591,7 @@ namespace RegigigasMod.Modules.Enemies
                 stockToConsume = 1
             });
 
-            Modules.Skills.AddUtilitySkill(prefab, revengeSkillDef);
+            Modules.Skills.AddUtilitySkills(prefab, revengeSkillDef);
             #endregion
 
             #region Special
@@ -561,7 +619,7 @@ namespace RegigigasMod.Modules.Enemies
                 stockToConsume = 1
             });
 
-            Modules.Skills.AddSpecialSkill(prefab, impactSkillDef);
+            Modules.Skills.AddSpecialSkills(prefab, impactSkillDef);
             #endregion
         }
 
@@ -2240,7 +2298,7 @@ localScale = new Vector3(0.2845F, 0.2845F, 0.2845F),
 
             itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                keyAsset = RoR2Content.Items.CooldownOnCrit,
+                keyAsset = JunkContent.Items.CooldownOnCrit,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -2628,7 +2686,7 @@ localScale = new Vector3(0.1F, 0.1F, 0.1F),
 
             itemDisplayRules.Add(new ItemDisplayRuleSet.KeyAssetRuleGroup
             {
-                keyAsset = RoR2Content.Items.Incubator,
+                keyAsset = JunkContent.Items.Incubator,
                 displayRuleGroup = new DisplayRuleGroup
                 {
                     rules = new ItemDisplayRule[]
@@ -3299,7 +3357,7 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
             #endregion
 
             itemDisplayRuleSet.keyAssetRuleGroups = itemDisplayRules.ToArray();
-            itemDisplayRuleSet.GenerateRuntimeValues();
+            //itemDisplayRuleSet.GenerateRuntimeValues();
         }
 
         private static CharacterModel.RendererInfo[] SkinRendererInfos(CharacterModel.RendererInfo[] defaultRenderers, Material[] materials)
@@ -3314,10 +3372,43 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
 
         private static void Hook()
         {
-            On.RoR2.HealthComponent.TakeDamage += HealthComponent_TakeDamage;
+            //On.RoR2.HealthComponent.TakeDamage += HealthComponent_TakeDamage;
             GlobalEventManager.onCharacterDeathGlobal += GlobalEventManager_onCharacterDeathGlobal;
+
+            On.RoR2.CharacterBody.AddBuff_BuffIndex += CharacterBody_AddBuff_BuffIndex;
+            On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += CharacterBody_AddTimedBuff_BuffDef_float;
         }
 
+        private static void CharacterBody_AddTimedBuff_BuffDef_float(On.RoR2.CharacterBody.orig_AddTimedBuff_BuffDef_float orig, CharacterBody self, BuffDef buffDef, float duration) {
+
+            if(CheckRegigigasImmune(self, (buffDef != null) ? buffDef.buffIndex : BuffIndex.None)) {
+                buffDef = null;
+            }
+
+            orig(self, buffDef, duration);
+        }
+
+        private static void CharacterBody_AddBuff_BuffIndex(On.RoR2.CharacterBody.orig_AddBuff_BuffIndex orig, CharacterBody self, BuffIndex buffType) {
+
+            if (CheckRegigigasImmune(self, buffType)) {
+                buffType = BuffIndex.None;
+            }
+
+            orig(self, buffType);
+        }
+
+        private static bool CheckRegigigasImmune(CharacterBody self, BuffIndex buffIndex) {
+            if(self.baseNameToken == RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME") {
+                if (buffIndex == RoR2Content.Buffs.Slow50.buffIndex ||
+                    buffIndex == RoR2Content.Buffs.Slow60.buffIndex ||
+                    buffIndex == RoR2Content.Buffs.Slow80.buffIndex) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        //two getcomponents on takedamage how dare you
         private static void HealthComponent_TakeDamage(On.RoR2.HealthComponent.orig_TakeDamage orig, HealthComponent self, DamageInfo damageInfo)
         {
             bool isHealing = false;
@@ -3351,14 +3442,15 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
 
         private static void GlobalEventManager_onCharacterDeathGlobal(DamageReport damageReport)
         {
-            // make shiny regi drop irradiant pearl
             CharacterMaster victim = damageReport.victimMaster;
             if (victim)
             {
-                Components.RegigigasDropComponent dropComponent = victim.gameObject.GetComponent<Components.RegigigasDropComponent>();
-                if (dropComponent)
-                {
-                    PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(dropComponent.itemDropDef.itemIndex), damageReport.victimBody.corePosition, Vector3.up * 20f);
+                // make shiny regi drop irradiant pearl
+                if (damageReport.victimBodyIndex == BodyCatalog.FindBodyIndex("RegigigasBody")) {
+                    Components.RegigigasDropComponent dropComponent = victim.gameObject.GetComponent<Components.RegigigasDropComponent>();
+                    if (dropComponent) {
+                        PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(dropComponent.itemDropDef.itemIndex), damageReport.victimBody.corePosition, Vector3.up * 20f);
+                    }
                 }
 
                 // slow start 10 kills

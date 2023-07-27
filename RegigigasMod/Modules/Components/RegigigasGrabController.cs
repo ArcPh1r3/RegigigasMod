@@ -96,6 +96,7 @@ namespace RegigigasMod.Modules.Components
             if (this.direction) this.direction.enabled = true;
 
             Destroy(this);
+            //Debug.LogWarning("destroying grabcomponent");
         }
 
         public void Throw(Vector3 throwVector)
@@ -112,6 +113,7 @@ namespace RegigigasMod.Modules.Components
             this.modelTransform = null;
 
             Destroy(this);
+            //Debug.LogWarning("destroying grabcomponent");
         }
     }
 }

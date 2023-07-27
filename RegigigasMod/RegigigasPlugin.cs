@@ -30,7 +30,7 @@ namespace RegigigasMod
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.3.3";
+        public const string MODVERSION = "1.4.0";
 
         public const string developerPrefix = "ROB";
 
@@ -64,6 +64,10 @@ namespace RegigigasMod
         private void LateSetup(global::HG.ReadOnlyArray<RoR2.ContentManagement.ReadOnlyContentPack> obj)
         {
             Modules.Enemies.Regigigas.SetItemDisplays();
+
+            // hate that i havze to do this
+            Modules.Buffs.armorBuff.iconSprite = RoR2Content.Buffs.ArmorBoost.iconSprite;
+            Modules.Buffs.slowStartBuff.iconSprite = RoR2Content.Buffs.Slow50.iconSprite;
         }
 
         private void Hook()

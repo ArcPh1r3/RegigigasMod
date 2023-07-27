@@ -20,7 +20,7 @@ namespace RegigigasMod.Modules
         internal static void RegisterBuffs()
         {
             armorBuff = AddNewBuff("RegigigasArmorBuff", Resources.Load<Sprite>("Textures/BuffIcons/texBuffGenericShield"), Color.grey, false, false);
-            slowStartBuff = AddNewBuff("RegigigasSlowStartDebuff", Resources.Load<Sprite>("Textures/BuffIcons/texBuffSlow50Icon"), Color.grey, true, false);
+            slowStartBuff = AddNewBuff("RegigigasSlowStartDebuff", null, Color.yellow, true, false);
         }
 
         // simple helper method

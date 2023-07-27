@@ -19,6 +19,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         private float throwStopwatch;
         private float timeBetweenRocks;
         private float duration;
+        private GameObject projectilePrefab;
 
         public override void OnEnter()
         {
@@ -26,6 +27,9 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.duration = FireAncientPower.baseDuration / this.attackSpeedStat;
             this.timeBetweenRocks = FireAncientPower.baseTimeBetweenRocks / this.attackSpeedStat;
             this.throwStopwatch = this.timeBetweenRocks;
+
+            // cache the prefab to save a little perf
+            this.projectilePrefab = Modules.Projectiles.rockProjectile;
 
             base.PlayAnimation("Gesture, Override", "FireAncientPower", "AncientPower.playbackRate", FireAncientPower.baseDuration);
         }
@@ -67,7 +71,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 Ray aimRay = base.GetAimRay();
 
-                ProjectileManager.instance.FireProjectile(Resources.Load<GameObject>("Prefabs/Projectiles/GrandparentMiniBoulder"), 
+                ProjectileManager.instance.FireProjectile(this.projectilePrefab, 
                     aimRay.origin, Util.QuaternionSafeLookRotation(aimRay.direction), 
                     base.gameObject, 
                     this.damageStat * FireAncientPower.damageCoefficient, 

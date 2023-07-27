@@ -12,6 +12,7 @@ namespace RegigigasMod.Modules
     internal static class Assets
     {
         internal static AssetBundle mainAssetBundle;
+        internal static AssetBundle secondaryAssetBundle;
 
         internal static Shader hotpoo = Resources.Load<Shader>("Shaders/Deferred/HGStandard");
         internal static Material commandoMat;
@@ -30,6 +31,15 @@ namespace RegigigasMod.Modules
                 using (var assetStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("RegigigasMod.regigigas"))
                 {
                     mainAssetBundle = AssetBundle.LoadFromStream(assetStream);
+                }
+            }
+
+            // lost the original unityproject so this is necessary
+            if (secondaryAssetBundle == null)
+            {
+                using (var assetStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("RegigigasMod.regigigas2"))
+                {
+                    secondaryAssetBundle = AssetBundle.LoadFromStream(assetStream);
                 }
             }
 
@@ -158,6 +168,27 @@ namespace RegigigasMod.Modules
             newEffectDef.spawnSoundEventName = soundName;
 
             effectDefs.Add(newEffectDef);
+        }
+
+        //ugh
+        public static Material CreateMaterial2(string materialName, float emission, Color emissionColor, float normalStrength)
+        {
+            if (!commandoMat) commandoMat = Resources.Load<GameObject>("Prefabs/CharacterBodies/CommandoBody").GetComponentInChildren<CharacterModel>().baseRendererInfos[0].defaultMaterial;
+
+            Material mat = UnityEngine.Object.Instantiate<Material>(commandoMat);
+            Material tempMat = Assets.secondaryAssetBundle.LoadAsset<Material>(materialName);
+
+            if (!tempMat) return commandoMat;
+
+            mat.name = materialName;
+            mat.SetColor("_Color", tempMat.GetColor("_Color"));
+            mat.SetTexture("_MainTex", tempMat.GetTexture("_MainTex"));
+            mat.SetColor("_EmColor", emissionColor);
+            mat.SetFloat("_EmPower", emission);
+            mat.SetTexture("_EmTex", tempMat.GetTexture("_EmissionMap"));
+            mat.SetFloat("_NormalStrength", normalStrength);
+
+            return mat;
         }
 
         public static Material CreateMaterial(string materialName, float emission, Color emissionColor, float normalStrength)

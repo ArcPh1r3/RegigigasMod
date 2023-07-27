@@ -64,13 +64,16 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             if (base.isAuthority)
             {
-                float num = 360f / (float)(1.5f * UltChannelState.waveProjectileCount);
+                float baseProjectileCount = (float)(1.5f * UltChannelState.waveProjectileCount);
+                if (Modules.Config.nerfedEarthPower) baseProjectileCount = 5f;
+
+                float num = 360f / baseProjectileCount;
                 Vector3 normalized = Vector3.ProjectOnPlane(UnityEngine.Random.onUnitSphere, Vector3.up).normalized;
                 Vector3 footPosition = base.characterBody.footPosition;
 
                 GameObject prefab = Modules.Projectiles.earthPowerWave;
 
-                for (int i = 0; i < (1.5f * UltChannelState.waveProjectileCount); i++)
+                for (int i = 0; i < baseProjectileCount; i++)
                 {
                     Vector3 forward = Quaternion.AngleAxis(num * (float)i, Vector3.up) * normalized;
                     ProjectileManager.instance.FireProjectile(prefab, footPosition, Util.QuaternionSafeLookRotation(forward), base.gameObject, base.characterBody.damage * Stomp.damageCoefficient, UltChannelState.waveProjectileForce, base.RollCrit(), DamageColorIndex.Default, null, -1f);

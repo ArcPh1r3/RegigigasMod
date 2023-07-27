@@ -8,7 +8,6 @@ namespace RegigigasMod.Modules.Components
     {
         public Transform pivotTransform;
 
-        private int killsNeeded;
         private bool isEnemy;
         private bool inSlowStart;
         private float stopwatch;
@@ -18,9 +17,11 @@ namespace RegigigasMod.Modules.Components
         {
             this.body = this.GetComponent<CharacterBody>();
             this.inSlowStart = true;
-            this.killsNeeded = 10;
             this.stopwatch = 120f;
+        }
 
+        private void Start()
+        {
             if (this.GetComponent<TeamComponent>().teamIndex != TeamIndex.Player)
             {
                 this.isEnemy = true;
@@ -83,7 +84,6 @@ namespace RegigigasMod.Modules.Components
                     if (!this.body.HasBuff(Modules.Buffs.slowStartBuff))
                     {
                         this.inSlowStart = false;
-                        //if (NetworkServer.active) this.body.RemoveBuff(Modules.Buffs.slowStartBuff);
                         this.ActivateSlowStart();
                         Destroy(this);
                     }

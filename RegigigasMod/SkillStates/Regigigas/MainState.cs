@@ -6,7 +6,7 @@ namespace RegigigasMod.SkillStates.Regigigas
     {
         public override void ProcessJump()
         {
-            if (base.characterMotor.jumpCount > base.characterBody.baseJumpCount)
+            if (base.characterMotor.jumpCount > base.characterBody.maxJumpCount)
             {
                 base.ProcessJump();
                 return;

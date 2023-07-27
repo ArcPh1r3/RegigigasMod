@@ -10,17 +10,19 @@ namespace RegigigasMod.Modules
             string prefix = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_";
 
             string desc = "Regigigas.<color=#CCD3E0>" + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > ." + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > ." + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > ." + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > ." + Environment.NewLine + Environment.NewLine;
+            desc = desc + "< ! > Use Drain Punch to survive until Slow Start is activated." + Environment.NewLine + Environment.NewLine;
+            desc = desc + "< ! > Ancient Power's health penalty can boost the damage of Revenge." + Environment.NewLine + Environment.NewLine;
+            desc = desc + "< ! > Crush Grip is terrible." + Environment.NewLine + Environment.NewLine;
+            desc = desc + "< ! > Reactivate Revenge to cancel it early." + Environment.NewLine + Environment.NewLine;
 
             string outro = "..and so it left, leaving irreparable damage in its wake.";
             string outroFailure = "..and so it vanished, returning to its eternal slumber.";
 
             string lore = "There is an enduring legend that states this Pokémon towed continents with ropes.";
 
-            LanguageAPI.Add(prefix + "NAME", "Regigigas");
+            string charName = "Regigigas";
+            if (Modules.Config.loreFriendly) charName = "Stone Juggernaut";
+            LanguageAPI.Add(prefix + "NAME", charName);
             LanguageAPI.Add(prefix + "DESCRIPTION", desc);
             LanguageAPI.Add(prefix + "SUBTITLE", "Weary Colossus");
             LanguageAPI.Add(prefix + "LORE", lore);
@@ -50,7 +52,7 @@ namespace RegigigasMod.Modules
 
             #region Secondary
             LanguageAPI.Add(prefix + "SECONDARY_EARTHQUAKE_NAME", "Earth Power");
-            LanguageAPI.Add(prefix + "SECONDARY_EARTHQUAKE_DESCRIPTION", $"Stomp with all your might, summoning pillars of <style=cIsDamage>flame</style> that deal <style=cIsDamage>{100f * SkillStates.Regigigas.Stomp.damageCoefficient}% damage</style>. <style=cIsDamage>Inflicts burn.</style>");
+            LanguageAPI.Add(prefix + "SECONDARY_EARTHQUAKE_DESCRIPTION", $"Stomp with all your might, summoning 5 pillars of <style=cIsDamage>flame</style> that deal <style=cIsDamage>{100f * SkillStates.Regigigas.Stomp.damageCoefficient}% damage</style>. <style=cIsDamage>Inflicts burn.</style>");
 
             LanguageAPI.Add(prefix + "SECONDARY_ANCIENTPOWER_NAME", "Ancient Power");
             LanguageAPI.Add(prefix + "SECONDARY_ANCIENTPOWER_DESCRIPTION", $"Charge up a barrage of rocks for <style=cIsDamage>{100f * SkillStates.Regigigas.FireAncientPower.damageCoefficient}% damage</style> each. Costs <style=cIsHealth>10% max health</style> for each rock if out of stock.");
@@ -58,12 +60,12 @@ namespace RegigigasMod.Modules
 
             #region Utility
             LanguageAPI.Add(prefix + "UTILITY_REVENGE_NAME", "Revenge");
-            LanguageAPI.Add(prefix + "UTILITY_REVENGE_DESCRIPTION", "Channel for a duration, gaining <style=cIsUtility>500 armor</style>. Then unleash a shockwave that returns 3x all damage you receieved during this time.");
+            LanguageAPI.Add(prefix + "UTILITY_REVENGE_DESCRIPTION", "Channel for 8 seconds, gaining <style=cIsUtility>500 armor</style>. Then unleash <style=cIsDamage>3x all damage received during this time</style>.");
             #endregion
 
             #region Special
             LanguageAPI.Add(prefix + "SPECIAL_IMPACT_NAME", "Giga Impact");
-            LanguageAPI.Add(prefix + "SPECIAL_IMPACT_DESCRIPTION", $"Do something cool for <style=cIsDamage>{100f * 80}% damage</style>.");
+            LanguageAPI.Add(prefix + "SPECIAL_IMPACT_DESCRIPTION", $"Leap high into the sky, dealing <style=cIsDamage>{100f * SkillStates.Regigigas.Bounce.damageCoefficient}% damage</style> around you in an explosive landing.");
             #endregion
 
             #region Achievements

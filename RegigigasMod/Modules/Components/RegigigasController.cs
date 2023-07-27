@@ -6,28 +6,33 @@ namespace RegigigasMod.Modules.Components
     public class RegigigasController : MonoBehaviour
     {
         private CharacterBody characterBody;
-        private CharacterModel model;
-        private ChildLocator childLocator;
+        //private CharacterModel model;
+        //private ChildLocator childLocator;
 
         private void Awake()
         {
             this.characterBody = this.gameObject.GetComponent<CharacterBody>();
-            this.childLocator = this.gameObject.GetComponentInChildren<ChildLocator>();
-            this.model = this.GetComponentInChildren<CharacterModel>();
+            // never ended up doing anything with these so comment out until it's needed one day
+            //this.childLocator = this.gameObject.GetComponentInChildren<ChildLocator>();
+            //this.model = this.GetComponentInChildren<CharacterModel>();
+        }
 
-            InvokeRepeating("CheckInventory", 0.5f, 0.5f);
+        private void Start()
+        {
+            if (this.characterBody)
+            {
+                // we don't talk about the old implementation of this
+                this.characterBody.inventory.onInventoryChanged += CheckInventory;
+            }
         }
 
         private void CheckInventory()
         {
-            if (this.characterBody && this.characterBody.master)
+            if (this.characterBody && this.characterBody.inventory)
             {
-                if (this.characterBody.master.inventory)
+                if (this.characterBody.inventory.GetItemCount(RoR2Content.Items.LunarPrimaryReplacement) > 0)
                 {
-                    if (this.characterBody.master.inventory.GetItemCount(RoR2Content.Items.LunarPrimaryReplacement) > 0)
-                    {
-                        this.characterBody.hideCrosshair = false;
-                    }
+                    this.characterBody.hideCrosshair = false;
                 }
             }
         }

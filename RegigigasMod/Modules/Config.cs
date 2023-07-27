@@ -7,11 +7,14 @@ namespace RegigigasMod.Modules
     internal static class Config
     {
         internal static ConfigEntry<float> _shinySpawnRate;
+        internal static ConfigEntry<bool> _nerfedEarthPower;
+        internal static ConfigEntry<bool> _loreFriendly;
 
         public static List<StageSpawnInfo> StageList = new List<StageSpawnInfo>();
 
-
         internal static float shinySpawnRate;
+        internal static bool nerfedEarthPower;
+        internal static bool loreFriendly;
 
         internal static void ReadConfig()
         {
@@ -22,6 +25,22 @@ namespace RegigigasMod.Modules
                                                             "Chance for spawned Regigigas to be shiny and drop Irradiant Pearls");
 
             shinySpawnRate = _shinySpawnRate.Value;
+
+            _nerfedEarthPower =
+                RegigigasPlugin.instance.Config.Bind<bool>("Regigigas",
+                                                           "Nerfed Earth Power",
+                                                           true,
+                                                           "Nerfs the projectile count on Earth Power. Set to false to restore the old unfair values.");
+
+            nerfedEarthPower = _nerfedEarthPower.Value;
+
+            _loreFriendly =
+                RegigigasPlugin.instance.Config.Bind<bool>("Regigigas",
+                                               "Lore Friendly",
+                                               false,
+                                               "Gives Regigigas an alternate name and model to make it fit in a little better.");
+
+            loreFriendly = _loreFriendly.Value;
 
             string stages = RegigigasPlugin.instance.Config.Bind<string>(
                 "Regigigas", 

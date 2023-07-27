@@ -69,14 +69,30 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             if (this.areaIndicator) this.UpdateRadius();
 
-            if (base.isAuthority && base.fixedAge >= this.duration)
+            if (base.isAuthority)
             {
-                this.outer.SetNextState(new RevengeEnd()
+                if (base.fixedAge >= this.duration)
                 {
-                    storedDamage = 3f * this.storedDamage
-                });
-                return;
+                    this.NextState();
+                }
+
+                // only playable regi can cancel this early
+                if (this.GetTeam() == TeamIndex.Player)
+                {
+                    if (base.IsKeyDownAuthority() && base.fixedAge >= 0.5f)
+                    {
+                        this.NextState();
+                    }
+                }
             }
+        }
+
+        private void NextState()
+        {
+            this.outer.SetNextState(new RevengeEnd()
+            {
+                storedDamage = 3f * this.storedDamage
+            });
         }
 
         public override void OnExit()

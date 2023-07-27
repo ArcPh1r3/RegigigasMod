@@ -14,12 +14,15 @@ namespace RegigigasMod.Modules
     internal static class Projectiles
     {
         internal static GameObject earthPowerWave;
+        internal static GameObject rockProjectile;
 
         internal static void RegisterProjectiles()
         {
             CreateEarthPowerWave();
+            CreateRockProjectile();
 
             Modules.Prefabs.projectilePrefabs.Add(earthPowerWave);
+            Modules.Prefabs.projectilePrefabs.Add(rockProjectile);
         }
 
         private static void CreateEarthPowerWave()
@@ -48,6 +51,11 @@ namespace RegigigasMod.Modules
             waveGhost.transform.Find("Size").Find("FireFX").GetComponent<PostProcessVolume>().sharedProfile = magmaWormPP;
 
             earthPowerWave.GetComponent<ProjectileController>().ghostPrefab = waveGhost;
+        }
+
+        private static void CreateRockProjectile()
+        {
+            rockProjectile = CloneProjectilePrefab("GrandparentMiniBoulder", "AncientPowerRock");
         }
         /*
         private static void CreateBomb()

@@ -180,10 +180,60 @@ namespace RegigigasMod.Modules.Enemies
 
             newPrefab.AddComponent<Modules.Components.RegigigasController>();
             newPrefab.AddComponent<Modules.Components.RegigigasFlashController>();
+            newPrefab.AddComponent<Modules.Components.SlowStartController>();
             #endregion
-            
+
             #region Model
-            Material bodyMat = Modules.Assets.CreateMaterial("matRegigigas", 0f, Color.white);
+            Material bodyMat = null;
+            if (Modules.Config.loreFriendly)
+            {
+                GameObject golem = Resources.Load<GameObject>("Prefabs/CharacterBodies/GolemBody");
+                bodyMat = UnityEngine.Object.Instantiate(golem.GetComponentInChildren<CharacterModel>().baseRendererInfos[0].defaultMaterial);
+
+                // this is for the golem material to render correctly
+                PrintController print1 = newPrefab.GetComponent<ModelLocator>().modelTransform.gameObject.AddComponent<PrintController>();
+                PrintController print2 = golem.GetComponentInChildren<PrintController>();
+
+                // ew
+                print1.age = print2.age;
+                print1.animateFlowmapPower = print2.animateFlowmapPower;
+                print1.disableWhenFinished = print2.disableWhenFinished;
+                print1.maxFlowmapPower = print2.maxFlowmapPower;
+                print1.maxPrintBias = print2.maxPrintBias;
+                print1.maxPrintHeight = 12f;// print2.maxPrintHeight;
+                print1.printCurve = print2.printCurve;
+                print1.printTime = print2.printTime;
+                print1.startingFlowmapPower = print2.startingFlowmapPower;
+                print1.startingPrintBias = print2.startingPrintBias;
+                print1.startingPrintHeight = print2.startingPrintHeight;
+
+                // it gets worse
+                Transform chestTransform = newPrefab.GetComponentInChildren<ChildLocator>().FindChild("Chest");
+                GameObject eye = UnityEngine.GameObject.Instantiate(golem.GetComponentInChildren<ChildLocator>().FindChild("Eye").gameObject);
+                eye.transform.parent = chestTransform;
+                eye.transform.localPosition = new Vector3(-0.34f, 0.8f, 0.34f);
+                eye.transform.localRotation = Quaternion.identity;
+                eye.GetComponent<Light>().intensity = 200f;
+
+                GameObject eye2 = UnityEngine.GameObject.Instantiate(eye);
+                eye2.transform.parent = chestTransform;
+                eye2.transform.localPosition = new Vector3(0.34f, 0.8f, 0.34f);
+                eye2.transform.localRotation = Quaternion.identity;
+
+                GameObject eye3 = UnityEngine.GameObject.Instantiate(eye);
+                eye3.transform.parent = chestTransform;
+                eye3.transform.localPosition = new Vector3(-0.34f, 0.25f, 0.34f);
+                eye3.transform.localRotation = Quaternion.identity;
+
+                GameObject eye4 = UnityEngine.GameObject.Instantiate(eye);
+                eye4.transform.parent = chestTransform;
+                eye4.transform.localPosition = new Vector3(0.34f, 0.25f, 0.34f);
+                eye4.transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                bodyMat = Modules.Assets.CreateMaterial("matRegigigas", 0f, Color.white);
+            }
 
             bodyRendererIndex = 1;
 
@@ -591,7 +641,7 @@ namespace RegigigasMod.Modules.Enemies
                 stockToConsume = 1
             });
 
-            Modules.Skills.AddUtilitySkills(prefab, revengeSkillDef);
+            //Modules.Skills.AddUtilitySkills(prefab, revengeSkillDef);
             #endregion
 
             #region Special
@@ -601,10 +651,10 @@ namespace RegigigasMod.Modules.Enemies
                 skillNameToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_DESCRIPTION",
                 skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texGigaImpactIcon"),
-                activationState = new EntityStates.SerializableEntityStateType(typeof(GigaImpact)),
-                activationStateMachineName = "Body",
+                activationState = new EntityStates.SerializableEntityStateType(typeof(BounceStart)),
+                activationStateMachineName = "Weapon",
                 baseMaxStock = 1,
-                baseRechargeInterval = 24f,
+                baseRechargeInterval = 16f,
                 beginSkillCooldownOnSkillEnd = true,
                 canceledFromSprinting = false,
                 forceSprintDuringState = false,
@@ -619,7 +669,8 @@ namespace RegigigasMod.Modules.Enemies
                 stockToConsume = 1
             });
 
-            Modules.Skills.AddSpecialSkills(prefab, impactSkillDef);
+            Modules.Skills.AddSpecialSkills(prefab, revengeSkillDef);
+            Modules.Skills.AddUtilitySkills(prefab, impactSkillDef);
             #endregion
         }
 
@@ -643,6 +694,18 @@ namespace RegigigasMod.Modules.Enemies
                 defaultRenderers,
                 mainRenderer,
                 model);
+
+            if (Modules.Config.loreFriendly)
+            {
+                defaultSkin.meshReplacements = new SkinDef.MeshReplacement[]
+                {
+                    new SkinDef.MeshReplacement
+                    {
+                        mesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt"),
+                        renderer = mainRenderer
+                    }
+                };
+            }
 
             skins.Add(defaultSkin);
             #endregion

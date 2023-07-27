@@ -20,8 +20,6 @@ namespace RegigigasMod.SkillStates.Regigigas
             if (this.modelAnimator) this.modelAnimator.SetFloat(AnimationParameters.aimWeight, 0f);
 
             base.PlayAnimation("Body", "Inactive");
-
-            base.characterBody.gameObject.AddComponent<Modules.Components.SlowStartController>();
         }
 
         public override void FixedUpdate()

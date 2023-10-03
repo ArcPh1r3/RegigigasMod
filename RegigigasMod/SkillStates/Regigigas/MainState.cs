@@ -6,16 +6,10 @@ namespace RegigigasMod.SkillStates.Regigigas
     {
         public override void ProcessJump()
         {
-            if (base.characterMotor.jumpCount > base.characterBody.maxJumpCount)
-            {
-                return;
-            }
-
-            this.characterMotor.jumpCount++;
-
-            if (this.jumpInputReceived)
+            if (this.jumpInputReceived && this.characterMotor.jumpCount < this.characterBody.maxJumpCount)
             {
                 this.outer.SetNextState(new JumpState());
+                this.characterMotor.jumpCount++;
             }
         }
     }

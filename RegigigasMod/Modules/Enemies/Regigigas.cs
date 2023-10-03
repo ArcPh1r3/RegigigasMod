@@ -179,10 +179,23 @@ namespace RegigigasMod.Modules.Enemies
             {
                 DeathRewards deathRewards = newPrefab.AddComponent<DeathRewards>();
                 deathRewards.logUnlockableDef = Resources.Load<UnlockableDef>("UnlockableDefs/Logs.Parent.0");
-                deathRewards.bossPickup = new SerializablePickupIndex
+
+                if (Modules.Config.loreFriendly)
                 {
-                    pickupName = "ItemIndex.Pearl"
-                };
+                    // stone guy drops knurl now sorry
+                    deathRewards.bossPickup = new SerializablePickupIndex
+                    {
+                        pickupName = "ItemIndex.Knurl"
+                    };
+                }
+                else
+                {
+                    deathRewards.bossPickup = new SerializablePickupIndex
+                    {
+                        pickupName = "ItemIndex.Pearl"
+                    };
+                }
+
                 newPrefab.AddComponent<Components.RegigigasShinyComponent>();
             }
 
@@ -256,6 +269,12 @@ namespace RegigigasMod.Modules.Enemies
                     childName = "Model",
                     material = bodyMat
                 }}, bodyRendererIndex);
+
+            // this is so incredibly fucking jank but it's for the logbook fix
+            if (Modules.Config.loreFriendly)
+            {
+                ((SkinnedMeshRenderer)newPrefab.GetComponentInChildren<CharacterModel>().baseRendererInfos[1].renderer).sharedMesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt");
+            }
             #endregion
 
             CreateHitboxes(newPrefab);

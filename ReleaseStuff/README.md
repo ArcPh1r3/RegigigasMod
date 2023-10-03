@@ -52,12 +52,14 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 ## Changelog
 
 `1.4.2`
-- Added a new alt skin for the lore friendly version
+- Added a new alt skin for the lore friendly version, as well as a new character icon
+- Added some missing hit feedback to Crush Grip
 - Greatly reduced jump windup frames after Slow Start is deactivated
 - Reduced size of playable version in character select and rewrote some flavor text
 - Fixed oversight causing the AI to use Giga Impact instead of Revenge, oops!
 - Fixed Hopoo Feathers doing nothing
 - Fixed non-host players getting stuck when grabbed
+- Fixed lore friendly logbook model
 
 `1.4.1`
  - fixed conflict with Deputy relating to buffs being applied

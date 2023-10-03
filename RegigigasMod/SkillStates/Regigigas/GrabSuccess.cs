@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using RegigigasMod.Modules.Components;
 using System.Linq;
+using UnityEngine.AddressableAssets;
 
 namespace RegigigasMod.SkillStates.Regigigas
 {
@@ -22,6 +23,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         private float grabThrowTime;
         private Transform grabTransform;
         private float duration;
+        private GameObject crushEffectPrefab;
 
         public override void OnEnter()
         {
@@ -31,6 +33,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.grabSqueezeTime = 0.3f * this.duration;
             this.hasSqueezed = false;
             this.grabTransform = base.FindModelChild(GrabSuccess.grabTransformString);
+
+            this.crushEffectPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Loader/OmniImpactVFXLoader.prefab").WaitForCompletion();
 
             base.PlayAnimation("FullBody, Override", "GrabSuccess", "Grab.playbackRate", this.duration);
         }
@@ -70,20 +74,29 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 DamageInfo info = new DamageInfo
                 {
-                    attacker = base.gameObject,
+                    attacker = this.gameObject,
                     crit = false,
-                    damage = GrabSuccess.damagePercentage * target.healthComponent.fullCombinedHealth,
-                    damageColorIndex = DamageColorIndex.Default,
+                    damage = GrabSuccess.damagePercentage * this.target.healthComponent.fullCombinedHealth,
+                    damageColorIndex = DamageColorIndex.WeakPoint,
                     damageType = DamageType.BypassArmor,
                     force = Vector3.zero,
-                    inflictor = base.gameObject,
-                    position = base.transform.position,
+                    inflictor = this.gameObject,
+                    position = this.target.transform.position,
                     procChainMask = default(ProcChainMask),
                     procCoefficient = 1f,
                 };
 
                 target.healthComponent.TakeDamage(info);
+
+                EffectManager.SpawnEffect(this.crushEffectPrefab, new EffectData
+                {
+                    origin = this.target.transform.position,
+                    scale = 1f
+                }, true);
             }
+
+            // why did this never have a sound?
+            if (this.target) Util.PlaySound("RegigigasPunchImpact", this.gameObject);
         }
 
         private void Throw()

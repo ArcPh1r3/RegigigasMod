@@ -46,7 +46,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 base.StartAimMode(0.5f, false);
             }
 
-            if (NetworkServer.active && base.fixedAge >= this.grabThrowTime)
+            if (base.fixedAge >= this.grabThrowTime)
             {
                 this.Throw();
             }
@@ -90,7 +90,8 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             if (this.grabController)
             {
-                this.grabController.Throw(base.GetAimRay().direction * GrabSuccess.throwForce);
+                if (NetworkServer.active) this.grabController.Throw(base.GetAimRay().direction * GrabSuccess.throwForce);
+                Destroy(this.grabController);
                 this.grabController = null;
                 this.target = null;
             }
@@ -99,6 +100,15 @@ namespace RegigigasMod.SkillStates.Regigigas
         public override void OnExit()
         {
             base.OnExit();
+
+            // release if you kill during the grab
+            if (this.grabController)
+            {
+                if (NetworkServer.active) this.grabController.Release();
+                Destroy(this.grabController);
+                this.grabController = null;
+                this.target = null;
+            }
         }
 
         public override InterruptPriority GetMinimumInterruptPriority()

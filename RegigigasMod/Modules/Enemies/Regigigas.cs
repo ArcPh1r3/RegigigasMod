@@ -101,6 +101,14 @@ namespace RegigigasMod.Modules.Enemies
             string iconName = "Regigigas";
             if (isPlayer) iconName = "RegigigasPlayer";
 
+            Color charColor = Color.yellow;
+            if (Modules.Config.loreFriendly)
+            {
+                charColor = Color.grey;
+                iconName = "StoneJuggernautEnemy";
+                if (isPlayer) iconName = "StoneJuggernaut";
+            }
+
             #region Body
             GameObject newPrefab = Modules.Prefabs.CreatePrefab(name, "mdlRegigigas", new BodyInfo
             {
@@ -108,7 +116,7 @@ namespace RegigigasMod.Modules.Enemies
                 armorGrowth = 0f,
                 bodyName = name,
                 bodyNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME",
-                bodyColor = Color.yellow,
+                bodyColor = charColor,
                 characterPortrait = Modules.Assets.LoadCharacterIcon(iconName),
                 crosshair = Modules.Assets.LoadCrosshair("SimpleDot"),
                 damage = 40f,
@@ -449,7 +457,7 @@ namespace RegigigasMod.Modules.Enemies
             revengeDriver.maxTargetHealthFraction = Mathf.Infinity;
             revengeDriver.minUserHealthFraction = Mathf.NegativeInfinity;
             revengeDriver.maxUserHealthFraction = 0.5f;
-            revengeDriver.skillSlot = SkillSlot.Utility;
+            revengeDriver.skillSlot = SkillSlot.Special;
 
             AISkillDriver grabDriver = newMaster.AddComponent<AISkillDriver>();
             grabDriver.customName = "Grab";
@@ -720,6 +728,23 @@ namespace RegigigasMod.Modules.Enemies
                 mainRenderer,
                 model,
                 masteryUnlockableDef);
+
+            if (Modules.Config.loreFriendly)
+            {
+                masterySkin.meshReplacements = new SkinDef.MeshReplacement[]
+                {
+                    new SkinDef.MeshReplacement
+                    {
+                        mesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt"),
+                        renderer = mainRenderer
+                    }
+                };
+
+                masterySkin.rendererInfos = SkinRendererInfos(defaultRenderers, new Material[]
+                {
+                    Addressables.LoadAssetAsync<Material>("RoR2/Base/Titan/matTitanGold.mat").WaitForCompletion()
+                });
+            }
 
             skins.Add(masterySkin);
             #endregion

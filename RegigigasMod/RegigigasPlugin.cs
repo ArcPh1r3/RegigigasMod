@@ -30,7 +30,7 @@ namespace RegigigasMod
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.4.0";
+        public const string MODVERSION = "1.4.2";
 
         public const string developerPrefix = "ROB";
 
@@ -43,7 +43,6 @@ namespace RegigigasMod
             Log.Init(Logger);
             Modules.Config.ReadConfig();
             Modules.Assets.PopulateAssets();
-            //Modules.Config.ReadConfig();
             Modules.CameraParams.InitializeParams();
             Modules.States.RegisterStates();
             Modules.Buffs.RegisterBuffs();

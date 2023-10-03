@@ -112,7 +112,6 @@ namespace RegigigasMod.Modules.Components
             this.pivotTransform = null;
             this.modelTransform = null;
 
-            Destroy(this);
             //Debug.LogWarning("destroying grabcomponent");
         }
     }

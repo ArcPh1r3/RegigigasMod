@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.Networking;
 using RoR2.Projectile;
+using UnityEngine.AddressableAssets;
 
 namespace RegigigasMod.SkillStates.Regigigas
 {
@@ -89,7 +90,8 @@ namespace RegigigasMod.SkillStates.Regigigas
                 effectData.origin = base.characterBody.footPosition;
                 effectData.scale = radius;
 
-                EffectManager.SpawnEffect(RoR2.LegacyResourcesAPI.Load<GameObject>("Prefabs/Effects/OmniEffect/OmniExplosionVFX"), effectData, true);
+                //RoR2.LegacyResourcesAPI.Load<GameObject>("Prefabs/Effects/OmniEffect/OmniExplosionVFX")
+                EffectManager.SpawnEffect(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/ExplosivePotDestructible/ExplosivePotExplosion.prefab").WaitForCompletion(), effectData, true);
 
                 new BlastAttack
                 {

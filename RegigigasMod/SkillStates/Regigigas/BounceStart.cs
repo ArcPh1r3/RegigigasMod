@@ -22,8 +22,17 @@ namespace RegigigasMod.SkillStates.Regigigas
                 this.animator.CrossFadeInFixedTime("AnimatedJump", 0.25f);
                 this.animator.Update(0f);
 
-                this.duration = this.animator.GetNextAnimatorStateInfo(layerIndex).length;
+                if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.duration = this.animator.GetNextAnimatorStateInfo(layerIndex).length * 0.5f;
+                else this.duration = this.animator.GetNextAnimatorStateInfo(layerIndex).length;
             }
+
+            if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.animator.speed = 2f;
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.animator.speed = 1f;
         }
 
         public override void FixedUpdate()

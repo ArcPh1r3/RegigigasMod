@@ -10,10 +10,16 @@ namespace RegigigasMod.Modules
             string prefix = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_";
 
             string desc = "Regigigas.<color=#CCD3E0>" + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > Use Drain Punch to survive until Slow Start is activated." + Environment.NewLine + Environment.NewLine;
+
+            if (Modules.Config.loreFriendly)
+            {
+                desc = "The Stone Juggernaut is a hulking beast that requires time and support to reach its full potential. If allowed to awaken, it dominates the battlefield with ease.<color=#CCD3E0>" + Environment.NewLine + Environment.NewLine; ;
+            }
+
+            desc = desc + "< ! > Use Drain Punch to survive until Slow Start is mitigated. Having allies protect you later into a run is essential!" + Environment.NewLine + Environment.NewLine;
             desc = desc + "< ! > Ancient Power's health penalty can boost the damage of Revenge." + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > Crush Grip is terrible." + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > Reactivate Revenge to cancel it early." + Environment.NewLine + Environment.NewLine;
+            desc = desc + "< ! > Crush Grip is terrible. Don't use it, please." + Environment.NewLine + Environment.NewLine;
+            desc = desc + "< ! > Reactivate Revenge to cancel it early. Knowing how much you can take is key to surviving with this." + Environment.NewLine + Environment.NewLine;
 
             string outro = "..and so it left, leaving irreparable damage in its wake.";
             string outroFailure = "..and so it vanished, returning to its eternal slumber.";
@@ -31,12 +37,20 @@ namespace RegigigasMod.Modules
 
             #region Skins
             LanguageAPI.Add(prefix + "DEFAULT_SKIN_NAME", "Default");
-            LanguageAPI.Add(prefix + "MONSOON_SKIN_NAME", "Shiny");
+            if (Modules.Config.loreFriendly) LanguageAPI.Add(prefix + "MONSOON_SKIN_NAME", "Gold");
+            else LanguageAPI.Add(prefix + "MONSOON_SKIN_NAME", "Shiny");
             #endregion
 
             #region Passive
             LanguageAPI.Add(prefix + "PASSIVE_NAME", "Slow Start");
-            LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore Regigigas to <style=cIsDamage>full strength</style>.");
+            if (Modules.Config.loreFriendly)
+            {
+                LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore the Stone Juggernaut to <style=cIsDamage>full strength</style>.");
+            }
+            else
+            {
+                LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore Regigigas to <style=cIsDamage>full strength</style>.");
+            }
             #endregion
 
             #region Primary
@@ -69,9 +83,18 @@ namespace RegigigasMod.Modules
             #endregion
 
             #region Achievements
-            LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_ACHIEVEMENT_NAME", "Regigigas: Mastery");
-            LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_ACHIEVEMENT_DESC", "As Regigigas, beat the game or obliterate on Monsoon.");
-            LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_UNLOCKABLE_NAME", "Regigigas: Mastery");
+            if (Modules.Config.loreFriendly)
+            {
+                LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_ACHIEVEMENT_NAME", "Stone Juggernaut: Mastery");
+                LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_ACHIEVEMENT_DESC", "As Stone Juggernaut, beat the game or obliterate on Monsoon.");
+                LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_UNLOCKABLE_NAME", "Stone Juggernaut: Mastery");
+            }
+            else
+            {
+                LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_ACHIEVEMENT_NAME", "Regigigas: Mastery");
+                LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_ACHIEVEMENT_DESC", "As Regigigas, beat the game or obliterate on Monsoon.");
+                LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_UNLOCKABLE_NAME", "Regigigas: Mastery");
+            }
             #endregion
         }
     }

@@ -8,11 +8,12 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             if (base.characterMotor.jumpCount > base.characterBody.maxJumpCount)
             {
-                base.ProcessJump();
                 return;
             }
 
-            if (this.jumpInputReceived && base.characterMotor.isGrounded)
+            this.characterMotor.jumpCount++;
+
+            if (this.jumpInputReceived)
             {
                 this.outer.SetNextState(new JumpState());
             }

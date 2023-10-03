@@ -47,11 +47,23 @@ Freeze up for 8 seconds, gaining 500 armor. At the end, release a massive blast 
 YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-External-Move-Icons-530204137)
 
 ## Known Issues
-- Crush Grip may have issues when used by players online
+- None as of the latest update
 
 ## Changelog
 
+`1.4.2`
+- Added a new alt skin for the lore friendly version
+- Greatly reduced jump windup frames after Slow Start is deactivated
+- Reduced size of playable version in character select and rewrote some flavor text
+- Fixed oversight causing the AI to use Giga Impact instead of Revenge, oops!
+- Fixed Hopoo Feathers doing nothing
+- Fixed non-host players getting stuck when grabbed
+
+`1.4.1`
+ - fixed conflict with Deputy relating to buffs being applied
+
 `1.4.0`
+Thanks to rob for visiting
 - Added a new `Lore Friendly` config option, gives the boss an alternate name and skin to help it fit into the world a little better. This is off by default
 - Nerfed Earth Power to only fire 5 waves; the original implementation didn't account for anything beyond a single teleporter boss, which was a mistake (old version can be restored via config)
 - Players can now cancel Revenge early by reactivating the skill

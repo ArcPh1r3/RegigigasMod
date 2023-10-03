@@ -111,6 +111,8 @@ namespace RegigigasMod.Modules
 
         internal static Texture LoadCharacterIcon(string characterName)
         {
+            // whoops, needed a fallback
+            if (mainAssetBundle.LoadAsset<Texture>("tex" + characterName + "Icon") == null) return secondaryAssetBundle.LoadAsset<Texture>("tex" + characterName + "Icon");
             return mainAssetBundle.LoadAsset<Texture>("tex" + characterName + "Icon");
         }
 

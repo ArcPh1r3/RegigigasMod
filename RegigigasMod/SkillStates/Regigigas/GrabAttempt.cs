@@ -49,9 +49,10 @@ namespace RegigigasMod.SkillStates.Regigigas
                         target = this.grabTarget,
                         grabController = this.grabController
                     });
+
                     return;
                 }
-                else
+                else 
                 {
                     this.outer.SetNextState(new GrabFail());
                     return;

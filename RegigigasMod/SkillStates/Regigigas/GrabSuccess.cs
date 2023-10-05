@@ -24,10 +24,11 @@ namespace RegigigasMod.SkillStates.Regigigas
         private Transform grabTransform;
         private float duration;
         private GameObject crushEffectPrefab;
-
+        
         public override void OnEnter()
         {
             base.OnEnter();
+
             this.duration = GrabSuccess.baseDuration / this.attackSpeedStat;
             this.grabThrowTime = 0.7f * this.duration;
             this.grabSqueezeTime = 0.3f * this.duration;
@@ -55,7 +56,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 this.Throw();
             }
 
-            if (base.isAuthority && base.fixedAge >= this.duration)
+            if (base.fixedAge >= this.duration)
             {
                 this.outer.SetNextStateToMain();
                 return;
@@ -70,7 +71,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             base.flashController.Flash(false);
 
-            if (base.isAuthority && this.target)
+            if (NetworkServer.active && this.target)
             {
                 DamageInfo info = new DamageInfo
                 {
@@ -103,7 +104,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             if (this.grabController)
             {
-                if (NetworkServer.active) this.grabController.Throw(base.GetAimRay().direction * GrabSuccess.throwForce);
+                this.grabController.Throw(base.GetAimRay().direction * GrabSuccess.throwForce);
                 Destroy(this.grabController);
                 this.grabController = null;
                 this.target = null;
@@ -119,7 +120,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             // release if you kill during the grab
             if (this.grabController)
             {
-                if (NetworkServer.active) this.grabController.Release();
+                this.grabController.Release();
                 Destroy(this.grabController);
                 this.grabController = null;
                 this.target = null;
@@ -129,6 +130,18 @@ namespace RegigigasMod.SkillStates.Regigigas
         public override InterruptPriority GetMinimumInterruptPriority()
         {
             return InterruptPriority.Frozen;
+        }
+
+        public override void OnSerialize(NetworkWriter writer) {
+
+            writer.Write(HurtBoxReference.FromHurtBox(this.target));
+            writer.Write(grabController.gameObject);
+        }
+
+        public override void OnDeserialize(NetworkReader reader) {
+
+            this.target = reader.ReadHurtBoxReference().ResolveHurtBox();
+            grabController = reader.ReadGameObject().GetComponent<RegigigasGrabController>();
         }
     }
 }

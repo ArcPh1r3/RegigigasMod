@@ -3489,7 +3489,7 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
         private static void CharacterBody_AddTimedBuff_BuffDef_float(On.RoR2.CharacterBody.orig_AddTimedBuff_BuffDef_float orig, CharacterBody self, BuffDef buffDef, float duration) {
 
             if(CheckRegigigasImmune(self, (buffDef != null) ? buffDef.buffIndex : BuffIndex.None)) {
-                buffDef = null;
+                return;
             }
 
             orig(self, buffDef, duration);

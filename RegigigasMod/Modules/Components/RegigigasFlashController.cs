@@ -7,10 +7,11 @@ namespace RegigigasMod.Modules.Components
     {
         private float maxEmission = 5f;
         private float currentEmission;
+        private float lastEmission = -1;
         public float emissionSmoothSpeed = 25f;
-        private CharacterBody body;
-        private CharacterModel model;
-        private Material bodyMat;
+        private ChildLocator childLocator;
+        private Renderer bodyRend;
+        private MaterialPropertyBlock bodyBlock;
 
         private enum FlashState
         {
@@ -23,16 +24,17 @@ namespace RegigigasMod.Modules.Components
 
         private void Awake()
         {
-            this.body = this.GetComponent<CharacterBody>();
-            this.model = this.GetComponentInChildren<CharacterModel>();// baseRendererInfos[0].defaultMaterial;
+            this.childLocator = GetComponent<ModelLocator>().modelTransform.GetComponent<ChildLocator>();// baseRendererInfos[0].defaultMaterial;
             this.currentState = FlashState.None;
 
-            Invoke("GetMaterial", 0.2f);
+            Invoke("GetRenderer", 0.2f);
         }
 
-        private void GetMaterial()
-        {
-            this.bodyMat = this.model.GetComponent<CharacterModel>().baseRendererInfos[1].defaultMaterial;
+        private void GetRenderer() {
+
+            this.bodyRend = this.childLocator.FindChildComponent<Renderer>("Model");
+            this.bodyBlock = new MaterialPropertyBlock();
+            this.bodyRend.GetPropertyBlock(bodyBlock);
         }
 
         private void FixedUpdate()
@@ -62,10 +64,12 @@ namespace RegigigasMod.Modules.Components
                     break;
             }
 
-            if (this.bodyMat)
-            {
-                this.bodyMat.SetFloat("_EmPower", this.currentEmission);
+            if (this.bodyRend && lastEmission != currentEmission) {
+                
+                this.bodyBlock.SetFloat("_EmPower", this.currentEmission);
+                this.bodyRend.SetPropertyBlock(bodyBlock);
             }
+            this.lastEmission = this.currentEmission;
         }
 
         public void Flash(bool playSound = true)

@@ -52,6 +52,9 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 ## Changelog
 
 `1.4.2`
+Thanks again to rob himself
+- Fixed non-host players getting stuck when grabbed
+- Fixed grab not working for non-host players
 - Added a new alt skin for the lore friendly version, as well as a new character icon
 - Added some missing hit feedback to Crush Grip
 - Added tons of new SFX to everything
@@ -65,8 +68,8 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 - Reduced size of playable version in character select and rewrote some flavor text
 - Fixed oversight causing the AI to use Giga Impact instead of Revenge, oops!
 - Fixed Hopoo Feathers doing nothing
-- Fixed non-host players getting stuck when grabbed
 - Fixed lore friendly logbook model
+- Fixed networking on emission glow during certain moves
 
 `1.4.1`
  - fixed conflict with Deputy relating to buffs being applied

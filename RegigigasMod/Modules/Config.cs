@@ -9,12 +9,14 @@ namespace RegigigasMod.Modules
         internal static ConfigEntry<float> _shinySpawnRate;
         internal static ConfigEntry<bool> _nerfedEarthPower;
         internal static ConfigEntry<bool> _loreFriendly;
+        internal static ConfigEntry<bool> _cssActualSize;
 
         public static List<StageSpawnInfo> StageList = new List<StageSpawnInfo>();
 
         internal static float shinySpawnRate;
         internal static bool nerfedEarthPower;
         internal static bool loreFriendly;
+        internal static bool cssActualSize;
 
         internal static void ReadConfig()
         {
@@ -41,6 +43,15 @@ namespace RegigigasMod.Modules
                                                "Gives Regigigas an alternate name and model to make it fit in a little better.");
 
             loreFriendly = _loreFriendly.Value;
+
+            _cssActualSize =
+                    RegigigasPlugin.instance.Config.Bind<bool>("Regigigas",
+                                   "CSS Actual Size",
+                                   false,
+                                   "Makes Regigigas use his proper size in the Character Select Screen.");
+
+            cssActualSize = _cssActualSize.Value;
+
 
             string stages = RegigigasPlugin.instance.Config.Bind<string>(
                 "Regigigas", 

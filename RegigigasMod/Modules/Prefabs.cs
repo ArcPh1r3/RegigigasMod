@@ -48,7 +48,9 @@ namespace RegigigasMod.Modules
             Transform modelBaseTransform = SetupModel(newPrefab, model.transform);
 
             // shrink this guy a lil so you can actually see him
-            model.transform.localScale *= 0.25f;
+            //model.transform.localScale *= 0.25f;
+            // actually we config that
+            if (!Modules.Config.cssActualSize) model.transform.localScale *= 0.25f;
 
             model.AddComponent<CharacterModel>().baseRendererInfos = prefab.GetComponentInChildren<CharacterModel>().baseRendererInfos;
 

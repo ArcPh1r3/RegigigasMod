@@ -32,6 +32,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.projectilePrefab = Modules.Projectiles.rockProjectile;
 
             base.PlayAnimation("Gesture, Override", "FireAncientPower", "AncientPower.playbackRate", FireAncientPower.baseDuration);
+
+            Util.PlaySound("sfx_regigigas_rocks_release", this.gameObject);
         }
 
         public override void FixedUpdate()
@@ -39,6 +41,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             base.FixedUpdate();
             base.StartAimMode(0.5f);
             this.throwStopwatch -= Time.fixedDeltaTime;
+
+            this.regigigasController.rockCount = this.rockCount;
 
             if (this.throwStopwatch <= 0f)
             {
@@ -58,6 +62,8 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             base.cameraTargetParams.cameraParams = Modules.CameraParams.defaultCameraParams;
             base.characterBody.hideCrosshair = true;
+
+            this.regigigasController.rockCount = 0;
         }
 
         private void ThrowRock()

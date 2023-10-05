@@ -12,7 +12,7 @@ namespace RegigigasMod.Modules {
         internal static void InitializeParams()
         {
             defaultCameraParams = NewCameraParams("ccpRegigigas", 70f, 1.37f, new Vector3(0f, 10f, -30f));
-            aimCameraParams = NewCameraParams("ccpRegigigasAim", 70f, 1.37f, new Vector3(3f, 10f, -20f));
+            aimCameraParams = NewCameraParams("ccpRegigigasAim", 70f, 1.37f, new Vector3(0f, 12f, -28f));
             chargeCameraParams = NewCameraParams("ccpRegigigasCharge", 70f, 1.37f, new Vector3(0f, 15f, -50f));
         }
 

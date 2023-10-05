@@ -68,9 +68,9 @@ namespace RegigigasMod.Modules.Components
             }
         }
 
-        public void Flash()
+        public void Flash(bool playSound = true)
         {
-            Util.PlaySound("RegigigasFlash", this.gameObject);
+            if (playSound) Util.PlaySound("RegigigasFlash", this.gameObject);
             this.currentState = FlashState.Up;
         }
     }

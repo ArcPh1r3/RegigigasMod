@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 using UnityEngine.Rendering.PostProcessing;
 
@@ -37,6 +38,7 @@ namespace RegigigasMod.Modules
             if (!waveGhost.GetComponent<NetworkIdentity>()) waveGhost.AddComponent<NetworkIdentity>();
 
             // gather materials and stuff
+            // addressables would be way better but i can't be bothered at this point. this works.
             PostProcessProfile magmaWormPP = Resources.Load<GameObject>("Prefabs/CharacterBodies/MagmaWormBody").GetComponentInChildren<PostProcessVolume>().sharedProfile;
             Material matMagmaOpaqueLarge = Resources.Load<GameObject>("Prefabs/ProjectileGhosts/MagmaOrbGhost").transform.Find("Particles").Find("SpitCore").GetComponent<ParticleSystemRenderer>().material;
             Material matMagmaOpaqueDirectional = Resources.Load<GameObject>("Prefabs/Effects/MagmaWormBurrow").transform.Find("ParticleLoop").Find("Magma, Directional").GetComponent<ParticleSystemRenderer>().material;
@@ -56,7 +58,13 @@ namespace RegigigasMod.Modules
         private static void CreateRockProjectile()
         {
             rockProjectile = CloneProjectilePrefab("GrandparentMiniBoulder", "AncientPowerRock");
-        }
+
+            // this turned out looking awful, but the big rock is cool :(
+            //rockProjectile.GetComponent<ProjectileController>().ghostPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/GrandparentBoulderGhost.prefab").WaitForCompletion();
+
+            rockProjectile.GetComponent<ProjectileImpactExplosion>().bonusBlastForce = Vector3.zero;
+            rockProjectile.GetComponent<ProjectileImpactExplosion>().impactEffect = Assets.rockHitEffect;
+    }
         /*
         private static void CreateBomb()
         {

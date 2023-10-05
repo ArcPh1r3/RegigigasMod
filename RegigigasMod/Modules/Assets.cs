@@ -6,6 +6,7 @@ using RoR2;
 using System.IO;
 using RoR2.Audio;
 using System.Collections.Generic;
+using UnityEngine.AddressableAssets;
 
 namespace RegigigasMod.Modules
 {
@@ -18,6 +19,7 @@ namespace RegigigasMod.Modules
         internal static Material commandoMat;
 
         internal static GameObject drainPunchChargeEffect;
+        internal static GameObject rockHitEffect;
 
         internal static NetworkSoundEventDef punchSoundDef;
 
@@ -53,6 +55,9 @@ namespace RegigigasMod.Modules
             drainPunchChargeEffect = LoadEffect("DrainPunchChargeEffect", true);
 
             punchSoundDef = CreateNetworkSoundEventDef("RegigigasPunchImpact");
+
+            rockHitEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Bell/OmniExplosionVFXBellDeath.prefab").WaitForCompletion().InstantiateClone("RegigigasRockImpact", true);
+            AddNewEffectDef(rockHitEffect, "sfx_regigigas_rock_hit");
         }
 
         internal static NetworkSoundEventDef CreateNetworkSoundEventDef(string eventName)

@@ -7,6 +7,7 @@ namespace RegigigasMod.SkillStates.Regigigas
     public class PunchCombo : BaseMeleeAttack
     {
         internal static float damageCoefficientOverride = 4.2f;
+        private bool sprintBuffered;
 
         public override void OnEnter()
         {
@@ -61,11 +62,14 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             base.FixedUpdate();
             base.characterBody.isSprinting = false;
+
+            if (this.inputBank && this.inputBank.sprint.down) this.sprintBuffered = true;
         }
 
         public override void OnExit()
         {
             base.OnExit();
+            if ((this.inputBank && this.inputBank.sprint.down) || this.sprintBuffered) this.characterBody.isSprinting = true;
         }
     }
 }

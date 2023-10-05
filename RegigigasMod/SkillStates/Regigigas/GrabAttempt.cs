@@ -84,12 +84,15 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 if (target.healthComponent && target.healthComponent.body)
                 {
-                    if (BodyMeetsGrabConditions(target.healthComponent.body))
+                    if (this.BodyMeetsGrabConditions(target.healthComponent.body))
                     {
                         this.grabController = target.healthComponent.body.gameObject.AddComponent<RegigigasGrabController>();
                         this.grabController.pivotTransform = this.grabTransform;
                         this.grabController.grabberHealthComponent = base.healthComponent;
                         this.grabTarget = target;
+
+                        Util.PlaySound("sfx_regigigas_grab", this.gameObject);
+
                         return;
                     }
                 }

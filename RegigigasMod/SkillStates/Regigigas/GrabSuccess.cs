@@ -68,7 +68,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             this.hasSqueezed = true;
 
-            base.flashController.Flash();
+            base.flashController.Flash(false);
 
             if (base.isAuthority && this.target)
             {
@@ -96,7 +96,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             }
 
             // why did this never have a sound?
-            if (this.target) Util.PlaySound("RegigigasPunchImpact", this.gameObject);
+            if (this.target) Util.PlaySound("sfx_regigigas_crush", this.gameObject);
         }
 
         private void Throw()
@@ -107,6 +107,8 @@ namespace RegigigasMod.SkillStates.Regigigas
                 Destroy(this.grabController);
                 this.grabController = null;
                 this.target = null;
+
+                Util.PlaySound("sfx_regigigas_throw", this.gameObject);
             }
         }
 

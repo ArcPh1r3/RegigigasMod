@@ -6,11 +6,13 @@ namespace RegigigasMod.SkillStates.Regigigas
 {
     public class BaseRegiSkillState : BaseSkillState
     {
+        protected RegigigasController regigigasController;
         protected RegigigasFlashController flashController;
         protected Animator anim;
 
         public override void OnEnter()
         {
+            this.regigigasController = this.GetComponent<RegigigasController>();
             this.flashController = base.GetComponent<RegigigasFlashController>();
             this.anim = base.GetModelAnimator();
             if (this.anim) this.anim.SetBool("isSprinting", false);

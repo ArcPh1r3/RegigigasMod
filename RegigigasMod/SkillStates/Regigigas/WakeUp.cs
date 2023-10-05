@@ -46,7 +46,11 @@ namespace RegigigasMod.SkillStates.Regigigas
             if (base.fixedAge >= this.cryTime && !this.hasCried)
             {
                 this.hasCried = true;
-                Util.PlaySound("RegigigasCry", base.gameObject);
+
+                string soundString = "RegigigasCry";
+                if (Modules.Config.loreFriendly) soundString = "sfx_regigigas_altcry"; // it's the regirock cry lmao
+
+                Util.PlaySound(soundString, base.gameObject);
             }
             
             if (base.fixedAge >= WakeUp.duration)

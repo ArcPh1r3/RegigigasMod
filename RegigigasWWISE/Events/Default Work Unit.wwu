@@ -91,6 +91,149 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="sfx_regigigas_rock_hit" ID="{76CBDB23-F969-423A-AF39-C6AB3722D300}">
+					<ChildrenList>
+						<Action Name="" ID="{803088D1-5873-4B62-A502-522C668E34C9}" ShortID="1055346334">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_rock_hit" ID="{1D712C9E-1996-4771-AABB-0DA8B29BE59F}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_altcry" ID="{25C97E5A-E064-4D99-A156-7396FEA753FF}">
+					<ChildrenList>
+						<Action Name="" ID="{61A4C6A0-E8F9-4FFD-90A1-6262D3C74E37}" ShortID="83297851">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_altcry" ID="{869FCC88-4305-4137-9FC6-0C28E5028047}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_burst" ID="{86054AD8-275F-4075-99A5-3DDC58D259CE}">
+					<ChildrenList>
+						<Action Name="" ID="{D8D6F194-CB5A-426D-8E28-861CA0F29A40}" ShortID="256605555">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_burst" ID="{16A80174-31D8-4C05-979F-2AB3135838E0}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_burst_pre" ID="{7A820B75-7E7E-4565-B08C-DE9698552365}">
+					<ChildrenList>
+						<Action Name="" ID="{A1C253A3-64E8-4396-BA60-CA33582BF78F}" ShortID="376167290">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_burst_pre" ID="{DA555D2E-A750-4BDC-9608-EB6E9475502B}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_death" ID="{FFE74464-66F5-4DF9-8316-212032C1E400}">
+					<ChildrenList>
+						<Action Name="" ID="{D946108D-A8B5-4F41-A931-68A50F894FCD}" ShortID="467520138">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_death" ID="{241D4EA7-7714-40A3-9E59-D47EF7B815E3}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_release" ID="{79351C59-1942-4D8B-85B9-FD42B3C8DE97}">
+					<ChildrenList>
+						<Action Name="" ID="{D64E5D59-9977-443A-9AB2-BE3D7DF36A41}" ShortID="783791103">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_release" ID="{C5CCA923-6B09-4843-8EAF-C315451B4078}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_rocks_loop" ID="{815D5FC5-2484-43AD-86A3-13A3FC6BD311}">
+					<ChildrenList>
+						<Action Name="" ID="{7F44834A-0219-48DC-8889-E05887AD79FC}" ShortID="774678163">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_rocks_loop" ID="{12DFD815-FF4D-4202-8BEC-7FECFE712A49}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_rocks_release" ID="{E042B442-D964-406C-BA0C-01D9AAF4E1DE}">
+					<ChildrenList>
+						<Action Name="" ID="{25590BA0-B1A2-49B7-A07D-EFC34B7A4361}" ShortID="782167235">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_rocks_release" ID="{27F48A79-B837-4D37-90C0-D10512975446}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_leap" ID="{D6F6F6E3-4D5C-4A20-A3A7-A6C7B85A278E}">
+					<ChildrenList>
+						<Action Name="" ID="{A00446DA-65F1-4FB0-A522-4DA854D46B26}" ShortID="500747551">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_leap" ID="{069BC619-DEE3-4C33-BAB9-EACD332C0B0D}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_throw" ID="{198C8734-8560-4838-B979-2D58141581D0}">
+					<ChildrenList>
+						<Action Name="" ID="{2C96DDD4-6C93-4BF5-B787-9375BB34A4FD}" ShortID="319413594">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_throw" ID="{0237F7F8-24A5-4672-AF58-A0EC043BE21F}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_rock_spawn" ID="{C03F4D2F-6756-4F66-B0B1-1B36B456CBC9}">
+					<ChildrenList>
+						<Action Name="" ID="{DC0B5772-C5CF-4CC3-9913-FA58B25AEB0C}" ShortID="1009130601">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_rock_spawn" ID="{C653AB69-8262-4E3A-9CA8-1BACB24AFFAA}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_crush" ID="{0EC68617-C63D-4D47-9346-E61557B19F25}">
+					<ChildrenList>
+						<Action Name="" ID="{1B02BEA4-AD62-4C9F-B0B7-8F93FE6A8DC6}" ShortID="730315147">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_crush" ID="{42B774FC-E959-4178-80A4-4CBEA625FD60}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_regigigas_grab" ID="{67652E2B-4C6E-4EBB-B6B9-0A7D81029807}">
+					<ChildrenList>
+						<Action Name="" ID="{5F40C19F-62EC-4C2A-A672-D4E901686CAC}" ShortID="835759967">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RegigigasGrab" ID="{0B0FB647-8313-4611-818A-4FB2219028B2}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

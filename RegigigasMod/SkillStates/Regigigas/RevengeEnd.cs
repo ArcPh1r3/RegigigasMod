@@ -38,7 +38,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.shockwaveRadius = Util.Remap(healthPercentage, 0f, 1f, RevengeEnd.minRadius, RevengeEnd.maxRadius);
 
             base.PlayAnimation("FullBody, Override", "RevengeEnd", "Revenge.playbackRate", this.duration);
-            this.soundID = Util.PlayAttackSpeedSound(ChargeMegaNova.chargingSoundString, base.gameObject, this.attackSpeedStat);
+            this.soundID = Util.PlayAttackSpeedSound("sfx_regigigas_burst_pre", base.gameObject, this.attackSpeedStat);
 
             ChildLocator childLocator = base.GetModelChildLocator();
             if (childLocator)
@@ -84,6 +84,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 AkSoundEngine.StopPlayingID(this.soundID);
 
                 Vector3 position = base.transform.position;
+                Util.PlaySound("sfx_regigigas_burst", this.gameObject);
                 Util.PlaySound("UNUNUN", base.gameObject);
 
                 if (FireMegaNova.novaEffectPrefab) EffectManager.SimpleMuzzleFlash(FireMegaNova.novaEffectPrefab, base.gameObject, "Chest", false);

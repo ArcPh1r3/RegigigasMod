@@ -35,7 +35,18 @@ namespace RegigigasMod.Modules.Components
                 }
                 else
                 {
-                    for (int i = 0; i < 10; i++)
+                    int count = 10;
+
+                    if (Run.instance) count = Mathf.Clamp(count - Run.instance.stageClearCount, 0, 10);
+                    if (count < 0)
+                    {
+                        this.inSlowStart = false;
+                        this.ActivateSlowStart();
+                        Destroy(this);
+                        return;
+                    }
+
+                    for (int i = 0; i < count; i++)
                     {
                         if (this.body.GetBuffCount(Modules.Buffs.slowStartBuff) < 10) this.body.AddBuff(Modules.Buffs.slowStartBuff);
                     }
@@ -49,6 +60,7 @@ namespace RegigigasMod.Modules.Components
             anim.SetLayerWeight(anim.GetLayerIndex("Body, Smooth"), 1f);
 
             this.body.GetComponent<RegigigasFlashController>().Flash();
+            Util.PlaySound("sfx_regigigas_release", this.gameObject);
         }
 
         public void GrantKill()

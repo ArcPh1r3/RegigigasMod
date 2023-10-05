@@ -15,6 +15,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         private float rockTimer;
         private float rockStopwatch;
         private float startDuration;
+        private uint playID;
 
         public override void OnEnter()
         {
@@ -28,6 +29,16 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             base.cameraTargetParams.cameraParams = Modules.CameraParams.aimCameraParams;
             base.characterBody.hideCrosshair = false;
+
+
+            this.playID = Util.PlaySound("sfx_regigigas_rocks_loop", this.gameObject);
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+
+            AkSoundEngine.StopPlayingID(this.playID);
         }
 
         public override void FixedUpdate()
@@ -35,6 +46,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             base.FixedUpdate();
             base.StartAimMode(0.5f);
             this.rockStopwatch -= Time.fixedDeltaTime;
+
+            this.regigigasController.rockCount = this.rockCount;
 
             if (this.rockStopwatch <= 0f)
             {
@@ -105,7 +118,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             if (this.SpendStockOrHealth())
             {
                 this.rockCount++;
-                this.flashController.Flash();
+                this.flashController.Flash(false);
+                Util.PlaySound("sfx_regigigas_rock_spawn", this.gameObject);
             }
 
             this.rockStopwatch = this.rockTimer;

@@ -10,6 +10,7 @@
 						<ObjectRef Name="RegigigasPunchSwing" ID="{370B6FF3-004E-43F6-94C0-5258524B19C7}" WorkUnitID="{0E6DDC47-9831-4C9F-9E50-5872B4A7E01C}" Origin="Manual" Filter="7"/>
 						<ObjectRef Name="RegigigasStomp" ID="{9380588B-0A96-43F6-A121-EAFC242B5A59}" WorkUnitID="{0E6DDC47-9831-4C9F-9E50-5872B4A7E01C}" Origin="Manual" Filter="7"/>
 						<ObjectRef Name="RegigigasSpawn" ID="{B61A1B2B-51EB-4543-BCAB-5FE8EAFD3071}" WorkUnitID="{0E6DDC47-9831-4C9F-9E50-5872B4A7E01C}" Origin="Manual" Filter="7"/>
+						<ObjectRef Name="Default Work Unit" ID="{0E6DDC47-9831-4C9F-9E50-5872B4A7E01C}" WorkUnitID="{0E6DDC47-9831-4C9F-9E50-5872B4A7E01C}" Origin="Manual" Filter="7"/>
 						<ObjectRef Name="UNUNUN" ID="{C7A163AB-5C9C-4E7A-8252-C192F5282149}" WorkUnitID="{0E6DDC47-9831-4C9F-9E50-5872B4A7E01C}" Origin="Manual" Filter="7"/>
 						<ObjectRef Name="RegigigasFlash" ID="{53FBD214-F20B-4F67-8C6A-D81112959385}" WorkUnitID="{0E6DDC47-9831-4C9F-9E50-5872B4A7E01C}" Origin="Manual" Filter="7"/>
 					</ObjectInclusionList>

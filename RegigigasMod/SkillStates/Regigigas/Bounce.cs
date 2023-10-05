@@ -50,7 +50,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             base.characterBody.bodyFlags |= CharacterBody.BodyFlags.IgnoreFallDamage;
 
-            Util.PlaySound(EntityStates.Croco.BaseLeap.leapSoundString, base.gameObject);
+            Util.PlaySound("sfx_regigigas_leap", base.gameObject);
         }
 
         public override void OnExit()

@@ -54,7 +54,14 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 `1.4.2`
 - Added a new alt skin for the lore friendly version, as well as a new character icon
 - Added some missing hit feedback to Crush Grip
+- Added tons of new SFX to everything
+- Added more item displays :-)
+- Slow Start's kill requirement now scales down with stage, all the way down to 0!
 - Greatly reduced jump windup frames after Slow Start is deactivated
+- Pressing sprint during Drain Punch will now buffer and enter a sprint when the attack is finished
+- Ancient Power now has a visual display of how many rocks are ready to be fired
+- Ancient Power no longer has extreme vertical knockback knocking enemies out of the attack
+- Improved Ancient Power's aim mode
 - Reduced size of playable version in character select and rewrote some flavor text
 - Fixed oversight causing the AI to use Giga Impact instead of Revenge, oops!
 - Fixed Hopoo Feathers doing nothing

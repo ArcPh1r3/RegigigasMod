@@ -51,6 +51,9 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 
 ## Changelog
 
+`1.4.4`
+ - Fixed an issue preventing player Regigigas from using certain interactables
+
 `1.4.3`
  - fixed stone juggernaut disappearing
 

@@ -51,6 +51,9 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 
 ## Changelog
 
+`1.4.3`
+ - fixed stone juggernaut disappearing
+
 `1.4.2`
 Thanks again to rob himself
 - Fixed non-host players getting stuck when grabbed

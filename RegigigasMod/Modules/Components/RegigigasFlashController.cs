@@ -7,7 +7,7 @@ namespace RegigigasMod.Modules.Components
     {
         private float maxEmission = 5f;
         private float currentEmission;
-        private float lastEmission = -1;
+        private float lastEmission = 0;
         public float emissionSmoothSpeed = 25f;
         private ChildLocator childLocator;
         private Renderer bodyRend;
@@ -26,8 +26,6 @@ namespace RegigigasMod.Modules.Components
         {
             this.childLocator = GetComponent<ModelLocator>().modelTransform.GetComponent<ChildLocator>();// baseRendererInfos[0].defaultMaterial;
             this.currentState = FlashState.None;
-
-            Invoke("GetRenderer", 0.2f);
         }
 
         private void GetRenderer() {
@@ -63,11 +61,14 @@ namespace RegigigasMod.Modules.Components
                     }
                     break;
             }
+            if (lastEmission != currentEmission) {
+                if (this.bodyRend) {
 
-            if (this.bodyRend && lastEmission != currentEmission) {
-                
-                this.bodyBlock.SetFloat("_EmPower", this.currentEmission);
-                this.bodyRend.SetPropertyBlock(bodyBlock);
+                    this.bodyBlock.SetFloat("_EmPower", this.currentEmission);
+                    this.bodyRend.SetPropertyBlock(bodyBlock);
+                }else {
+                    GetRenderer();
+                }
             }
             this.lastEmission = this.currentEmission;
         }

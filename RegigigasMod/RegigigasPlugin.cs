@@ -30,7 +30,7 @@ namespace RegigigasMod
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.4.2";
+        public const string MODVERSION = "1.4.3";
 
         public const string developerPrefix = "ROB";
 

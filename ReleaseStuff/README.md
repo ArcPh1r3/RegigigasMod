@@ -51,6 +51,9 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 
 ## Changelog
 
+`1.4.3`
+- Fixed an issue preventing player Regigigas from using certain interactables
+
 `1.4.2`
 - Added a new alt skin for the lore friendly version, as well as a new character icon
 - Added some missing hit feedback to Crush Grip

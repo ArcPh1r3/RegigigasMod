@@ -162,7 +162,7 @@ namespace RegigigasMod.Modules.Enemies
             direction.turnSpeed = 135f;
 
             Interactor interactor = newPrefab.GetComponent<Interactor>();
-            interactor.maxInteractionDistance = 12f;
+            interactor.maxInteractionDistance = 8f;
 
             newPrefab.GetComponent<CameraTargetParams>().cameraParams = regiParams;
 

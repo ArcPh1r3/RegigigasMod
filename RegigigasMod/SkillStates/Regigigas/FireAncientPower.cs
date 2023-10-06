@@ -28,6 +28,9 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.timeBetweenRocks = FireAncientPower.baseTimeBetweenRocks / this.attackSpeedStat;
             this.throwStopwatch = this.timeBetweenRocks;
 
+            // hehhhe :3333
+            this.characterBody.aimOriginTransform.localPosition = new Vector3(0f, 12f, 0f);
+
             // cache the prefab to save a little perf
             this.projectilePrefab = Modules.Projectiles.rockProjectile;
 
@@ -59,6 +62,8 @@ namespace RegigigasMod.SkillStates.Regigigas
         public override void OnExit()
         {
             base.OnExit();
+
+            this.characterBody.aimOriginTransform.localPosition = new Vector3(0f, 0f, 0f);
 
             base.cameraTargetParams.cameraParams = Modules.CameraParams.defaultCameraParams;
             base.characterBody.hideCrosshair = true;

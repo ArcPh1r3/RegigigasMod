@@ -209,9 +209,14 @@ namespace RegigigasMod.Modules.Enemies
             if (Modules.Config.loreFriendly)
             {
                 GameObject golem = Resources.Load<GameObject>("Prefabs/CharacterBodies/GolemBody");
-                bodyMat = UnityEngine.Object.Instantiate(golem.GetComponentInChildren<CharacterModel>().baseRendererInfos[0].defaultMaterial);
+                bodyMat = new Material(golem.GetComponentInChildren<CharacterModel>().baseRendererInfos[0].defaultMaterial);
 
                 // this is for the golem material to render correctly
+                //simple way
+                //bodyMat.DisableKeyword("PRINT_CUTOFF");
+                //bodyMat.SetInt(PrintController.printOnPropertyId, 0);
+
+                //not simple way that keeps the red glow on the legs
                 PrintController print1 = newPrefab.GetComponent<ModelLocator>().modelTransform.gameObject.AddComponent<PrintController>();
                 PrintController print2 = golem.GetComponentInChildren<PrintController>();
 
@@ -221,7 +226,7 @@ namespace RegigigasMod.Modules.Enemies
                 print1.disableWhenFinished = print2.disableWhenFinished;
                 print1.maxFlowmapPower = print2.maxFlowmapPower;
                 print1.maxPrintBias = print2.maxPrintBias;
-                print1.maxPrintHeight = 12f;// print2.maxPrintHeight;
+                print1.maxPrintHeight = 69f;// print2.maxPrintHeight;
                 print1.printCurve = print2.printCurve;
                 print1.printTime = print2.printTime;
                 print1.startingFlowmapPower = print2.startingFlowmapPower;
@@ -3489,7 +3494,7 @@ localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
         private static void CharacterBody_AddTimedBuff_BuffDef_float(On.RoR2.CharacterBody.orig_AddTimedBuff_BuffDef_float orig, CharacterBody self, BuffDef buffDef, float duration) {
 
             if(CheckRegigigasImmune(self, (buffDef != null) ? buffDef.buffIndex : BuffIndex.None)) {
-                buffDef = null;
+                return;
             }
 
             orig(self, buffDef, duration);

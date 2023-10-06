@@ -50,7 +50,7 @@ namespace RegigigasMod.Modules
             // shrink this guy a lil so you can actually see him
             //model.transform.localScale *= 0.25f;
             // actually we config that
-            if (!Modules.Config.cssActualSize) model.transform.localScale *= 0.25f;
+            if (!Modules.Config.cssActualSize) model.transform.localScale *= 0.29f;
 
             model.AddComponent<CharacterModel>().baseRendererInfos = prefab.GetComponentInChildren<CharacterModel>().baseRendererInfos;
 

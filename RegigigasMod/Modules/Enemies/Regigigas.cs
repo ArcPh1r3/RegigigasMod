@@ -86,9 +86,20 @@ namespace RegigigasMod.Modules.Enemies
             Material titanPredictionEffect = Resources.Load<GameObject>("Prefabs/Projectiles/TitanPreFistProjectile").transform.Find("TeamAreaIndicator, GroundOnly").GetComponent<TeamAreaIndicator>().teamMaterialPairs[0].sharedMaterial;
             //Material globMat = new EntityStates.TitanMonster.FireMegaLaser().laserPrefab.transform.Find("End").Find("EndEffect").Find("Particles").Find("Glob").GetComponent<ParticleSystemRenderer>().material;
 
-            slowStartOrb.transform.Find("TrailParent").Find("Trail").GetComponent<TrailRenderer>().widthMultiplier = 3f;
+            TrailRenderer trail = slowStartOrb.transform.Find("TrailParent").Find("Trail").GetComponent<TrailRenderer>();
+            trail.widthMultiplier = 3f;
+            trail.material = Addressables.LoadAssetAsync<Material>("RoR2/DLC1/GoldOnHurt/matGoldOrbTrail.mat").WaitForCompletion();
+
             slowStartOrb.transform.Find("VFX").Find("Core").GetComponent<ParticleSystemRenderer>().material = titanPredictionEffect;
             slowStartOrb.transform.Find("VFX").localScale = Vector3.one * 3f;
+
+            var main = slowStartOrb.transform.Find("VFX").Find("PulseGlow").GetComponent<ParticleSystem>().colorOverLifetime;
+            main.color = new ParticleSystem.MinMaxGradient
+            {
+                colorMin = Color.yellow,
+                colorMax = Color.yellow,
+                color = Color.yellow,
+            };  
 
             Modules.Assets.AddNewEffectDef(slowStartOrb);
         }
@@ -126,7 +137,7 @@ namespace RegigigasMod.Modules.Enemies
                 maxHealth = 4200f,
                 subtitleNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_SUBTITLE",
                 podPrefab = null,
-                moveSpeed = 6f,
+                moveSpeed = 8f,
                 jumpPower = 35f,
                 attackSpeed = 2f
             });
@@ -383,6 +394,13 @@ namespace RegigigasMod.Modules.Enemies
             //        }
             //    }
             //};
+
+            if (RegigigasPlugin.riskyArtifactsInstalled) SetupRiskyCompat(characterSpawnCard);
+        }
+
+        public static void SetupRiskyCompat(CharacterSpawnCard spawnCard)
+        {
+            Risky_Artifacts.Artifacts.Origin.AddSpawnCard(spawnCard, Risky_Artifacts.Artifacts.Origin.BossTier.t2);
         }
 
         private static void SetupHurtboxes(GameObject bodyPrefab)

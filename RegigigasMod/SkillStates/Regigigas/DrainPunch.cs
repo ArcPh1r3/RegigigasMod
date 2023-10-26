@@ -5,6 +5,7 @@ using RoR2;
 using RoR2.Networking;
 using System;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 
 namespace RegigigasMod.SkillStates.Regigigas
@@ -37,8 +38,23 @@ namespace RegigigasMod.SkillStates.Regigigas
         protected override void OnHitEnemyAuthority() {
             base.OnHitEnemyAuthority();
 
-            for (int i = 0; i < hitResults.Count; i++) {
+            GameObject j = Modules.Assets.punchImpactEffect;
+            HurtBox[] h = hitResults.ToArray();
+            for (int i = 0; i < hitResults.Count; i++)
+            {
                 handleLifeSteal(healthComponent, damageCoefficientOverride * this.damageStat * 0.5f);
+
+                EffectData effectData = new EffectData();
+                effectData.scale = 4f;
+
+                // extra oomph
+                if (h[i] && h[i].healthComponent)
+                {
+                    effectData.origin = h[i].transform.position;
+                    effectData.rotation = h[i].transform.rotation;
+
+                    EffectManager.SpawnEffect(j, effectData, true);
+                }
             }
         }
 

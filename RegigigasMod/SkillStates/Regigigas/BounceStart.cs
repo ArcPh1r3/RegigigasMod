@@ -19,14 +19,14 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 int layerIndex = this.animator.GetLayerIndex("Body");
 
-                this.animator.CrossFadeInFixedTime("AnimatedJump", 0.25f);
+                this.animator.CrossFadeInFixedTime("AnimatedJump", 0.1f);
                 this.animator.Update(0f);
 
-                if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.duration = this.animator.GetNextAnimatorStateInfo(layerIndex).length * 0.5f;
+                if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.duration = this.animator.GetNextAnimatorStateInfo(layerIndex).length * 0.25f;
                 else this.duration = this.animator.GetNextAnimatorStateInfo(layerIndex).length;
             }
 
-            if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.animator.speed = 2f;
+            if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.animator.speed = 4f;
         }
 
         public override void OnExit()

@@ -96,6 +96,11 @@ namespace RegigigasMod.Modules
                 LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_UNLOCKABLE_NAME", "Regigigas: Mastery");
             }
             #endregion
+
+            #region Misc
+            LanguageAPI.Add(prefix + "SLOW_START", "SLOW START...");
+            LanguageAPI.Add(prefix + "SLOW_START_RELEASED", "FULL POWER!");
+            #endregion
         }
     }
 }

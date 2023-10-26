@@ -1,6 +1,7 @@
 ﻿using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 namespace RegigigasMod.Modules.Components
 {
@@ -32,13 +33,57 @@ namespace RegigigasMod.Modules.Components
                 if (this.isEnemy)
                 {
                     this.body.AddBuff(Modules.Buffs.slowStartBuff);
+
+                    EffectManager.SpawnEffect(Modules.Assets.slowStartEffect, new EffectData
+                    {
+                        origin = this.transform.position + new Vector3(0f, 5f, 0f),
+                        rotation = Quaternion.identity
+                    }, true);
                 }
                 else
                 {
                     int count = 10;
 
+                    bool cancel = false;
+
                     if (Run.instance) count = Mathf.Clamp(count - Run.instance.stageClearCount, 0, 10);
-                    if (count < 0)
+                    if (count <= 0) cancel = true;
+
+                    // cancel on certain stages too
+                    Scene currentScene = SceneManager.GetActiveScene();
+
+                    switch (currentScene.name)
+                    {
+                        case "moon":
+                            cancel = true;
+                            break;
+                        case "moon2":
+                            cancel = true;
+                            break;
+                        case "voidraid":
+                            cancel = true;
+                            break;
+                        case "bazaar":
+                            cancel = true;
+                            break;
+                        case "arena":
+                            cancel = true;
+                            break;
+                        case "goldshores":
+                            cancel = true;
+                            break;
+                        case "limbo":
+                            cancel = true;
+                            break;
+                        case "mysteryspace":
+                            cancel = true;
+                            break;
+                        case "voidstage":
+                            cancel = true;
+                            break;
+                    }
+
+                    if (cancel)
                     {
                         this.inSlowStart = false;
                         this.ActivateSlowStart();
@@ -50,6 +95,12 @@ namespace RegigigasMod.Modules.Components
                     {
                         if (this.body.GetBuffCount(Modules.Buffs.slowStartBuff) < 10) this.body.AddBuff(Modules.Buffs.slowStartBuff);
                     }
+
+                    EffectManager.SpawnEffect(Modules.Assets.slowStartEffect, new EffectData
+                    {
+                        origin = this.transform.position + new Vector3(0f, 5f, 0f),
+                        rotation = Quaternion.identity
+                    }, true);
                 }
             }
         }
@@ -61,6 +112,17 @@ namespace RegigigasMod.Modules.Components
 
             this.body.GetComponent<RegigigasFlashController>().Flash();
             Util.PlaySound("sfx_regigigas_release", this.gameObject);
+
+            if (NetworkServer.active)
+            {
+                this.body.AddBuff(Modules.Buffs.fullPowerBuff);
+
+                EffectManager.SpawnEffect(Modules.Assets.slowStartReleasedEffect, new EffectData
+                {
+                    origin = this.transform.position + new Vector3(0f, 5f, 0f),
+                    rotation = Quaternion.identity
+                }, true);
+            }
         }
 
         public void GrantKill()

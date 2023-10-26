@@ -1,6 +1,7 @@
 # Regigigas
 - Adds Regigigas, a powerful new boss that spawns on Siren's Call, Sundered Grove, and post-loop Titanic Plains, Abandoned Aqueduct, Wetland Aspect and Rallypoint Delta
-- Includes a playable version in config, disabled by default
+- Includes a somewhat balanced and playable version in config, disabled by default
+- Fully multiplayer compatible!
 
 [![](https://cdn.discordapp.com/attachments/469291841859092488/817547733132640326/unknown.png)]()
 
@@ -24,7 +25,7 @@ Note: This model was sloppily hacked together with Stone Golem parts, if any art
 
 For the first 2 minutes after spawning, `attack speed`, `damage` and `movement speed` are halved. `Armor` is doubled during this time.
 
-For the playable version, this is changed to a 10 kill requirement.
+For the playable version, this is changed to a 10 kill requirement, scaling down with stage count.
 
 
 ### Crush Grip
@@ -41,7 +42,7 @@ Stomp with all your might, summoning pillars of flame that deal 600% damage. Inf
 Freeze up for 8 seconds, gaining 500 armor. At the end, release a massive blast for triple the damage receieved during this time. Radius scales up with damage taken, up to a limit.
 
 ## TODO
-- still needs a few more sotv fixes (allegedly)
+- still needs a few more sotv fixes (allegedly) (????)
 
 ## Credits
 YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-External-Move-Icons-530204137)
@@ -52,7 +53,11 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 ## Changelog
 
 `1.4.4`
- - Fixed an issue preventing player Regigigas from using certain interactables
+- Added compatibility for the Artifact of Origination from Moffein's Risky_Artifacts
+- Added a text popup for Slow Start and its activation
+- Base movement speed: 6 > 8 (this is still halved during Slow Start)
+- Slow Start is now nullified in certain stages because fighting Voidling with it and traversing the Moon was just awful (lore reason: lower gravity or smth idk)
+- Fixed an issue preventing player Regigigas from using certain interactables
 
 `1.4.3`
  - fixed stone juggernaut disappearing

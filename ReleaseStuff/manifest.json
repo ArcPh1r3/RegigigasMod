@@ -4,7 +4,7 @@
     "website_url": "https://github.com/TheTimeSweeper/RegigigasMod",
     "description": "Adds a new boss to the game, Regigigas - now fully compatible with multiplayer (finally). Includes playable and ror2-fitting versions in config. | Originally by rob, fixed by me",
     "dependencies": [
-        "tristanmcpherson-R2API-4.4.1",
+        "tristanmcpherson-R2API-5.0.5",
         "bbepis-BepInExPack-5.4.2101"
     ]
 }

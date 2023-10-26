@@ -7,6 +7,8 @@ using System.IO;
 using RoR2.Audio;
 using System.Collections.Generic;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Rendering.PostProcessing;
+using ThreeEyedGames;
 
 namespace RegigigasMod.Modules
 {
@@ -21,10 +23,16 @@ namespace RegigigasMod.Modules
         internal static GameObject drainPunchChargeEffect;
         internal static GameObject rockHitEffect;
 
+        internal static GameObject slamImpactEffect;
+        internal static GameObject punchImpactEffect;
+
         internal static NetworkSoundEventDef punchSoundDef;
 
         internal static List<EffectDef> effectDefs = new List<EffectDef>();
         internal static List<NetworkSoundEventDef> networkSoundEventDefs = new List<NetworkSoundEventDef>();
+
+        internal static GameObject slowStartEffect;
+        internal static GameObject slowStartReleasedEffect;
 
         internal static void PopulateAssets()
         {
@@ -58,6 +66,40 @@ namespace RegigigasMod.Modules
 
             rockHitEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Bell/OmniExplosionVFXBellDeath.prefab").WaitForCompletion().InstantiateClone("RegigigasRockImpact", true);
             AddNewEffectDef(rockHitEffect, "sfx_regigigas_rock_hit");
+
+            string prefix = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_";
+            slowStartEffect = CreateTextPopupEffect("RegigigasSlowStartEffect", prefix + "SLOW_START", 2f);
+            slowStartReleasedEffect = CreateTextPopupEffect("RegigigasSlowStartReleasedEffect", prefix + "SLOW_START_RELEASED", 2.5f);
+
+            slamImpactEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Brother/BrotherSlamImpact.prefab").WaitForCompletion().InstantiateClone("RegigigasSlamImpact", true);
+
+            slamImpactEffect.transform.Find("Spikes, Small").gameObject.SetActive(false);
+
+            slamImpactEffect.transform.Find("PP").GetComponent<PostProcessVolume>().sharedProfile = Addressables.LoadAssetAsync<PostProcessProfile>("RoR2/Base/title/ppLocalMagmaWorm.asset").WaitForCompletion();
+
+            slamImpactEffect.transform.Find("Point light").GetComponent<Light>().color = Color.yellow;
+
+            slamImpactEffect.transform.Find("Flash Lines, Fire").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/VFX/matFirePillarParticle.mat").WaitForCompletion();
+
+            slamImpactEffect.transform.Find("Fire").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/VFX/matFirePillarParticle.mat").WaitForCompletion();
+
+            slamImpactEffect.transform.Find("Physics").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/MagmaWorm/matFracturedGround.mat").WaitForCompletion();
+
+            slamImpactEffect.transform.Find("Decal").GetComponent<Decal>().Material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Beetle/matBeetleGuardSlamDecal.mat").WaitForCompletion();
+
+            AddNewEffectDef(slamImpactEffect, "");
+
+
+            punchImpactEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Loader/OmniImpactVFXLoader.prefab").WaitForCompletion().InstantiateClone("RegigigasPunchImpact", true);
+            punchImpactEffect.GetComponent<EffectComponent>().applyScale = true;
+
+            punchImpactEffect.transform.Find("Scaled Hitspark 1 (Random Color)").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/VFX/matOmniHitspark1.mat").WaitForCompletion();
+            punchImpactEffect.transform.Find("Scaled Hitspark 3 (Random Color)").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/VFX/matOmniHitspark3.mat").WaitForCompletion();
+            punchImpactEffect.transform.Find("ScaledSmokeRing, Mesh").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/LifestealOnHit/matLifeStealOnHitAuraTrails.mat").WaitForCompletion();
+
+            punchImpactEffect.transform.Find("Impact Shockwave").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/VFX/matOmniRing2.mat").WaitForCompletion();
+
+            AddNewEffectDef(punchImpactEffect, "");
         }
 
         internal static NetworkSoundEventDef CreateNetworkSoundEventDef(string eventName)
@@ -69,6 +111,22 @@ namespace RegigigasMod.Modules
             networkSoundEventDefs.Add(networkSoundEventDef);
 
             return networkSoundEventDef;
+        }
+
+        internal static GameObject CreateTextPopupEffect(string prefabName, string token, float scale = 1f, string soundName = "")
+        {
+            GameObject i = RoR2.LegacyResourcesAPI.Load<GameObject>("Prefabs/Effects/BearProc").InstantiateClone(prefabName, true);
+
+            i.GetComponent<EffectComponent>().soundName = soundName;
+            if (!i.GetComponent<NetworkIdentity>()) i.AddComponent<NetworkIdentity>();
+
+            i.GetComponentInChildren<RoR2.UI.LanguageTextMeshController>().token = token;
+
+            i.GetComponentInChildren<ObjectScaleCurve>().timeMax *= 2f;
+
+            Assets.AddNewEffectDef(i);
+
+            return i;
         }
 
         internal static void ConvertAllRenderersToHopooShader(GameObject objectToConvert)

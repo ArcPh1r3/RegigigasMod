@@ -58,6 +58,7 @@ namespace RegigigasMod.Modules
         private static void CreateRockProjectile()
         {
             rockProjectile = CloneProjectilePrefab("GrandparentMiniBoulder", "AncientPowerRock");
+            rockProjectile.GetComponent<Rigidbody>().useGravity = false;
 
             // this turned out looking awful, but the big rock is cool :(
             //rockProjectile.GetComponent<ProjectileController>().ghostPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/GrandparentBoulderGhost.prefab").WaitForCompletion();

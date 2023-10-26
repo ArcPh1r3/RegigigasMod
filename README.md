@@ -1,6 +1,7 @@
 # Regigigas
 - Adds Regigigas, a powerful new boss that spawns on Siren's Call, Sundered Grove, and post-loop Titanic Plains, Abandoned Aqueduct, Wetland Aspect and Rallypoint Delta
-- Includes a playable version in config, disabled by default
+- Includes a somewhat balanced and playable version in config, disabled by default
+- Fully multiplayer compatible!
 
 [![](https://cdn.discordapp.com/attachments/469291841859092488/817547733132640326/unknown.png)]()
 
@@ -24,7 +25,7 @@ Note: This model was sloppily hacked together with Stone Golem parts, if any art
 
 For the first 2 minutes after spawning, `attack speed`, `damage` and `movement speed` are halved. `Armor` is doubled during this time.
 
-For the playable version, this is changed to a 10 kill requirement.
+For the playable version, this is changed to a 10 kill requirement, scaling down with stage count.
 
 
 ### Crush Grip
@@ -41,17 +42,61 @@ Stomp with all your might, summoning pillars of flame that deal 600% damage. Inf
 Freeze up for 8 seconds, gaining 500 armor. At the end, release a massive blast for triple the damage receieved during this time. Radius scales up with damage taken, up to a limit.
 
 ## TODO
-- still needs a few more sotv fixes (allegedly)
+- still needs a few more sotv fixes (allegedly) (????)
 
 ## Credits
 YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-External-Move-Icons-530204137)
 
 ## Known Issues
-- Crush Grip may have issues when used by players online
+- None as of the latest update
 
 ## Changelog
 
+`1.4.5`
+- Added Slow Start icon
+- Added VFX to Giga Impact
+- Added new buff icons
+- Ancient Power rocks now fly in a straight line ignoring gravity
+- Ancient Power damage per rock: 400% > 500%, damage output wasn't rewarding enough to justify the risk
+- Sped up jump animation outside of Slow Start even more
+- Updated almost all VFX
+- Fixed Slow Start's text popups appearing multiple times in multiplayer
+
+`1.4.4`
+- Added compatibility for the Artifact of Origination from Moffein's Risky_Artifacts
+- Added a text popup for Slow Start and its activation
+- Base movement speed: 6 > 8 (this is still halved during Slow Start)
+- Slow Start is now nullified in certain stages because fighting Voidling with it and traversing the Moon was just awful (lore reason: lower gravity or smth idk)
+- Fixed an issue preventing player Regigigas from using certain interactables
+
+`1.4.3`
+ - fixed stone juggernaut disappearing
+
+`1.4.2`
+Thanks again to rob himself
+- Fixed non-host players getting stuck when grabbed
+- Fixed grab not working for non-host players
+- Added a new alt skin for the lore friendly version, as well as a new character icon
+- Added some missing hit feedback to Crush Grip
+- Added tons of new SFX to everything
+- Added more item displays :-)
+- Slow Start's kill requirement now scales down with stage, all the way down to 0!
+- Greatly reduced jump windup frames after Slow Start is deactivated
+- Pressing sprint during Drain Punch will now buffer and enter a sprint when the attack is finished
+- Ancient Power now has a visual display of how many rocks are ready to be fired
+- Ancient Power no longer has extreme vertical knockback knocking enemies out of the attack
+- Improved Ancient Power's aim mode
+- Reduced size of playable version in character select and rewrote some flavor text
+- Fixed oversight causing the AI to use Giga Impact instead of Revenge, oops!
+- Fixed Hopoo Feathers doing nothing
+- Fixed lore friendly logbook model
+- Fixed networking on emission glow during certain moves
+
+`1.4.1`
+ - fixed conflict with Deputy relating to buffs being applied
+
 `1.4.0`
+Thanks to rob for visiting
 - Added a new `Lore Friendly` config option, gives the boss an alternate name and skin to help it fit into the world a little better. This is off by default
 - Nerfed Earth Power to only fire 5 waves; the original implementation didn't account for anything beyond a single teleporter boss, which was a mistake (old version can be restored via config)
 - Players can now cancel Revenge early by reactivating the skill

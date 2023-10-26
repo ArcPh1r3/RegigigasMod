@@ -35,7 +35,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.hasSqueezed = false;
             this.grabTransform = base.FindModelChild(GrabSuccess.grabTransformString);
 
-            this.crushEffectPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Loader/OmniImpactVFXLoader.prefab").WaitForCompletion();
+            this.crushEffectPrefab = Modules.Assets.punchImpactEffect;//Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Loader/OmniImpactVFXLoader.prefab").WaitForCompletion();
 
             base.PlayAnimation("FullBody, Override", "GrabSuccess", "Grab.playbackRate", this.duration);
         }
@@ -92,7 +92,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 EffectManager.SpawnEffect(this.crushEffectPrefab, new EffectData
                 {
                     origin = this.target.transform.position,
-                    scale = 1f
+                    scale = 2f
                 }, true);
             }
 

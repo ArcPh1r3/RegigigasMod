@@ -11,6 +11,7 @@ using UnityEngine;
 
 namespace RegigigasMod
 {
+    [BepInDependency("com.Moffein.RiskyArtifacts", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("com.bepis.r2api", BepInDependency.DependencyFlags.HardDependency)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInPlugin(MODUID, MODNAME, MODVERSION)]
@@ -30,15 +31,19 @@ namespace RegigigasMod
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.4.4";
+        public const string MODVERSION = "1.4.5";
 
         public const string developerPrefix = "ROB";
 
         public static RegigigasPlugin instance;
 
+        public static bool riskyArtifactsInstalled;
+
         private void Awake()
         {
             instance = this;
+
+            riskyArtifactsInstalled = BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.Moffein.RiskyArtifacts");
 
             Log.Init(Logger);
             Modules.Config.ReadConfig();
@@ -66,7 +71,7 @@ namespace RegigigasMod
 
             // hate that i havze to do this
             Modules.Buffs.armorBuff.iconSprite = RoR2Content.Buffs.ArmorBoost.iconSprite;
-            Modules.Buffs.slowStartBuff.iconSprite = RoR2Content.Buffs.Slow50.iconSprite;
+            //Modules.Buffs.slowStartBuff.iconSprite = RoR2Content.Buffs.Slow50.iconSprite; wahoo
         }
 
         private void Hook()

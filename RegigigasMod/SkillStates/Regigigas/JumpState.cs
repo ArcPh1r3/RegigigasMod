@@ -23,11 +23,11 @@ namespace RegigigasMod.SkillStates.Regigigas
                 this.animator.CrossFadeInFixedTime("AnimatedJump", 0.25f);
                 this.animator.Update(0f);
 
-                if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.duration = this.animator.GetNextAnimatorStateInfo(layerIndex).length * 0.5f;
+                if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.duration = this.animator.GetNextAnimatorStateInfo(layerIndex).length * 0.25f;
                 else this.duration = this.animator.GetNextAnimatorStateInfo(layerIndex).length;
             }
 
-            if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.animator.speed = 2f;
+            if (!this.characterBody.HasBuff(Modules.Buffs.slowStartBuff)) this.animator.speed = 4f;
         }
 
         public override void OnExit()
@@ -63,6 +63,8 @@ namespace RegigigasMod.SkillStates.Regigigas
                         horizontalBonus = (num2 + num3) / num3;
                     }
                 }
+
+                Util.PlaySound("sfx_regigigas_leap", base.gameObject);
 
                 GenericCharacterMain.ApplyJumpVelocity(base.characterMotor, base.characterBody, horizontalBonus, verticalBonus, false);
 

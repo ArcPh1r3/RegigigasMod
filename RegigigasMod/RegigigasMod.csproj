@@ -48,6 +48,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Decalicious">
+      <HintPath>libs\Decalicious.dll</HintPath>
+    </Reference>
+    <Reference Include="Risky_Artifacts">
+      <HintPath>libs\Risky_Artifacts.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Postprocessing.Runtime">
       <HintPath>E:\Abbas's stuff VII I think\1337 haxx\ror2lol\Chikara ga minegitte kuru\AmpV2\libs\Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>

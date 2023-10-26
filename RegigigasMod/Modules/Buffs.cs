@@ -15,12 +15,15 @@ namespace RegigigasMod.Modules
         // regigigas slow start debuff
         internal static BuffDef slowStartBuff;
 
+        internal static BuffDef fullPowerBuff;
+
         internal static List<BuffDef> buffDefs = new List<BuffDef>();
 
         internal static void RegisterBuffs()
         {
             armorBuff = AddNewBuff("RegigigasArmorBuff", Resources.Load<Sprite>("Textures/BuffIcons/texBuffGenericShield"), Color.grey, false, false);
-            slowStartBuff = AddNewBuff("RegigigasSlowStartDebuff", null, Color.yellow, true, false);
+            slowStartBuff = AddNewBuff("RegigigasSlowStartDebuff", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texBuffSlowStart"), Color.yellow, true, false);
+            fullPowerBuff = AddNewBuff("RegigigasFullPowerBuff", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texBuffFullPower"), Color.yellow, false, false);
         }
 
         // simple helper method

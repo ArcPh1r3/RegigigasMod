@@ -12,7 +12,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         public static float baseDuration = 0.6f;
         public static float baseTimeBetweenRocks = 0.15f;
 
-        public static float damageCoefficient = 4f;
+        public static float damageCoefficient = 5f;
         public static float throwForce = 140f;
         public static float projectileForce = 5f;
 

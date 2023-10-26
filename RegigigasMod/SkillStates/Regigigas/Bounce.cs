@@ -19,6 +19,8 @@ namespace RegigigasMod.SkillStates.Regigigas
         private float stopwatch;
         private Animator animator;
         private float previousAirControl;
+        private GameObject chargeEffectInstanceL;
+        private GameObject chargeEffectInstanceR;
 
         public override void OnEnter()
         {
@@ -51,11 +53,32 @@ namespace RegigigasMod.SkillStates.Regigigas
             base.characterBody.bodyFlags |= CharacterBody.BodyFlags.IgnoreFallDamage;
 
             Util.PlaySound("sfx_regigigas_leap", base.gameObject);
+
+            this.chargeEffectInstanceL = GameObject.Instantiate(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/ChargeGrandParentSunHands.prefab").WaitForCompletion());
+            this.chargeEffectInstanceL.transform.parent = this.FindModelChild("FootL");
+            this.chargeEffectInstanceL.transform.localPosition = new Vector3(0f, 0f, 0f);
+            this.chargeEffectInstanceL.transform.localRotation = Quaternion.identity;
+            this.chargeEffectInstanceL.transform.localScale = Vector3.one;
+
+            this.chargeEffectInstanceR = GameObject.Instantiate(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/ChargeGrandParentSunHands.prefab").WaitForCompletion());
+            this.chargeEffectInstanceR.transform.parent = this.FindModelChild("FootR");
+            this.chargeEffectInstanceR.transform.localPosition = new Vector3(0f, 0f, 0f);
+            this.chargeEffectInstanceR.transform.localRotation = Quaternion.identity;
+            this.chargeEffectInstanceR.transform.localScale = Vector3.one;
+
+            EffectData effectData = new EffectData();
+            effectData.origin = base.characterBody.footPosition;
+            effectData.scale = 5f;
+
+            EffectManager.SpawnEffect(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Parent/ParentSlamEffect.prefab").WaitForCompletion(), effectData, true);
         }
 
         public override void OnExit()
         {
             base.OnExit();
+
+            if (this.chargeEffectInstanceL) EntityState.Destroy(this.chargeEffectInstanceL);
+            if (this.chargeEffectInstanceR) EntityState.Destroy(this.chargeEffectInstanceR);
 
             base.characterBody.bodyFlags &= ~CharacterBody.BodyFlags.IgnoreFallDamage;
             base.characterMotor.airControl = this.previousAirControl;
@@ -90,8 +113,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 effectData.origin = base.characterBody.footPosition;
                 effectData.scale = radius;
 
-                //RoR2.LegacyResourcesAPI.Load<GameObject>("Prefabs/Effects/OmniEffect/OmniExplosionVFX")
-                EffectManager.SpawnEffect(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/ExplosivePotDestructible/ExplosivePotExplosion.prefab").WaitForCompletion(), effectData, true);
+                EffectManager.SpawnEffect(Modules.Assets.slamImpactEffect, effectData, true);
 
                 new BlastAttack
                 {

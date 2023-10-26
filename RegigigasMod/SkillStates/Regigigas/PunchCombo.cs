@@ -35,6 +35,9 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.impactSound = Modules.Assets.punchSoundDef.index;
 
             base.OnEnter();
+
+            PrimarySkillShurikenBehavior shurikenComponent = this.GetComponent<PrimarySkillShurikenBehavior>();
+            if (shurikenComponent) shurikenComponent.OnSkillActivated(this.skillLocator.primary);
         }
 
         protected override void PlayAttackAnimation()

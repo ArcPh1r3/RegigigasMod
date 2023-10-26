@@ -66,6 +66,12 @@ namespace RegigigasMod.SkillStates.Regigigas
 
                 Util.PlaySound("sfx_regigigas_leap", base.gameObject);
 
+                EffectManager.SpawnEffect(LegacyResourcesAPI.Load<GameObject>("Prefabs/Effects/ImpactEffects/CharacterLandImpact"), new EffectData
+                {
+                    origin = base.characterBody.footPosition,
+                    scale = base.characterBody.radius
+                }, true);
+
                 GenericCharacterMain.ApplyJumpVelocity(base.characterMotor, base.characterBody, horizontalBonus, verticalBonus, false);
 
                 if (quailJump)

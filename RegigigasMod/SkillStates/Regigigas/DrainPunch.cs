@@ -1,4 +1,5 @@
-﻿using R2API.Networking;
+﻿using EntityStates;
+using R2API.Networking;
 using R2API.Networking.Interfaces;
 using RegigigasMod.SkillStates.BaseStates;
 using RoR2;
@@ -14,14 +15,29 @@ namespace RegigigasMod.SkillStates.Regigigas
     {
         internal new static float damageCoefficientOverride = 2.8f;
 
+        private GameObject chargeEffectInstance;
+
         public override void OnEnter()
         {
             base.OnEnter();
 
             this.attack.damage = DrainPunch.damageCoefficientOverride * this.damageStat;
 
-            if (this.swingIndex == 1) EffectManager.SimpleMuzzleFlash(Modules.Assets.drainPunchChargeEffect, base.gameObject, "HandR", false);
-            else EffectManager.SimpleMuzzleFlash(Modules.Assets.drainPunchChargeEffect, base.gameObject, "HandL", false);
+            string muzzleString = "HandL";
+            if (this.swingIndex == 1) muzzleString = "HandR";
+            this.chargeEffectInstance = GameObject.Instantiate(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/ChargeGrandParentSunHands.prefab").WaitForCompletion());
+            this.chargeEffectInstance.transform.parent = this.FindModelChild(muzzleString);
+            this.chargeEffectInstance.transform.localPosition = new Vector3(0f, 0f, 0f);
+            this.chargeEffectInstance.transform.localRotation = Quaternion.identity;
+            this.chargeEffectInstance.transform.localScale = Vector3.one;
+
+            this.chargeEffectInstance.GetComponentInChildren<ObjectScaleCurve>().timeMax = 0.5f;
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            if (this.chargeEffectInstance) EntityState.Destroy(this.chargeEffectInstance);
         }
 
         protected override void SetNextState()
@@ -33,6 +49,11 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 swingIndex = index
             });
+        }
+
+        protected override void PlaySwingEffect()
+        {
+            if (this.chargeEffectInstance) EntityState.Destroy(this.chargeEffectInstance);
         }
 
         protected override void OnHitEnemyAuthority() {
@@ -70,6 +91,4 @@ namespace RegigigasMod.SkillStates.Regigigas
             }
         }
     }
-
-
 }

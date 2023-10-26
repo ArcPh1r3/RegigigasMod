@@ -1,5 +1,6 @@
 ﻿using RoR2;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
@@ -118,6 +119,12 @@ namespace RegigigasMod.Modules.Components
                 this.body.AddBuff(Modules.Buffs.fullPowerBuff);
 
                 EffectManager.SpawnEffect(Modules.Assets.slowStartReleasedEffect, new EffectData
+                {
+                    origin = this.transform.position + new Vector3(0f, 5f, 0f),
+                    rotation = Quaternion.identity
+                }, true);
+
+                EffectManager.SpawnEffect(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/GrandParentSunSpawn.prefab").WaitForCompletion(), new EffectData
                 {
                     origin = this.transform.position + new Vector3(0f, 5f, 0f),
                     rotation = Quaternion.identity

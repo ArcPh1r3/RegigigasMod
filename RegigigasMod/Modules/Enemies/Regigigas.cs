@@ -129,7 +129,7 @@ namespace RegigigasMod.Modules.Enemies
                 bodyNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME",
                 bodyColor = charColor,
                 characterPortrait = Modules.Assets.LoadCharacterIcon(iconName),
-                crosshair = Modules.Assets.LoadCrosshair("SMG"),
+                crosshair = Modules.Assets.ancientPowerCrosshairPrefab,
                 damage = 40f,
                 healthGrowth = 1260f,
                 healthRegen = 0f,
@@ -607,6 +607,7 @@ namespace RegigigasMod.Modules.Enemies
             skillLocator.passiveSkill.enabled = true;
             skillLocator.passiveSkill.skillNameToken = prefix + "_REGIGIGAS_BODY_PASSIVE_NAME";
             skillLocator.passiveSkill.skillDescriptionToken = prefix + "_REGIGIGAS_BODY_PASSIVE_DESCRIPTION";
+            skillLocator.passiveSkill.icon = Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texSlowStartIcon");
 
             #region Primary
             Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));

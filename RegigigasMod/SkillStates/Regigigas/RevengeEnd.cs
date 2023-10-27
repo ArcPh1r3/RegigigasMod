@@ -14,8 +14,8 @@ namespace RegigigasMod.SkillStates.Regigigas
         public static float maxDamagePercentage = 0.3f;
         public static float minDamagePercentage = 0f;
 
-        public static float maxRadius = 80f;
-        public static float minRadius = 24f;
+        public static float maxRadius = 120f;
+        public static float minRadius = 32f;
 
         private float shockwaveRadius;
         private float shockwaveTime;

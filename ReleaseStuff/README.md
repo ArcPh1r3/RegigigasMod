@@ -52,6 +52,17 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 
 ## Changelog
 
+`1.4.5`
+- Added Slow Start icon
+- Added new buff icons
+- Ancient Power rocks now fly in a straight line ignoring gravity
+- Ancient Power damage per rock: 400% > 500%, damage output wasn't rewarding enough to justify the risk
+- Ancient Power crosshair updated
+- Increased radius of Revenge- this thing was not threatening at all as a boss move with its short range
+- Sped up jump animation outside of Slow Start even more
+- Updated and cleaned up almost all VFX, adding lots more where it was missing
+- Fixed Slow Start's text popups appearing multiple times in multiplayer
+
 `1.4.4`
 - Added compatibility for the Artifact of Origination from Moffein's Risky_Artifacts
 - Added a text popup for Slow Start and its activation

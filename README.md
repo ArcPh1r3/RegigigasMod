@@ -54,12 +54,13 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 
 `1.4.5`
 - Added Slow Start icon
-- Added VFX to Giga Impact
 - Added new buff icons
 - Ancient Power rocks now fly in a straight line ignoring gravity
 - Ancient Power damage per rock: 400% > 500%, damage output wasn't rewarding enough to justify the risk
+- Ancient Power crosshair updated
+- Increased radius of Revenge- this thing was not threatening at all as a boss move with its short range
 - Sped up jump animation outside of Slow Start even more
-- Updated almost all VFX
+- Updated and cleaned up almost all VFX, adding lots more where it was missing
 - Fixed Slow Start's text popups appearing multiple times in multiplayer
 
 `1.4.4`

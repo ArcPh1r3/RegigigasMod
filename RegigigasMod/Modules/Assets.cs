@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Rendering.PostProcessing;
 using ThreeEyedGames;
+using RoR2.UI;
 
 namespace RegigigasMod.Modules
 {
@@ -33,6 +34,8 @@ namespace RegigigasMod.Modules
 
         internal static GameObject slowStartEffect;
         internal static GameObject slowStartReleasedEffect;
+
+        internal static GameObject ancientPowerCrosshairPrefab;
 
         internal static void PopulateAssets()
         {
@@ -100,6 +103,12 @@ namespace RegigigasMod.Modules
             punchImpactEffect.transform.Find("Impact Shockwave").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/VFX/matOmniRing2.mat").WaitForCompletion();
 
             AddNewEffectDef(punchImpactEffect, "");
+
+
+            ancientPowerCrosshairPrefab = PrefabAPI.InstantiateClone(LoadCrosshair("ToolbotGrenadeLauncher"), "AncientPowerCrosshair", false);
+            CrosshairController crosshair = ancientPowerCrosshairPrefab.GetComponent<CrosshairController>();
+            crosshair.skillStockSpriteDisplays = new CrosshairController.SkillStockSpriteDisplay[0];
+            ancientPowerCrosshairPrefab.transform.Find("StockCountHolder").gameObject.SetActive(false);
         }
 
         internal static NetworkSoundEventDef CreateNetworkSoundEventDef(string eventName)
@@ -122,7 +131,9 @@ namespace RegigigasMod.Modules
 
             i.GetComponentInChildren<RoR2.UI.LanguageTextMeshController>().token = token;
 
-            i.GetComponentInChildren<ObjectScaleCurve>().timeMax *= 2f;
+            i.GetComponentInChildren<ObjectScaleCurve>().timeMax *= 3f;
+
+            i.transform.localScale = Vector3.one * 3f;
 
             Assets.AddNewEffectDef(i);
 

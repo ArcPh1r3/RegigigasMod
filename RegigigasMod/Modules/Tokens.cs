@@ -45,11 +45,11 @@ namespace RegigigasMod.Modules
             LanguageAPI.Add(prefix + "PASSIVE_NAME", "Slow Start");
             if (Modules.Config.loreFriendly)
             {
-                LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore the Stone Juggernaut to <style=cIsDamage>full strength</style>.");
+                LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore the Stone Juggernaut to <style=cIsDamage>full power</style>.");
             }
             else
             {
-                LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore Regigigas to <style=cIsDamage>full strength</style>.");
+                LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore Regigigas to <style=cIsDamage>full power</style>.");
             }
             #endregion
 

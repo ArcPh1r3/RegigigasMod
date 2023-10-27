@@ -22,6 +22,8 @@ namespace RegigigasMod.Modules.Components
         private RockData[] rocks;
         private int activeRocks;
 
+        private GameObject muzzleFlashEffectPrefab;
+
         private void Awake()
         {
             this.characterBody = this.gameObject.GetComponent<CharacterBody>();
@@ -37,6 +39,8 @@ namespace RegigigasMod.Modules.Components
             //  > displayed rocks are set a certain distance from the center of the pivot, so they rotate around the body
             this.SetUpRockPivot();
             this.SetUpRocks();
+
+            this.muzzleFlashEffectPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Golem/MuzzleflashGolem.prefab").WaitForCompletion();
         }
 
         private void SetUpRockPivot()
@@ -126,6 +130,14 @@ namespace RegigigasMod.Modules.Components
                     this.rocks[i].rock.transform.position = this.rocks[i].position;
                     this.rocks[i].rock.transform.rotation = Quaternion.Euler(new Vector3(Random.Range(0f, 360f), Random.Range(0f, 360f), Random.Range(0f, 360f)));
                     this.rocks[i].rock.SetActive(true);
+
+                    EffectData effectData = new EffectData();
+                    effectData.origin = this.rocks[i].position;
+                    effectData.rotation = Quaternion.identity;
+                    effectData.scale = 5f;
+
+                    EffectManager.SpawnEffect(this.muzzleFlashEffectPrefab, effectData, true);
+
                     return;
                 }
             }

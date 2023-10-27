@@ -31,7 +31,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.chargeEffectInstance.transform.localRotation = Quaternion.identity;
             this.chargeEffectInstance.transform.localScale = Vector3.one;
 
-            this.chargeEffectInstance.GetComponentInChildren<ObjectScaleCurve>().timeMax = 0.5f;
+            this.chargeEffectInstance.GetComponentInChildren<ObjectScaleCurve>().timeMax = 0.35f;
         }
 
         public override void OnExit()

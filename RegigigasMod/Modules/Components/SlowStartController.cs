@@ -99,7 +99,7 @@ namespace RegigigasMod.Modules.Components
 
                     EffectManager.SpawnEffect(Modules.Assets.slowStartEffect, new EffectData
                     {
-                        origin = this.transform.position + new Vector3(0f, 5f, 0f),
+                        origin = this.transform.position + new Vector3(0f, 6f, 0f),
                         rotation = Quaternion.identity
                     }, true);
                 }
@@ -120,7 +120,7 @@ namespace RegigigasMod.Modules.Components
 
                 EffectManager.SpawnEffect(Modules.Assets.slowStartReleasedEffect, new EffectData
                 {
-                    origin = this.transform.position + new Vector3(0f, 5f, 0f),
+                    origin = this.transform.position + new Vector3(0f, 5, 0f),
                     rotation = Quaternion.identity
                 }, true);
 

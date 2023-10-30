@@ -27,6 +27,7 @@ namespace RegigigasMod.Modules
             AddSkill(typeof(BaseMeleeAttack));
             AddSkill(typeof(PunchCombo));
             AddSkill(typeof(DrainPunch));
+            AddSkill(typeof(IcePunch));
 
             AddSkill(typeof(GrabAttempt));
             AddSkill(typeof(GrabFail));
@@ -36,10 +37,13 @@ namespace RegigigasMod.Modules
             AddSkill(typeof(ChargeAncientPower));
             AddSkill(typeof(FireAncientPower));
 
+            AddSkill(typeof(SkillStates.Regigigas.GigaImpact.Channel));
+            AddSkill(typeof(SkillStates.Regigigas.GigaImpact.Fire));
+
             AddSkill(typeof(Revenge));
             AddSkill(typeof(RevengeEnd));
 
-            AddSkill(typeof(GigaImpact));
+            AddSkill(typeof(GigaImpactOld));
         }
     }
 }

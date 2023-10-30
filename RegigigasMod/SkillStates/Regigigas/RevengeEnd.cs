@@ -3,6 +3,7 @@ using EntityStates.VagrantMonster;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
+using static RoR2.CameraTargetParams;
 
 namespace RegigigasMod.SkillStates.Regigigas
 {
@@ -25,6 +26,8 @@ namespace RegigigasMod.SkillStates.Regigigas
         private uint soundID;
         private Animator modelAnimator;
 
+        private CameraParamsOverrideHandle camParamsOverrideHandle;
+
         public override void OnEnter()
         {
             base.OnEnter();
@@ -32,6 +35,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.shockwaveTime = 0.3f * this.duration;
             this.hasFired = false;
             this.modelAnimator = base.GetModelAnimator();
+            this.camParamsOverrideHandle = Modules.CameraParams.OverrideCameraParams(base.cameraTargetParams, RegigigasCameraParams.CHARGE, 0.5f);
 
             float healthPercentage = this.storedDamage / base.healthComponent.fullCombinedHealth;
 
@@ -133,7 +137,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             if (this.modelAnimator) this.modelAnimator.SetFloat(AnimationParameters.aimWeight, 1f);
             if (this.chargeEffectInstance) EntityState.Destroy(this.chargeEffectInstance);
-            base.cameraTargetParams.cameraParams = Modules.CameraParams.defaultCameraParams;
+            this.cameraTargetParams.RemoveParamsOverride(this.camParamsOverrideHandle);
         }
 
         public override InterruptPriority GetMinimumInterruptPriority()

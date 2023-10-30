@@ -52,6 +52,14 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 
 ## Changelog
 
+`1.4.6`
+- Giga Impact renamed to Heavy Slam, damage changed to a scaling value based on speed, fall speed greatly increased
+- Added new special: Giga Impact- charge up, then rush forward and explode in a burst of flames
+- ^should provide some much needed flexibility as well as the ability to get through certain tight spaces
+- Added character select animation
+- Updated even more VFX and SFX
+- Updated skill icons
+
 `1.4.5`
 - Added Slow Start icon
 - Added new buff icons

@@ -83,23 +83,21 @@ namespace RegigigasMod.Modules.Enemies
             slowStartOrb = PrefabAPI.InstantiateClone(Resources.Load<GameObject>("Prefabs/Effects/OrbEffects/InfusionOrbEffect"), "SlowStartOrbEffect", true);
             if (!slowStartOrb.GetComponent<NetworkIdentity>()) slowStartOrb.AddComponent<NetworkIdentity>();
 
-            Material titanPredictionEffect = Resources.Load<GameObject>("Prefabs/Projectiles/TitanPreFistProjectile").transform.Find("TeamAreaIndicator, GroundOnly").GetComponent<TeamAreaIndicator>().teamMaterialPairs[0].sharedMaterial;
+            //Material titanPredictionEffect = Resources.Load<GameObject>("Prefabs/Projectiles/TitanPreFistProjectile").transform.Find("TeamAreaIndicator, GroundOnly").GetComponent<TeamAreaIndicator>().teamMaterialPairs[0].sharedMaterial;
             //Material globMat = new EntityStates.TitanMonster.FireMegaLaser().laserPrefab.transform.Find("End").Find("EndEffect").Find("Particles").Find("Glob").GetComponent<ParticleSystemRenderer>().material;
 
             TrailRenderer trail = slowStartOrb.transform.Find("TrailParent").Find("Trail").GetComponent<TrailRenderer>();
-            trail.widthMultiplier = 3f;
-            trail.material = Addressables.LoadAssetAsync<Material>("RoR2/DLC1/GoldOnHurt/matGoldOrbTrail.mat").WaitForCompletion();
+            trail.widthMultiplier = 1f;
+            trail.material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Grandparent/matGrandparentTeleportOutBoom.mat").WaitForCompletion();
 
-            slowStartOrb.transform.Find("VFX").Find("Core").GetComponent<ParticleSystemRenderer>().material = titanPredictionEffect;
-            slowStartOrb.transform.Find("VFX").localScale = Vector3.one * 3f;
+            slowStartOrb.transform.Find("VFX").Find("Core").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Loader/matOmniRing2Loader.mat").WaitForCompletion();
+            slowStartOrb.transform.Find("VFX").localScale = Vector3.one * 2f;
 
-            var main = slowStartOrb.transform.Find("VFX").Find("PulseGlow").GetComponent<ParticleSystem>().colorOverLifetime;
-            main.color = new ParticleSystem.MinMaxGradient
-            {
-                colorMin = Color.yellow,
-                colorMax = Color.yellow,
-                color = Color.yellow,
-            };  
+            slowStartOrb.transform.Find("VFX").Find("Core").localScale = Vector3.one * 4.5f;
+
+            slowStartOrb.transform.Find("VFX").Find("PulseGlow").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Grandparent/matGrandParentSunGlow.mat").WaitForCompletion();
+
+            slowStartOrb.GetComponent<OrbEffect>().endEffect = Modules.Assets.slowStartPickupEffect;
 
             Modules.Assets.AddNewEffectDef(slowStartOrb);
         }
@@ -163,7 +161,7 @@ namespace RegigigasMod.Modules.Enemies
             footstep.baseFootstepString = "Play_moonBrother_step";
             footstep.sprintFootstepOverrideString = "Play_moonBrother_sprint";
 
-            CharacterCameraParams regiParams = Modules.CameraParams.defaultCameraParams;
+            CharacterCameraParams regiParams = Modules.CameraParams.CreateCameraParamsWithData(RegigigasCameraParams.DEFAULT);
 
             KinematicCharacterMotor characterController = newPrefab.GetComponent<KinematicCharacterMotor>();
             characterController.CapsuleRadius = 4f;
@@ -611,8 +609,9 @@ namespace RegigigasMod.Modules.Enemies
 
             #region Primary
             Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
-            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texBrickBreakIcon"), false));
-            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texDrainPunchIcon"), false));
+            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
+            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewDrainPunchIcon"), false));
+            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(IcePunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false));
             #endregion
 
             #region Secondary
@@ -698,10 +697,10 @@ namespace RegigigasMod.Modules.Enemies
             #region Special
             SkillDef impactSkillDef = Modules.Skills.CreateSkillDef(new SkillDefInfo
             {
-                skillName = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
-                skillNameToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
-                skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_DESCRIPTION",
-                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texGigaImpactIcon"),
+                skillName = prefix + "_REGIGIGAS_BODY_SPECIAL_SLAM_NAME",
+                skillNameToken = prefix + "_REGIGIGAS_BODY_SPECIAL_SLAM_NAME",
+                skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SPECIAL_SLAM_DESCRIPTION",
+                skillIcon = Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texHeavySlamIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(BounceStart)),
                 activationStateMachineName = "Weapon",
                 baseMaxStock = 1,
@@ -720,7 +719,31 @@ namespace RegigigasMod.Modules.Enemies
                 stockToConsume = 1
             });
 
-            Modules.Skills.AddSpecialSkills(prefab, revengeSkillDef);
+            SkillDef impact2SkillDef = Modules.Skills.CreateSkillDef(new SkillDefInfo
+            {
+                skillName = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
+                skillNameToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
+                skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_DESCRIPTION",
+                skillIcon = Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewGigaImpactIcon"),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(SkillStates.Regigigas.GigaImpact.Channel)),
+                activationStateMachineName = "Body",
+                baseMaxStock = 1,
+                baseRechargeInterval = 16f,
+                beginSkillCooldownOnSkillEnd = true,
+                canceledFromSprinting = false,
+                forceSprintDuringState = false,
+                fullRestockOnAssign = true,
+                interruptPriority = EntityStates.InterruptPriority.PrioritySkill,
+                resetCooldownTimerOnUse = false,
+                isCombatSkill = true,
+                mustKeyPress = false,
+                cancelSprintingOnActivation = true,
+                rechargeStock = 1,
+                requiredStock = 1,
+                stockToConsume = 1
+            });
+
+            Modules.Skills.AddSpecialSkills(prefab, revengeSkillDef, impact2SkillDef);
             Modules.Skills.AddUtilitySkills(prefab, impactSkillDef);
             #endregion
         }

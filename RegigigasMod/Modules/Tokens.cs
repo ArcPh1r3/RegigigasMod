@@ -62,6 +62,9 @@ namespace RegigigasMod.Modules
 
             LanguageAPI.Add(prefix + "PRIMARY_DRAINPUNCH_NAME", "Drain Punch");
             LanguageAPI.Add(prefix + "PRIMARY_DRAINPUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>{SkillStates.Regigigas.DrainPunch.damageCoefficientOverride * 100f}% damage</style>, <style=cIsHealing>healing for 50% of damage dealt</style>.");
+
+            LanguageAPI.Add(prefix + "PRIMARY_ICEPUNCH_NAME", "Ice Punch");
+            LanguageAPI.Add(prefix + "PRIMARY_ICEPUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>{SkillStates.Regigigas.IcePunch.damageCoefficientOverride * 100f}% damage</style>, <style=cIsUtility>freezing enemies hit</style>.");
             #endregion
 
             #region Secondary
@@ -78,8 +81,11 @@ namespace RegigigasMod.Modules
             #endregion
 
             #region Special
+            LanguageAPI.Add(prefix + "SPECIAL_SLAM_NAME", "Heavy Slam");
+            LanguageAPI.Add(prefix + "SPECIAL_SLAM_DESCRIPTION", $"Leap high into the sky, dealing <style=cIsDamage>{100f * SkillStates.Regigigas.Bounce.minDamageCoefficient}-{100f * SkillStates.Regigigas.Bounce.maxDamageCoefficient}% damage</style> around you in an explosive landing.");
+
             LanguageAPI.Add(prefix + "SPECIAL_IMPACT_NAME", "Giga Impact");
-            LanguageAPI.Add(prefix + "SPECIAL_IMPACT_DESCRIPTION", $"Leap high into the sky, dealing <style=cIsDamage>{100f * SkillStates.Regigigas.Bounce.damageCoefficient}% damage</style> around you in an explosive landing.");
+            LanguageAPI.Add(prefix + "SPECIAL_IMPACT_DESCRIPTION", $"Cloak yourself in <style=cIsDamage>flame</style> and rush forward, <style=cIsUtility>dragging in nearby enemies</style>, then explode for <style=cIsDamage>{100f * SkillStates.Regigigas.GigaImpactOld.blastAttackDamageCoefficient}% damage</style>.");
             #endregion
 
             #region Achievements

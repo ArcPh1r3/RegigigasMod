@@ -2,6 +2,7 @@
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
+using static RoR2.CameraTargetParams;
 
 namespace RegigigasMod.SkillStates.Regigigas
 {
@@ -17,6 +18,8 @@ namespace RegigigasMod.SkillStates.Regigigas
         private float startDuration;
         private uint playID;
 
+        private CameraParamsOverrideHandle camParamsOverrideHandle;
+
         public override void OnEnter()
         {
             base.OnEnter();
@@ -24,10 +27,10 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.rockTimer = ChargeAncientPower.baseRockTimer;// / this.attackSpeedStat;
             this.rockCount = 0;
             this.rockStopwatch = this.startDuration + this.rockTimer;
+            this.camParamsOverrideHandle = Modules.CameraParams.OverrideCameraParams(base.cameraTargetParams, RegigigasCameraParams.AIM, 0.5f);
 
             base.PlayAnimation("Gesture, Override", "ChargeAncientPower", "AncientPower.playbackRate", this.startDuration);
 
-            base.cameraTargetParams.cameraParams = Modules.CameraParams.aimCameraParams;
             base.characterBody.hideCrosshair = false;
 
 
@@ -39,6 +42,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             base.OnExit();
 
             AkSoundEngine.StopPlayingID(this.playID);
+
+            this.cameraTargetParams.RemoveParamsOverride(this.camParamsOverrideHandle, 0.5f);
         }
 
         public override void FixedUpdate()
@@ -68,7 +73,6 @@ namespace RegigigasMod.SkillStates.Regigigas
                 else
                 {
                     base.PlayAnimation("Gesture, Override", "BufferEmpty");
-                    base.cameraTargetParams.cameraParams = Modules.CameraParams.defaultCameraParams;
                     this.outer.SetNextStateToMain();
                     return;
                 }

@@ -10,6 +10,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.Rendering.PostProcessing;
 using ThreeEyedGames;
 using RoR2.UI;
+using RoR2.Projectile;
 
 namespace RegigigasMod.Modules
 {
@@ -36,6 +37,9 @@ namespace RegigigasMod.Modules
         internal static GameObject slowStartReleasedEffect;
 
         internal static GameObject ancientPowerCrosshairPrefab;
+
+        internal static GameObject gigaImpactRushEffect;
+        internal static GameObject slowStartPickupEffect;
 
         internal static void PopulateAssets()
         {
@@ -109,6 +113,22 @@ namespace RegigigasMod.Modules
             CrosshairController crosshair = ancientPowerCrosshairPrefab.GetComponent<CrosshairController>();
             crosshair.skillStockSpriteDisplays = new CrosshairController.SkillStockSpriteDisplay[0];
             ancientPowerCrosshairPrefab.transform.Find("StockCountHolder").gameObject.SetActive(false);
+
+
+            gigaImpactRushEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/LunarWisp/LunarWispTrackingBombGhost.prefab").WaitForCompletion().InstantiateClone("RegigigasGigaImpactRushEffect", false);
+            RegigigasPlugin.Destroy(gigaImpactRushEffect.GetComponent<ProjectileGhostController>());
+
+            gigaImpactRushEffect.transform.Find("Point Light").GetComponent<Light>().color = Color.white;
+            gigaImpactRushEffect.transform.Find("Glow").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Common/VFX/matFirePillarParticle.mat").WaitForCompletion();
+            gigaImpactRushEffect.transform.Find("BombOrb").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Grandparent/matGrandparentTeleportOutBoom.mat").WaitForCompletion();
+            gigaImpactRushEffect.transform.Find("BombOrb").Find("Sparks").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Captain/matCaptainAirstrikeTrail.mat").WaitForCompletion();
+
+            slowStartPickupEffect = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Infusion/InfusionOrbFlash.prefab").WaitForCompletion().InstantiateClone("RegigigasGigaImpactRushEffect", true);
+
+            slowStartPickupEffect.transform.Find("Blood").localScale = Vector3.one * 7f;
+            slowStartPickupEffect.transform.Find("Blood").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Firework/matFireworkSparkle.mat").WaitForCompletion();
+
+            AddNewEffectDef(slowStartPickupEffect, "sfx_regigigas_slowstart_pickup");
         }
 
         internal static NetworkSoundEventDef CreateNetworkSoundEventDef(string eventName)

@@ -2,6 +2,7 @@
 using RoR2;
 using UnityEngine;
 using RoR2.Projectile;
+using static RoR2.CameraTargetParams;
 
 namespace RegigigasMod.SkillStates.Regigigas
 {
@@ -21,12 +22,15 @@ namespace RegigigasMod.SkillStates.Regigigas
         private float duration;
         private GameObject projectilePrefab;
 
+        private CameraParamsOverrideHandle camParamsOverrideHandle;
+
         public override void OnEnter()
         {
             base.OnEnter();
             this.duration = FireAncientPower.baseDuration / this.attackSpeedStat;
             this.timeBetweenRocks = FireAncientPower.baseTimeBetweenRocks / this.attackSpeedStat;
             this.throwStopwatch = this.timeBetweenRocks;
+            this.camParamsOverrideHandle = Modules.CameraParams.OverrideCameraParams(base.cameraTargetParams, RegigigasCameraParams.AIM, 0.5f);
 
             // hehhhe :3333
             this.characterBody.aimOriginTransform.localPosition = new Vector3(0f, 12f, 0f);
@@ -65,7 +69,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             this.characterBody.aimOriginTransform.localPosition = new Vector3(0f, 0f, 0f);
 
-            base.cameraTargetParams.cameraParams = Modules.CameraParams.defaultCameraParams;
+            this.cameraTargetParams.RemoveParamsOverride(this.camParamsOverrideHandle);
             base.characterBody.hideCrosshair = true;
 
             this.regigigasController.rockCount = 0;

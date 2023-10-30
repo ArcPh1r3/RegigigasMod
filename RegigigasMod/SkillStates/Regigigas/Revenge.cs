@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using RegigigasMod.Modules.Components;
 using System.Linq;
+using static RoR2.CameraTargetParams;
 
 namespace RegigigasMod.SkillStates.Regigigas
 {
@@ -18,12 +19,15 @@ namespace RegigigasMod.SkillStates.Regigigas
         private GameObject chargeEffectInstance;
         private Transform areaIndicator;
 
+        private CameraParamsOverrideHandle camParamsOverrideHandle;
+
         public override void OnEnter()
         {
             base.OnEnter();
             this.duration = Revenge.baseDuration;// / this.attackSpeedStat;
             this.lastHealth = base.healthComponent.combinedHealth;
             this.modelAnimator = base.GetModelAnimator();
+            this.camParamsOverrideHandle = Modules.CameraParams.OverrideCameraParams(base.cameraTargetParams, RegigigasCameraParams.CHARGE, 0.5f);
 
             base.PlayAnimation("FullBody, Override", "RevengeEntry", "Revenge.playbackRate", this.duration * 0.1f);
 
@@ -48,7 +52,6 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.chargeEffectInstance.GetComponent<ScaleParticleSystemDuration>().newDuration = this.duration;
             this.areaIndicator = this.chargeEffectInstance.transform.Find("Particles").Find("AreaIndicator");
 
-            base.cameraTargetParams.cameraParams = Modules.CameraParams.chargeCameraParams;
             this.chargeEffectInstance.GetComponentInChildren<PostProcessDuration>().maxDuration = this.duration;
         }
 
@@ -98,6 +101,8 @@ namespace RegigigasMod.SkillStates.Regigigas
         public override void OnExit()
         {
             base.OnExit();
+
+            this.cameraTargetParams.RemoveParamsOverride(this.camParamsOverrideHandle, 0.5f);
 
             if (this.chargeEffectInstance) EntityState.Destroy(this.chargeEffectInstance);
         }

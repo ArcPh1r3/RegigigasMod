@@ -1,4 +1,5 @@
-﻿using RegigigasMod.Modules.Components;
+﻿using UnityEngine;
+using RegigigasMod.Modules.Components;
 using RoR2;
 using RoR2.Orbs;
 
@@ -6,12 +7,11 @@ namespace RegigigasMod.Modules.Misc
 {
     public class SlowStartOrb : Orb
     {
-        private const float speed = 60f;
         private SlowStartController slowStartController;
 
         public override void Begin()
         {
-            base.duration = base.distanceToTarget / 30f;
+            base.duration = base.distanceToTarget / Random.Range(15f, 30f);
 
             EffectData effectData = new EffectData
             {

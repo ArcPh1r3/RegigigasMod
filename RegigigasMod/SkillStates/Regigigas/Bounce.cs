@@ -10,7 +10,8 @@ namespace RegigigasMod.SkillStates.Regigigas
 {
     public class Bounce : BaseSkillState
     {
-        public static float damageCoefficient = 20f;
+        public static float minDamageCoefficient = 12f;
+        public static float maxDamageCoefficient = 48f;
         public static float leapDuration = 0.6f;
         public static float dropVelocity = 24f;
 
@@ -21,6 +22,8 @@ namespace RegigigasMod.SkillStates.Regigigas
         private float previousAirControl;
         private GameObject chargeEffectInstanceL;
         private GameObject chargeEffectInstanceR;
+        private bool isFalling;
+        private float maxYSpeed;
 
         public override void OnEnter()
         {
@@ -48,9 +51,9 @@ namespace RegigigasMod.SkillStates.Regigigas
                 base.characterMotor.velocity = a + b + b2;
             }
 
-            base.characterDirection.moveVector = direction;
+            this.characterDirection.moveVector = direction;
 
-            base.characterBody.bodyFlags |= CharacterBody.BodyFlags.IgnoreFallDamage;
+            this.characterBody.bodyFlags |= CharacterBody.BodyFlags.IgnoreFallDamage;
 
             Util.PlaySound("sfx_regigigas_leap", base.gameObject);
 
@@ -90,6 +93,13 @@ namespace RegigigasMod.SkillStates.Regigigas
             base.StartAimMode(0.5f, false);
             this.stopwatch += Time.fixedDeltaTime;
 
+            if (this.characterMotor.velocity.y <= 0f && base.fixedAge >= 0.1f) this.isFalling = true;
+
+            // cache this and use your highest downward velocity to calc damage
+            if (this.characterMotor.velocity.y <= this.maxYSpeed) this.maxYSpeed = this.characterMotor.velocity.y;
+
+            if (this.isFalling) this.characterMotor.velocity.y += (-16f * Time.fixedDeltaTime);
+
             if (this.stopwatch >= this.duration && base.isAuthority && base.characterMotor.isGrounded)
             {
                 this.GroundImpact();
@@ -104,10 +114,10 @@ namespace RegigigasMod.SkillStates.Regigigas
             {
                 this.hasLanded = true;
 
-                Util.PlaySound("RegigigasStomp", base.gameObject);
-                Util.PlaySound("Play_parent_attack1_slam", base.gameObject);
+                Util.PlaySound("sfx_regigigas_slam", base.gameObject);
+                //Util.PlaySound("Play_parent_attack1_slam", base.gameObject);
 
-                float radius = 32f;
+                float radius = 24f;
 
                 EffectData effectData = new EffectData();
                 effectData.origin = base.characterBody.footPosition;
@@ -115,14 +125,16 @@ namespace RegigigasMod.SkillStates.Regigigas
 
                 EffectManager.SpawnEffect(Modules.Assets.slamImpactEffect, effectData, true);
 
+                float dmg = Util.Remap(this.maxYSpeed, 0f, -500f, Bounce.minDamageCoefficient, Bounce.maxDamageCoefficient);
+
                 new BlastAttack
                 {
                     attacker = this.gameObject,
                     attackerFiltering = AttackerFiltering.NeverHitSelf,
-                    baseDamage = Bounce.damageCoefficient * this.damageStat,
+                    baseDamage = dmg * this.damageStat,
                     baseForce = 800f,
                     bonusForce = Vector3.up * 2000f,
-                    crit = base.RollCrit(),
+                    crit = this.RollCrit(),
                     damageColorIndex = DamageColorIndex.WeakPoint,
                     damageType = DamageType.AOE,
                     falloffModel = BlastAttack.FalloffModel.None,

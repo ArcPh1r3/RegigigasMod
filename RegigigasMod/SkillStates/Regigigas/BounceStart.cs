@@ -40,6 +40,8 @@ namespace RegigigasMod.SkillStates.Regigigas
             base.FixedUpdate();
             if (this.animator) this.animator.SetBool("isGrounded", false);
 
+            this.characterMotor.velocity.y = 0f;
+
             if (base.fixedAge >= this.duration / 2f && base.isAuthority)
             {
                 this.outer.SetNextState(new Bounce());

@@ -124,7 +124,7 @@ namespace RegigigasMod.Modules.Components
                     rotation = Quaternion.identity
                 }, true);
 
-                EffectManager.SpawnEffect(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/GrandParentSunSpawn.prefab").WaitForCompletion(), new EffectData
+                EffectManager.SpawnEffect(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/GrandparentEggImpact.prefab").WaitForCompletion(), new EffectData
                 {
                     origin = this.transform.position + new Vector3(0f, 5f, 0f),
                     rotation = Quaternion.identity

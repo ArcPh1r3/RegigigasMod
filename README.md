@@ -42,15 +42,41 @@ Stomp with all your might, summoning pillars of flame that deal 600% damage. Inf
 Freeze up for 8 seconds, gaining 500 armor. At the end, release a massive blast for triple the damage receieved during this time. Radius scales up with damage taken, up to a limit.
 
 ## TODO
-- still needs a few more sotv fixes (allegedly) (????)
+- Ancient Scepter support
+- Void item displays
 
 ## Credits
 YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-External-Move-Icons-530204137)
 
 ## Known Issues
-- None as of the latest update
+- Missing item displays for SOTV items
 
 ## Changelog
+
+`1.4.9`
+- Separated lore friendly configs for playable and boss versions, so you can have the boss as Stone Juggernaut and the player as Regigigas if you'd like (thanks Moffein for the suggestion)
+
+`1.4.8`
+- oops
+
+`1.4.7`
+- Added a config option to nerf the boss version's melee by making it punch instead of grab
+- Adjusted the order of skills in the loadout so the default loadout isn't completely terrible
+- Ancient Power damage per rock: 500% > 300%, max stock 8 > 5, cooldown 4s > 5s
+- Heavy Slam minimum damage: 1400% > 800%
+- Giga Impact damage: 1600% > 1200%
+- Earth Power damage per wave: 600% > 400%
+- ^^^overall damage was way too high after new Heavy Slam and Giga Impact
+- Added skill: Ice Punch
+- Added skill: Mach Punch- both these skills are kinda joke tier
+- Added missing skin icons
+- Tweaked Heavy Slam logic- less movespeed scaling, faster falling, less likely to hit the skybox with no items
+- Updated Ancient Power skill icon
+- Finished most of the missing item displays
+- Added skin: King (sorry)
+- Fixed hitstop not working on punches
+- Fixed items falling through the floor when dropped via item drop mods
+- Regirock skin now plays the proper Regirock cry
 
 `1.4.6`
 - Giga Impact renamed to Heavy Slam, damage changed to a scaling value based on speed, fall speed greatly increased

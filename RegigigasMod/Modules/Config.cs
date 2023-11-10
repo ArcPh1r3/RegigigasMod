@@ -8,14 +8,18 @@ namespace RegigigasMod.Modules
     {
         internal static ConfigEntry<float> _shinySpawnRate;
         internal static ConfigEntry<bool> _nerfedEarthPower;
+        internal static ConfigEntry<bool> _nerfedMelee;
         internal static ConfigEntry<bool> _loreFriendly;
+        internal static ConfigEntry<bool> _loreFriendly2;
         internal static ConfigEntry<bool> _cssActualSize;
 
         public static List<StageSpawnInfo> StageList = new List<StageSpawnInfo>();
 
         internal static float shinySpawnRate;
         internal static bool nerfedEarthPower;
+        internal static bool nerfedMelee;
         internal static bool loreFriendly;
+        internal static bool loreFriendly2;
         internal static bool cssActualSize;
 
         internal static void ReadConfig()
@@ -36,6 +40,14 @@ namespace RegigigasMod.Modules
 
             nerfedEarthPower = _nerfedEarthPower.Value;
 
+            _nerfedMelee =
+                RegigigasPlugin.instance.Config.Bind<bool>("Regigigas",
+                                                           "Nerfed Melee",
+                                                           false,
+                                                           "Nerfs the melee attack of the boss version, by removing the grab and letting it punch instead. Set to false to use the unfair grab.");
+
+            nerfedMelee = _nerfedMelee.Value;
+
             _loreFriendly =
                 RegigigasPlugin.instance.Config.Bind<bool>("Regigigas",
                                                "Lore Friendly",
@@ -43,6 +55,14 @@ namespace RegigigasMod.Modules
                                                "Gives Regigigas an alternate name and model to make it fit in a little better.");
 
             loreFriendly = _loreFriendly.Value;
+
+            _loreFriendly2 =
+    RegigigasPlugin.instance.Config.Bind<bool>("Regigigas (Playable)",
+                                   "Lore Friendly",
+                                   false,
+                                   "Gives Regigigas (Player) an alternate name and model to make it fit in a little better.");
+
+            loreFriendly2 = _loreFriendly2.Value;
 
             _cssActualSize =
                     RegigigasPlugin.instance.Config.Bind<bool>("Regigigas",

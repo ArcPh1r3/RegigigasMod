@@ -54,5 +54,10 @@ namespace RegigigasMod.SkillStates.Regigigas
                 return;
             }
         }
+
+        public override InterruptPriority GetMinimumInterruptPriority()
+        {
+            return InterruptPriority.Pain;
+        }
     }
 }

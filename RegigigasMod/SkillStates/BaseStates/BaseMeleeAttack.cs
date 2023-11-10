@@ -19,7 +19,7 @@ namespace RegigigasMod.SkillStates.BaseStates
         protected float procCoefficient = 1f;
         protected float pushForce = 300f;
         protected Vector3 bonusForce = Vector3.zero;
-        protected float baseDuration = 1f;
+        protected float baseDuration = 1.8f;
         protected float attackStartTime = 0.2f;
         protected float attackEndTime = 0.4f;
         protected float baseEarlyExitTime = 0.4f;
@@ -34,7 +34,7 @@ namespace RegigigasMod.SkillStates.BaseStates
         protected GameObject hitEffectPrefab;
         protected NetworkSoundEventIndex impactSound;
 
-        private float earlyExitTime;
+        protected float earlyExitTime;
         public float duration;
         private bool hasFired;
         private float hitPauseTimer;
@@ -118,7 +118,7 @@ namespace RegigigasMod.SkillStates.BaseStates
             if (!this.inHitPause)
             {
                 this.storedVelocity = base.characterMotor.velocity;
-                this.hitStopCachedState = base.CreateHitStopCachedState(base.characterMotor, this.animator, "Slash.playbackRate");
+                this.hitStopCachedState = base.CreateHitStopCachedState(base.characterMotor, this.animator, "Punch.playbackRate");
                 this.hitPauseTimer = this.hitStopDuration / this.attackSpeedStat;
                 this.inHitPause = true;
             }
@@ -180,7 +180,7 @@ namespace RegigigasMod.SkillStates.BaseStates
             else
             {
                 if (base.characterMotor) base.characterMotor.velocity = Vector3.zero;
-                if (this.animator) this.animator.SetFloat("Swing.playbackRate", 0f);
+                if (this.animator) this.animator.SetFloat("Punch.playbackRate", 0f);
             }
 
             if (this.stopwatch >= (this.duration * this.attackStartTime) && this.stopwatch <= (this.duration * this.attackEndTime))

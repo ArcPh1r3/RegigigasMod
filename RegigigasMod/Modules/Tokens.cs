@@ -9,48 +9,43 @@ namespace RegigigasMod.Modules
         {
             string prefix = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_";
 
-            string desc = "Regigigas.<color=#CCD3E0>" + Environment.NewLine + Environment.NewLine;
-
-            if (Modules.Config.loreFriendly)
-            {
-                desc = "The Stone Juggernaut is a hulking beast that requires time and support to reach its full potential. If allowed to awaken, it dominates the battlefield with ease.<color=#CCD3E0>" + Environment.NewLine + Environment.NewLine; ;
-            }
+            string desc = "Regigigas is a hulking beast that requires time and support to reach its full potential. If allowed to awaken, it dominates the battlefield with ease.<color=#CCD3E0>" + Environment.NewLine + Environment.NewLine; ;
 
             desc = desc + "< ! > Use Drain Punch to survive until Slow Start is mitigated. Having allies protect you later into a run is essential!" + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > Ancient Power's health penalty can boost the damage of Revenge." + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > Crush Grip is terrible. Don't use it, please." + Environment.NewLine + Environment.NewLine;
-            desc = desc + "< ! > Reactivate Revenge to cancel it early. Knowing how much you can take is key to surviving with this." + Environment.NewLine + Environment.NewLine;
+            desc = desc + "< ! > Ancient Power is essential for dealing with flying enemies, and a good form of constant damage. Using Drain Punch to sustain yourself while doing this is key." + Environment.NewLine + Environment.NewLine;
+            desc = desc + "< ! > Heavy Slam does more damage the faster you fall, so be sure to jump as high as you can." + Environment.NewLine + Environment.NewLine;
+            desc = desc + "< ! > Giga Impact has a huge vacuum effect, so use that to maximize your damage output." + Environment.NewLine + Environment.NewLine;
 
             string outro = "..and so it left, leaving irreparable damage in its wake.";
             string outroFailure = "..and so it vanished, returning to its eternal slumber.";
 
             string lore = "There is an enduring legend that states this Pokémon towed continents with ropes.";
+            string lore2 = "There is an enduring legend that states this golem towed continents with ropes.";
 
-            string charName = "Regigigas";
-            if (Modules.Config.loreFriendly) charName = "Stone Juggernaut";
-            LanguageAPI.Add(prefix + "NAME", charName);
+            LanguageAPI.Add(prefix + "NAME", "Regigigas");
+            LanguageAPI.Add(prefix + "NAME2", "Stone Juggernaut");
             LanguageAPI.Add(prefix + "DESCRIPTION", desc);
             LanguageAPI.Add(prefix + "SUBTITLE", "Weary Colossus");
             LanguageAPI.Add(prefix + "LORE", lore);
+            LanguageAPI.Add(prefix + "LORE2", lore2);
             LanguageAPI.Add(prefix + "OUTRO_FLAVOR", outro);
             LanguageAPI.Add(prefix + "OUTRO_FAILURE", outroFailure);
 
             #region Skins
             LanguageAPI.Add(prefix + "DEFAULT_SKIN_NAME", "Default");
+
             if (Modules.Config.loreFriendly) LanguageAPI.Add(prefix + "MONSOON_SKIN_NAME", "Gold");
             else LanguageAPI.Add(prefix + "MONSOON_SKIN_NAME", "Shiny");
+
+            LanguageAPI.Add(prefix + "JUGGERNAUT_SKIN_NAME", "Juggernaut");
+
+            LanguageAPI.Add(prefix + "BOWSER_SKIN_NAME", "King");
             #endregion
 
             #region Passive
             LanguageAPI.Add(prefix + "PASSIVE_NAME", "Slow Start");
-            if (Modules.Config.loreFriendly)
-            {
-                LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore the Stone Juggernaut to <style=cIsDamage>full power</style>.");
-            }
-            else
-            {
-                LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore Regigigas to <style=cIsDamage>full power</style>.");
-            }
+            LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore Regigigas to <style=cIsDamage>full power</style>.");
+            LanguageAPI.Add(prefix + "PASSIVE_DESCRIPTION2", $"<style=cIsHealth>Stats are halved</style> upon spawning. Defeating <style=cIsUtility>10 enemies</style> will restore the Stone Juggernaut to <style=cIsDamage>full power</style>.");
             #endregion
 
             #region Primary
@@ -59,6 +54,9 @@ namespace RegigigasMod.Modules
 
             LanguageAPI.Add(prefix + "PRIMARY_PUNCH_NAME", "Brick Break");
             LanguageAPI.Add(prefix + "PRIMARY_PUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>{SkillStates.Regigigas.PunchCombo.damageCoefficientOverride * 100f}% damage</style>.");
+
+            LanguageAPI.Add(prefix + "PRIMARY_MACHPUNCH_NAME", "Mach Punch");
+            LanguageAPI.Add(prefix + "PRIMARY_MACHPUNCH_DESCRIPTION", $"Punch really fast for <style=cIsDamage>{SkillStates.Regigigas.MachPunch.damageCoefficientOverride * 100f}% damage</style>.");
 
             LanguageAPI.Add(prefix + "PRIMARY_DRAINPUNCH_NAME", "Drain Punch");
             LanguageAPI.Add(prefix + "PRIMARY_DRAINPUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>{SkillStates.Regigigas.DrainPunch.damageCoefficientOverride * 100f}% damage</style>, <style=cIsHealing>healing for 50% of damage dealt</style>.");
@@ -89,7 +87,7 @@ namespace RegigigasMod.Modules
             #endregion
 
             #region Achievements
-            if (Modules.Config.loreFriendly)
+            if (Modules.Config.loreFriendly2)
             {
                 LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_ACHIEVEMENT_NAME", "Stone Juggernaut: Mastery");
                 LanguageAPI.Add(prefix + "MONSOONUNLOCKABLE_ACHIEVEMENT_DESC", "As Stone Juggernaut, beat the game or obliterate on Monsoon.");

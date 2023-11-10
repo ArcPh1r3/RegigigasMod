@@ -22,8 +22,8 @@ namespace RegigigasMod.Modules
         {
             defaultCameraParams = NewCameraParams("ccpRegigigas", 70f, 1.37f, new Vector3(0f, 10f, -30f));
             aimCameraParams = NewCameraParams("ccpRegigigasAim", 70f, 1.37f, new Vector3(0f, 12f, -28f));
-            chargeCameraParams = NewCameraParams("ccpRegigigasCharge", 70f, 1.37f, new Vector3(0f, 15f, -50f));
-            chargeCameraParams = NewCameraParams("ccpRegigigasEmote", 70f, 1.37f, new Vector3(0f, 5f, -27f));
+            chargeCameraParams = NewCameraParams("ccpRegigigasCharge", 70f, 1.37f, new Vector3(0f, 3f, -35f));
+            emoteCameraParams = NewCameraParams("ccpRegigigasEmote", 70f, 1.37f, new Vector3(0f, 5f, -40f));
         }
 
         private static CharacterCameraParamsData NewCameraParams(string name, float pitch, float pivotVerticalOffset, Vector3 standardPosition)

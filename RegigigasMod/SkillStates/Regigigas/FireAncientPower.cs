@@ -13,7 +13,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         public static float baseDuration = 0.6f;
         public static float baseTimeBetweenRocks = 0.15f;
 
-        public static float damageCoefficient = 5f;
+        public static float damageCoefficient = 3f;
         public static float throwForce = 140f;
         public static float projectileForce = 5f;
 
@@ -67,7 +67,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             base.OnExit();
 
-            this.characterBody.aimOriginTransform.localPosition = new Vector3(0f, 0f, 0f);
+            this.characterBody.aimOriginTransform.localPosition = new Vector3(0f, 0.5f, 0f);
 
             this.cameraTargetParams.RemoveParamsOverride(this.camParamsOverrideHandle);
             base.characterBody.hideCrosshair = true;

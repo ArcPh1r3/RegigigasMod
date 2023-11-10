@@ -18,11 +18,10 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.procCoefficient = 1f;
             this.pushForce = 3500f;
             this.bonusForce = Vector3.zero;
-            this.baseDuration = 1.8f;
             this.attackStartTime = 0.37f;
             this.attackEndTime = 0.5f;
             this.baseEarlyExitTime = 0.58f;
-            this.hitStopDuration = 0.035f;
+            this.hitStopDuration = 0.18f;
             this.attackRecoil = 1.5f;
             this.hitHopVelocity = 8f;
 

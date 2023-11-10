@@ -48,7 +48,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 this.hasCried = true;
 
                 string soundString = "RegigigasCry";
-                if (Modules.Config.loreFriendly) soundString = "sfx_regigigas_altcry"; // it's the regirock cry lmao
+                if (Modules.Config.loreFriendly || this.characterBody.skinIndex > 1) soundString = "sfx_regigigas_altcry"; // it's the regirock cry lmao
 
                 Util.PlaySound(soundString, this.gameObject);
             }

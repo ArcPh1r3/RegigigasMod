@@ -5,32 +5,33 @@ using System;
 using UnityEngine.Networking;
 using RoR2.Projectile;
 using UnityEngine.AddressableAssets;
+using static RoR2.CameraTargetParams;
 
 namespace RegigigasMod.SkillStates.Regigigas
 {
     public class Bounce : BaseSkillState
     {
-        public static float minDamageCoefficient = 12f;
-        public static float maxDamageCoefficient = 48f;
+        public static float minDamageCoefficient = 8f;
+        public static float maxDamageCoefficient = 36f;
         public static float leapDuration = 0.6f;
-        public static float dropVelocity = 24f;
 
         private float duration;
         private bool hasLanded;
         private float stopwatch;
-        private Animator animator;
         private float previousAirControl;
         private GameObject chargeEffectInstanceL;
         private GameObject chargeEffectInstanceR;
         private bool isFalling;
+        private bool setCamOverride;
         private float maxYSpeed;
+
+        private CameraParamsOverrideHandle camParamsOverrideHandle;
 
         public override void OnEnter()
         {
             base.OnEnter();
             this.duration = Bounce.leapDuration / (0.75f + (0.25f * this.attackSpeedStat));
             this.hasLanded = false;
-            this.animator = base.GetModelAnimator();
             base.characterMotor.jumpCount = base.characterBody.maxJumpCount;
 
             this.previousAirControl = base.characterMotor.airControl;
@@ -43,8 +44,8 @@ namespace RegigigasMod.SkillStates.Regigigas
                 base.characterBody.isSprinting = true;
 
                 direction.y = Mathf.Max(direction.y, 1.25f * EntityStates.Croco.Leap.minimumY);
-                Vector3 a = direction.normalized * (1.15f * EntityStates.Croco.Leap.aimVelocity) * this.moveSpeedStat;
-                Vector3 b = Vector3.up * 6f * EntityStates.Croco.Leap.upwardVelocity;
+                Vector3 a = direction.normalized * (1.15f * EntityStates.Croco.Leap.aimVelocity) * (3 + (0.5f * this.moveSpeedStat));
+                Vector3 b = Vector3.up * 5f * EntityStates.Croco.Leap.upwardVelocity;
                 Vector3 b2 = new Vector3(direction.x, 0f, direction.z).normalized * (0.75f * EntityStates.Croco.Leap.forwardVelocity);
 
                 base.characterMotor.Motor.ForceUnground();
@@ -85,20 +86,31 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             base.characterBody.bodyFlags &= ~CharacterBody.BodyFlags.IgnoreFallDamage;
             base.characterMotor.airControl = this.previousAirControl;
+
+            if (this.setCamOverride) this.cameraTargetParams.RemoveParamsOverride(this.camParamsOverrideHandle, 1.5f);
         }
 
         public override void FixedUpdate()
         {
             base.FixedUpdate();
             base.StartAimMode(0.5f, false);
+            this.characterBody.isSprinting = true;
             this.stopwatch += Time.fixedDeltaTime;
 
-            if (this.characterMotor.velocity.y <= 0f && base.fixedAge >= 0.1f) this.isFalling = true;
+            if (!this.isFalling)
+            {
+                if (this.characterMotor.velocity.y <= 0f && base.fixedAge >= 0.1f)
+                {
+                    this.isFalling = true;
+                    this.setCamOverride = true;
+                    this.camParamsOverrideHandle = Modules.CameraParams.OverrideCameraParams(base.cameraTargetParams, RegigigasCameraParams.CHARGE, 2f);
+                }
+            }
 
             // cache this and use your highest downward velocity to calc damage
             if (this.characterMotor.velocity.y <= this.maxYSpeed) this.maxYSpeed = this.characterMotor.velocity.y;
 
-            if (this.isFalling) this.characterMotor.velocity.y += (-16f * Time.fixedDeltaTime);
+            if (this.isFalling) this.characterMotor.velocity.y += (-24f * Time.fixedDeltaTime);
 
             if (this.stopwatch >= this.duration && base.isAuthority && base.characterMotor.isGrounded)
             {
@@ -135,7 +147,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                     baseForce = 800f,
                     bonusForce = Vector3.up * 2000f,
                     crit = this.RollCrit(),
-                    damageColorIndex = DamageColorIndex.WeakPoint,
+                    damageColorIndex = DamageColorIndex.Default,
                     damageType = DamageType.AOE,
                     falloffModel = BlastAttack.FalloffModel.None,
                     inflictor = this.gameObject,
@@ -151,7 +163,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 
         public override InterruptPriority GetMinimumInterruptPriority()
         {
-            return InterruptPriority.PrioritySkill;
+            return InterruptPriority.Pain;
         }
     }
 }

@@ -79,6 +79,7 @@ namespace RegigigasMod.SkillStates.Regigigas.GigaImpact
         {
             base.FixedUpdate();
             this.characterBody.isSprinting = true;
+            base.StartAimMode(0.5f);
 
             if (base.isAuthority)
             {
@@ -86,7 +87,7 @@ namespace RegigigasMod.SkillStates.Regigigas.GigaImpact
                 this.characterMotor.velocity = forwardForce;
 
                 this.rushBlastAttack.position = this.characterBody.corePosition;
-                this.rushBlastAttack.bonusForce = forwardForce;
+                this.rushBlastAttack.bonusForce = forwardForce * 0.8f;
                 this.rushBlastAttack.Fire();
 
                 if (this.inputBank.skill4.justPressed) this.outer.SetNextStateToMain();
@@ -136,7 +137,7 @@ namespace RegigigasMod.SkillStates.Regigigas.GigaImpact
 
             if (this.effectInstance) EntityState.Destroy(this.effectInstance);
 
-            this.cameraTargetParams.RemoveParamsOverride(this.camParamsOverrideHandle);
+            this.cameraTargetParams.RemoveParamsOverride(this.camParamsOverrideHandle, 0.5f);
 
             Util.PlaySound("sfx_regigigas_explode", this.gameObject);
 

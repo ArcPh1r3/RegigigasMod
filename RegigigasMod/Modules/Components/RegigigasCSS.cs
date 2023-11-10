@@ -17,7 +17,7 @@ namespace RegigigasMod.Modules.Components
         private void Cry()
         {
             string soundString = "RegigigasCry";
-            if (Modules.Config.loreFriendly) soundString = "sfx_regigigas_altcry";
+            if (Modules.Config.loreFriendly2) soundString = "sfx_regigigas_altcry";
             Util.PlaySound(soundString, this.gameObject);
         }
     }

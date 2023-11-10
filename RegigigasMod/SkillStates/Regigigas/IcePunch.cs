@@ -13,7 +13,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 {
     public class IcePunch : PunchCombo
     {
-        internal new static float damageCoefficientOverride = 2.8f;
+        internal new static float damageCoefficientOverride = 1.4f;
 
         private GameObject chargeEffectInstance;
 
@@ -21,7 +21,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             base.OnEnter();
 
-            this.attack.damage = DrainPunch.damageCoefficientOverride * this.damageStat;
+            this.attack.damage = IcePunch.damageCoefficientOverride * this.damageStat;
             this.attack.damageType = DamageType.Freeze2s;
 
             string muzzleString = "HandL";

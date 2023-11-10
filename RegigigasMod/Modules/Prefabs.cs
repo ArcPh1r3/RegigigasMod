@@ -160,7 +160,7 @@ namespace RegigigasMod.Modules
 
             GameObject aimOrigin = new GameObject("AimOrigin");
             aimOrigin.transform.parent = modelBase.transform;
-            aimOrigin.transform.localPosition = new Vector3(0f, 0f, 0f); // whoops
+            aimOrigin.transform.localPosition = new Vector3(0f, 0.5f, 0f); // whoops
             aimOrigin.transform.localRotation = Quaternion.identity;
             aimOrigin.transform.localScale = Vector3.one;
             prefab.GetComponent<CharacterBody>().aimOriginTransform = aimOrigin.transform;

@@ -10,14 +10,13 @@ namespace RegigigasMod.SkillStates.Regigigas
     public class Stomp : BaseRegiSkillState
     {
         public static float baseDuration = 4f;
-        public static float damageCoefficient = 6f;
+        public static float damageCoefficient = 4f;
 
         private float stompTime;
         private bool hasStomped;
         private float duration;
         private float flashTime;
         private bool hasFlashed;
-        private Animator modelAnimator;
 
         public override void OnEnter()
         {
@@ -27,7 +26,6 @@ namespace RegigigasMod.SkillStates.Regigigas
             this.flashTime = 0.4f * this.duration;
             this.hasStomped = false;
             this.hasFlashed = false;
-            this.modelAnimator = base.GetModelAnimator();
 
             base.PlayAnimation("FullBody, Override", "Stomp", "Stomp.playbackRate", this.duration);
         }

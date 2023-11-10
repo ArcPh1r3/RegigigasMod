@@ -104,6 +104,11 @@ namespace RegigigasMod.Modules.Enemies
 
         private static GameObject CreateBodyPrefab(bool isPlayer)
         {
+            bool isLoreFriendly = false;
+
+            if (!isPlayer && Modules.Config.loreFriendly) isLoreFriendly = true;
+            if (isPlayer && Modules.Config.loreFriendly2) isLoreFriendly = true;
+
             string name = bodyName;
             if (isPlayer) name = "RegigigasPlayerBody";
 
@@ -111,12 +116,15 @@ namespace RegigigasMod.Modules.Enemies
             if (isPlayer) iconName = "RegigigasPlayer";
 
             Color charColor = Color.yellow;
-            if (Modules.Config.loreFriendly)
+            if (isLoreFriendly)
             {
                 charColor = Color.grey;
                 iconName = "StoneJuggernautEnemy";
                 if (isPlayer) iconName = "StoneJuggernaut";
             }
+
+            string _nameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME";
+            if (isLoreFriendly) _nameToken += "2";
 
             #region Body
             GameObject newPrefab = Modules.Prefabs.CreatePrefab(name, "mdlRegigigas", new BodyInfo
@@ -124,7 +132,7 @@ namespace RegigigasMod.Modules.Enemies
                 armor = 20f,
                 armorGrowth = 0f,
                 bodyName = name,
-                bodyNameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME",
+                bodyNameToken = _nameToken,
                 bodyColor = charColor,
                 characterPortrait = Modules.Assets.LoadCharacterIcon(iconName),
                 crosshair = Modules.Assets.ancientPowerCrosshairPrefab,
@@ -215,7 +223,7 @@ namespace RegigigasMod.Modules.Enemies
 
             #region Model
             Material bodyMat = null;
-            if (Modules.Config.loreFriendly)
+            if (isLoreFriendly)
             {
                 GameObject golem = Resources.Load<GameObject>("Prefabs/CharacterBodies/GolemBody");
                 bodyMat = new Material(golem.GetComponentInChildren<CharacterModel>().baseRendererInfos[0].defaultMaterial);
@@ -285,7 +293,7 @@ namespace RegigigasMod.Modules.Enemies
                 }}, bodyRendererIndex);
 
             // this is so incredibly fucking jank but it's for the logbook fix
-            if (Modules.Config.loreFriendly)
+            if (isLoreFriendly)
             {
                 ((SkinnedMeshRenderer)newPrefab.GetComponentInChildren<CharacterModel>().baseRendererInfos[1].renderer).sharedMesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt");
             }
@@ -293,8 +301,8 @@ namespace RegigigasMod.Modules.Enemies
 
             CreateHitboxes(newPrefab);
             SetupHurtboxes(newPrefab);
-            CreateSkills(newPrefab);
-            CreateSkins(newPrefab);
+            CreateSkills(newPrefab, isPlayer);
+            CreateSkins(newPrefab, isLoreFriendly);
             InitializeItemDisplays(newPrefab);
 
             return newPrefab;
@@ -595,7 +603,7 @@ namespace RegigigasMod.Modules.Enemies
             Modules.Prefabs.SetupHitbox(model, hitboxTransform, "Punch");
         }
 
-        private static void CreateSkills(GameObject prefab)
+        private static void CreateSkills(GameObject prefab, bool isPlayer)
         {
             Modules.Skills.CreateSkillFamilies(prefab);
 
@@ -608,10 +616,25 @@ namespace RegigigasMod.Modules.Enemies
             skillLocator.passiveSkill.icon = Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texSlowStartIcon");
 
             #region Primary
-            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
-            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
-            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewDrainPunchIcon"), false));
-            Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(IcePunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false));
+            if (isPlayer)
+            {
+                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewDrainPunchIcon"), false));
+                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
+                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(IcePunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false));
+                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
+                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(MachPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_MACHPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_MACHPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
+            }
+            else
+            {
+                if (Modules.Config.nerfedMelee)
+                {
+                    Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(IcePunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false));
+                }
+                else
+                {
+                    Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
+                }
+            }
             #endregion
 
             #region Secondary
@@ -644,11 +667,11 @@ namespace RegigigasMod.Modules.Enemies
                 skillName = prefix + "_REGIGIGAS_BODY_SECONDARY_ANCIENTPOWER_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_SECONDARY_ANCIENTPOWER_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SECONDARY_ANCIENTPOWER_DESCRIPTION",
-                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texAncientPowerIcon"),
+                skillIcon = Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewAncientPowerIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(ChargeAncientPower)),
                 activationStateMachineName = "Weapon",
-                baseMaxStock = 8,
-                baseRechargeInterval = 4f,
+                baseMaxStock = 5,
+                baseRechargeInterval = 5f,
                 beginSkillCooldownOnSkillEnd = true,
                 canceledFromSprinting = false,
                 forceSprintDuringState = false,
@@ -663,7 +686,8 @@ namespace RegigigasMod.Modules.Enemies
                 stockToConsume = 0,
             });
 
-            Modules.Skills.AddSecondarySkills(prefab, earthPowerSkillDef, ancientPowerSkillDef);
+            if (isPlayer) Modules.Skills.AddSecondarySkills(prefab, ancientPowerSkillDef, earthPowerSkillDef);
+            else Modules.Skills.AddSecondarySkills(prefab, earthPowerSkillDef, ancientPowerSkillDef);
             #endregion
 
             #region Utility
@@ -743,12 +767,20 @@ namespace RegigigasMod.Modules.Enemies
                 stockToConsume = 1
             });
 
-            Modules.Skills.AddSpecialSkills(prefab, revengeSkillDef, impact2SkillDef);
-            Modules.Skills.AddUtilitySkills(prefab, impactSkillDef);
+            if (isPlayer)
+            {
+                Modules.Skills.AddSpecialSkills(prefab, impact2SkillDef, revengeSkillDef);
+                Modules.Skills.AddUtilitySkills(prefab, impactSkillDef);
+            }
+            else
+            {
+                Modules.Skills.AddSpecialSkills(prefab, revengeSkillDef, impact2SkillDef);
+                Modules.Skills.AddUtilitySkills(prefab, impactSkillDef);
+            }
             #endregion
         }
 
-        private static void CreateSkins(GameObject prefab)
+        private static void CreateSkins(GameObject prefab, bool isLoreFriendly)
         {
             GameObject model = prefab.GetComponentInChildren<ModelLocator>().modelTransform.gameObject;
             CharacterModel characterModel = model.GetComponent<CharacterModel>();
@@ -764,12 +796,12 @@ namespace RegigigasMod.Modules.Enemies
 
             #region DefaultSkin
             SkinDef defaultSkin = Modules.Skins.CreateSkinDef(RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_DEFAULT_SKIN_NAME",
-                Assets.mainAssetBundle.LoadAsset<Sprite>("texMainSkin"),
+                Assets.secondaryAssetBundle.LoadAsset<Sprite>("texDefaultSkinIcon"),
                 defaultRenderers,
                 mainRenderer,
                 model);
 
-            if (Modules.Config.loreFriendly)
+            if (isLoreFriendly)
             {
                 defaultSkin.meshReplacements = new SkinDef.MeshReplacement[]
                 {
@@ -786,7 +818,7 @@ namespace RegigigasMod.Modules.Enemies
 
             #region MasterySkin
             SkinDef masterySkin = Modules.Skins.CreateSkinDef(RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_MONSOON_SKIN_NAME",
-                Assets.mainAssetBundle.LoadAsset<Sprite>("texMainSkin"),
+                Assets.secondaryAssetBundle.LoadAsset<Sprite>("texMasterySkinIcon"),
                 SkinRendererInfos(defaultRenderers, new Material[]
                 {
                     Modules.Assets.CreateMaterial("matRegigigasShiny", 0f, Color.white)
@@ -795,7 +827,7 @@ namespace RegigigasMod.Modules.Enemies
                 model,
                 masteryUnlockableDef);
 
-            if (Modules.Config.loreFriendly)
+            if (isLoreFriendly)
             {
                 masterySkin.meshReplacements = new SkinDef.MeshReplacement[]
                 {
@@ -813,6 +845,50 @@ namespace RegigigasMod.Modules.Enemies
             }
 
             skins.Add(masterySkin);
+            #endregion
+
+            #region JuggernautSkin
+            /*SkinDef juggernautSkin = Modules.Skins.CreateSkinDef(RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_JUGGERNAUT_SKIN_NAME",
+                Assets.secondaryAssetBundle.LoadAsset<Sprite>("texJuggernautSkin"),
+                SkinRendererInfos(defaultRenderers, new Material[]
+                {
+                    Addressables.LoadAssetAsync<Material>("RoR2/Base/Golem/matGolem.mat").WaitForCompletion()
+                }),
+                mainRenderer,
+                model);
+
+            juggernautSkin.meshReplacements = new SkinDef.MeshReplacement[]
+            {
+                    new SkinDef.MeshReplacement
+                    {
+                        mesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshJuggernaut"),
+                        renderer = mainRenderer
+                    }
+            };
+
+            skins.Add(juggernautSkin);*/
+            #endregion
+
+            #region BowserSkin
+            SkinDef bowserSkin = Modules.Skins.CreateSkinDef(RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_BOWSER_SKIN_NAME",
+                Assets.secondaryAssetBundle.LoadAsset<Sprite>("texBowserSkin"),
+                SkinRendererInfos(defaultRenderers, new Material[]
+                {
+                    Modules.Assets.CreateMaterial2("matBowser", 0f, Color.black, 1f)
+                }),
+                mainRenderer,
+                model);
+
+            bowserSkin.meshReplacements = new SkinDef.MeshReplacement[]
+            {
+                    new SkinDef.MeshReplacement
+                    {
+                        mesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshBowser"),
+                        renderer = mainRenderer
+                    }
+            };
+
+            skins.Add(bowserSkin);
             #endregion
 
             skinController.skins = skins.ToArray();
@@ -955,9 +1031,9 @@ localScale = new Vector3(0.60334F, 0.60334F, 0.60334F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayBehemoth"),
 childName = "Chest",
-localPos = new Vector3(0F, 0.2247F, -0.1174F),
-localAngles = new Vector3(6.223F, 180F, 0F),
-localScale = new Vector3(0.1F, 0.1F, 0.1F),
+localPos = new Vector3(-0.42951F, 1.10023F, 1.03641F),
+localAngles = new Vector3(274.8848F, 0.00001F, 180F),
+localScale = new Vector3(0.20987F, 0.20987F, 0.20987F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1363,10 +1439,10 @@ localScale = new Vector3(1.59055F, 1.59055F, 1.59055F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayAfterburnerShoulderRing"),
-                            childName = "UpperArmR",
-                            localPos = new Vector3(0, 0, -0.002f),
-                            localAngles = new Vector3(-90, 0, 0),
-                            localScale = new Vector3(0.01f, 0.01f, 0.01f),
+childName = "UpperArmR",
+localPos = new Vector3(0.00501F, 0F, -0.03148F),
+localAngles = new Vector3(60.53529F, 341.322F, 45.18088F),
+localScale = new Vector3(1.59055F, 1.59055F, 1.59055F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1615,9 +1691,9 @@ localScale = new Vector3(0.2149F, 0.2149F, 0.2149F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayDevilHorns"),
 childName = "Head",
-localPos = new Vector3(0.0949F, 0.0945F, 0.0654F),
+localPos = new Vector3(0.09489F, -0.1928F, 0.56997F),
 localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(0.5349F, 0.5349F, 0.5349F),
+localScale = new Vector3(1.66606F, 1.66606F, 1.66606F),
                             limbMask = LimbFlags.None
                         },
                         new ItemDisplayRule
@@ -1625,9 +1701,9 @@ localScale = new Vector3(0.5349F, 0.5349F, 0.5349F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayDevilHorns"),
 childName = "Head",
-localPos = new Vector3(-0.0949F, 0.0945F, 0.0105F),
+localPos = new Vector3(-0.09489F, -0.1928F, 0.56997F),
 localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(-0.5349F, 0.5349F, 0.5349F),
+localScale = new Vector3(-1.66606F, 1.66606F, 1.66606F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1646,9 +1722,9 @@ localScale = new Vector3(-0.5349F, 0.5349F, 0.5349F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayInfusion"),
 childName = "Pelvis",
-localPos = new Vector3(-0.0703F, 0.0238F, -0.0366F),
-localAngles = new Vector3(0F, 45F, 0F),
-localScale = new Vector3(0.5253F, 0.5253F, 0.5253F),
+localPos = new Vector3(-0.41511F, 0.48808F, -0.57027F),
+localAngles = new Vector3(343.5917F, 31.09355F, 349.7681F),
+localScale = new Vector3(1.01135F, 1.01135F, 1.01135F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1751,9 +1827,9 @@ localScale = new Vector3(0.95221F, 0.95221F, 0.95221F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayStunGrenade"),
 childName = "ThighR",
-localPos = new Vector3(0.001F, 0.3609F, 0.0523F),
-localAngles = new Vector3(90F, 0F, 0F),
-localScale = new Vector3(0.5672F, 0.5672F, 0.5672F),
+localPos = new Vector3(0.00098F, 0.36091F, 0.32414F),
+localAngles = new Vector3(84.64566F, 0F, 0F),
+localScale = new Vector3(2.17292F, 2.17292F, 2.17292F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1771,7 +1847,7 @@ localScale = new Vector3(0.5672F, 0.5672F, 0.5672F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayFirework"),
-childName = "Muzzle",
+childName = "Chest",
 localPos = new Vector3(0.0086F, 0.0069F, 0.0565F),
 localAngles = new Vector3(0F, 0F, 0F),
 localScale = new Vector3(0.1194F, 0.1194F, 0.1194F),
@@ -1793,9 +1869,9 @@ localScale = new Vector3(0.1194F, 0.1194F, 0.1194F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayLunarDagger"),
 childName = "Chest",
-localPos = new Vector3(-0.0015F, 0.2234F, -0.0655F),
-localAngles = new Vector3(277.637F, 358.2474F, 1.4903F),
-localScale = new Vector3(0.3385F, 0.3385F, 0.3385F),
+localPos = new Vector3(0.64758F, 0.29912F, -0.61104F),
+localAngles = new Vector3(293.776F, 336.3584F, 350.1967F),
+localScale = new Vector3(0.52607F, 0.52607F, 0.52607F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1856,9 +1932,9 @@ localScale = new Vector3(0.12917F, 0.12917F, 0.12917F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplaySoda"),
 childName = "Pelvis",
-localPos = new Vector3(-0.075F, 0.095F, 0F),
+localPos = new Vector3(-0.87329F, 0.50205F, -0.27461F),
 localAngles = new Vector3(270F, 251.0168F, 0F),
-localScale = new Vector3(0.1655F, 0.1655F, 0.1655F),
+localScale = new Vector3(0.86578F, 0.86578F, 0.86578F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1877,9 +1953,19 @@ localScale = new Vector3(0.1655F, 0.1655F, 0.1655F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayDoubleMag"),
 childName = "Chest",
-localPos = new Vector3(-0.0018F, 0.0002F, 0.097F),
-localAngles = new Vector3(84.2709F, 200.5981F, 25.0139F),
-localScale = new Vector3(0.0441F, 0.0441F, 0.0441F),
+localPos = new Vector3(-0.23728F, 1.3545F, 0.20177F),
+localAngles = new Vector3(43.21322F, 177.9687F, 3.32021F),
+localScale = new Vector3(0.19646F, 0.19646F, 0.19646F),
+                            limbMask = LimbFlags.None
+                        },
+                        new ItemDisplayRule
+                        {
+                            ruleType = ItemDisplayRuleType.ParentedPrefab,
+                            followerPrefab = ItemDisplays.LoadDisplay("DisplayDoubleMag"),
+childName = "Chest",
+localPos = new Vector3(0.23728F, 1.3545F, 0.20177F),
+localAngles = new Vector3(43.21322F, 177.9687F, 3.32021F),
+localScale = new Vector3(-0.19646F, 0.19646F, 0.19646F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1897,10 +1983,10 @@ localScale = new Vector3(0.0441F, 0.0441F, 0.0441F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayStickyBomb"),
-childName = "Pelvis",
-localPos = new Vector3(0.0594F, 0.0811F, 0.0487F),
-localAngles = new Vector3(8.4958F, 176.5473F, 162.7601F),
-localScale = new Vector3(0.0736F, 0.0736F, 0.0736F),
+childName = "Head",
+localPos = new Vector3(-0.00001F, 0.73349F, -0.62605F),
+localAngles = new Vector3(330.8843F, 0F, 0F),
+localScale = new Vector3(0.95255F, 0.95255F, 0.95255F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1919,9 +2005,9 @@ localScale = new Vector3(0.0736F, 0.0736F, 0.0736F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayKey"),
 childName = "Pelvis",
-localPos = new Vector3(0.0589F, 0.1056F, -0.0174F),
-localAngles = new Vector3(0.2454F, 195.0205F, 89.0854F),
-localScale = new Vector3(0.4092F, 0.4092F, 0.4092F),
+localPos = new Vector3(-0.37463F, 0.35709F, -0.54593F),
+localAngles = new Vector3(359.1296F, 113.1945F, 79.46977F),
+localScale = new Vector3(2.47573F, 2.47573F, 2.47573F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -1961,9 +2047,9 @@ localScale = new Vector3(1.07385F, 1.07385F, 1.07385F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayBauble"),
 childName = "Pelvis",
-localPos = new Vector3(-0.0074F, 0.076F, -0.0864F),
-localAngles = new Vector3(0F, 23.7651F, 0F),
-localScale = new Vector3(0.0687F, 0.0687F, 0.0687F),
+localPos = new Vector3(0.80792F, 0.07597F, -0.65225F),
+localAngles = new Vector3(0F, 84.83021F, 0F),
+localScale = new Vector3(0.61666F, 0.61666F, 0.61666F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2024,9 +2110,9 @@ localScale = new Vector3(1F, 1F, 1F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayCorpseFlower"),
 childName = "UpperArmR",
-localPos = new Vector3(-0.0393F, 0.1484F, 0F),
-localAngles = new Vector3(270F, 90F, 0F),
-localScale = new Vector3(0.1511F, 0.1511F, 0.1511F),
+localPos = new Vector3(-0.21966F, 0.14843F, -0.11813F),
+localAngles = new Vector3(270F, 47.5487F, 0F),
+localScale = new Vector3(0.84843F, 0.84843F, 0.84843F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2097,9 +2183,9 @@ localScale = new Vector3(0.3395F, 0.3395F, -0.3395F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayGoldHeart"),
 childName = "Chest",
-localPos = new Vector3(-0.0571F, 0.3027F, 0.0755F),
+localPos = new Vector3(-0.30044F, 0.00551F, 0.75263F),
 localAngles = new Vector3(335.0033F, 343.2951F, 0F),
-localScale = new Vector3(0.1191F, 0.1191F, 0.1191F),
+localScale = new Vector3(0.38673F, 0.38673F, 0.38673F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2118,9 +2204,9 @@ localScale = new Vector3(0.1191F, 0.1191F, 0.1191F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayBrokenMask"),
 childName = "UpperArmR",
-localPos = new Vector3(-0.0283F, 0.0452F, -0.0271F),
-localAngles = new Vector3(0F, 270F, 0F),
-localScale = new Vector3(0.1385F, 0.1385F, 0.1385F),
+localPos = new Vector3(-0.02831F, 0.04522F, -0.35931F),
+localAngles = new Vector3(0F, 180F, 0F),
+localScale = new Vector3(0.61631F, 0.61631F, 0.61631F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2160,9 +2246,9 @@ localScale = new Vector3(1F, 1F, 1F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayGlowFlower"),
 childName = "UpperArmL",
-localPos = new Vector3(0.0399F, 0.1684F, 0.0121F),
+localPos = new Vector3(0.17257F, 0.47208F, 0.05231F),
 localAngles = new Vector3(0F, 73.1449F, 0F),
-localScale = new Vector3(0.2731F, 0.2731F, 0.0273F),
+localScale = new Vector3(1F, 1F, 1F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2293,10 +2379,10 @@ localScale = new Vector3(0.6787F, 0.6787F, 0.6787F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayJellyGuts"),
-childName = "Head",
-localPos = new Vector3(-0.0484F, -0.0116F, 0.0283F),
-localAngles = new Vector3(316.2306F, 45.1087F, 303.6165F),
-localScale = new Vector3(0.1035F, 0.1035F, 0.1035F),
+childName = "ThighL",
+localPos = new Vector3(-0.09928F, 0.18003F, -0.01285F),
+localAngles = new Vector3(323.3031F, 0F, 0F),
+localScale = new Vector3(0.35171F, 0.35171F, 0.35171F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2335,10 +2421,10 @@ localScale = new Vector3(6F, 6F, 6F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayInterstellarDeskPlant"),
-childName = "UpperArmR",
-localPos = new Vector3(-0.0663F, 0.2266F, 0F),
-localAngles = new Vector3(4.9717F, 270F, 54.4915F),
-localScale = new Vector3(0.0429F, 0.0429F, 0.0429F),
+childName = "Chest",
+localPos = new Vector3(0.24858F, 1.29878F, -0.00001F),
+localAngles = new Vector3(308.3245F, 90.00002F, 219.6731F),
+localScale = new Vector3(0.21971F, 0.21971F, 0.21971F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2420,9 +2506,9 @@ localScale = new Vector3(0.19732F, 0.19732F, 0.19732F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplaySeed"),
 childName = "Head",
-localPos = new Vector3(-0.1702F, 0.1366F, -0.026F),
-localAngles = new Vector3(344.0657F, 196.8238F, 275.5892F),
-localScale = new Vector3(0.0275F, 0.0275F, 0.0275F),
+localPos = new Vector3(-0.77396F, 0.20156F, 0.17595F),
+localAngles = new Vector3(344.0657F, 196.8238F, 341.9944F),
+localScale = new Vector3(0.11666F, 0.11666F, 0.11666F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2441,9 +2527,9 @@ localScale = new Vector3(0.0275F, 0.0275F, 0.0275F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayWhip"),
 childName = "Pelvis",
-localPos = new Vector3(0.1001F, -0.0132F, 0F),
-localAngles = new Vector3(0F, 0F, 20.1526F),
-localScale = new Vector3(0.2845F, 0.2845F, 0.2845F),
+localPos = new Vector3(0.87087F, 0.52804F, 0F),
+localAngles = new Vector3(0F, 0F, 356.1968F),
+localScale = new Vector3(0.91785F, 0.91785F, 0.91785F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2483,9 +2569,9 @@ localScale = new Vector3(0.8005F, 0.8005F, 0.8005F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayStealthkit"),
 childName = "CalfL",
-localPos = new Vector3(-0.0063F, 0.2032F, -0.0507F),
-localAngles = new Vector3(90F, 0F, 0F),
-localScale = new Vector3(0.1454F, 0.2399F, 0.16F),
+localPos = new Vector3(0.37219F, 0.20322F, 0.0013F),
+localAngles = new Vector3(270F, 90F, 0F),
+localScale = new Vector3(0.87138F, 1.43772F, 0.95888F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2504,9 +2590,9 @@ localScale = new Vector3(0.1454F, 0.2399F, 0.16F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayShieldGenerator"),
 childName = "Chest",
-localPos = new Vector3(0F, 0.2649F, 0.0689F),
-localAngles = new Vector3(304.1204F, 90F, 270F),
-localScale = new Vector3(0.1057F, 0.1057F, 0.1057F),
+localPos = new Vector3(0.19986F, 0.14573F, 0.62897F),
+localAngles = new Vector3(330.479F, 292.0447F, 97.47173F),
+localScale = new Vector3(0.3612F, 0.3612F, 0.3612F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2525,9 +2611,9 @@ localScale = new Vector3(0.1057F, 0.1057F, 0.1057F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayTeslaCoil"),
 childName = "Chest",
-localPos = new Vector3(0.0008F, 0.3747F, -0.0423F),
-localAngles = new Vector3(297.6866F, 1.3864F, 358.5596F),
-localScale = new Vector3(0.3229F, 0.3229F, 0.3229F),
+localPos = new Vector3(0.86271F, -0.16653F, -0.30456F),
+localAngles = new Vector3(297.395F, 41.39772F, 252.9746F),
+localScale = new Vector3(0.70799F, 0.70799F, 0.70799F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2661,9 +2747,9 @@ localScale = new Vector3(0.37123F, 0.34439F, 0.34439F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayToothMeshLarge"),
 childName = "Head",
-localPos = new Vector3(0F, 0.0687F, 0.0998F),
-localAngles = new Vector3(344.9017F, 0F, 0F),
-localScale = new Vector3(7.5452F, 7.5452F, 7.5452F),
+localPos = new Vector3(-0.00002F, 0.25492F, 0.18287F),
+localAngles = new Vector3(295.4421F, 180F, 180F),
+localScale = new Vector3(20.17883F, 20.17883F, 20.17883F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2683,8 +2769,8 @@ localScale = new Vector3(7.5452F, 7.5452F, 7.5452F),
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayPearl"),
 childName = "LowerArmR",
 localPos = new Vector3(0F, 0F, 0F),
-localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(0.1F, 0.1F, 0.1F),
+localAngles = new Vector3(308.5302F, 239.8277F, 180F),
+localScale = new Vector3(0.2F, 0.2F, 0.2F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2704,8 +2790,8 @@ localScale = new Vector3(0.1F, 0.1F, 0.1F),
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayShinyPearl"),
 childName = "LowerArmL",
 localPos = new Vector3(0F, 0F, 0F),
-localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(0.1F, 0.1F, 0.1F),
+localAngles = new Vector3(308.5302F, 239.8277F, 180F),
+localScale = new Vector3(0.2F, 0.2F, 0.2F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2745,9 +2831,9 @@ localScale = new Vector3(0.12716F, 0.12716F, 0.12716F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplaySquidTurret"),
 childName = "Head",
-localPos = new Vector3(-0.0164F, 0.1641F, -0.0005F),
-localAngles = new Vector3(0F, 90F, 0F),
-localScale = new Vector3(0.2235F, 0.3016F, 0.3528F),
+localPos = new Vector3(0.23866F, 0.15906F, -0.0005F),
+localAngles = new Vector3(52.30758F, 90F, 0F),
+localScale = new Vector3(0.11772F, 0.15885F, 0.18582F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2850,8 +2936,8 @@ localScale = new Vector3(0.49217F, 0.49217F, 0.49217F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayAncestralIncubator"),
 childName = "Chest",
-localPos = new Vector3(0F, 0.3453F, 0F),
-localAngles = new Vector3(353.0521F, 317.2421F, 69.6292F),
+localPos = new Vector3(0.2342F, 0.8036F, 0.1405F),
+localAngles = new Vector3(353.0521F, 317.2421F, 351.5904F),
 localScale = new Vector3(0.0528F, 0.0528F, 0.0528F),
                             limbMask = LimbFlags.None
                         }
@@ -2892,9 +2978,9 @@ localScale = new Vector3(0.355F, 0.355F, 0.355F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplaySiphonOnLowHealth"),
 childName = "Pelvis",
-localPos = new Vector3(0.0542F, 0.0206F, -0.0019F),
-localAngles = new Vector3(0F, 303.4368F, 0F),
-localScale = new Vector3(0.0385F, 0.0385F, 0.0385F),
+localPos = new Vector3(-0.63261F, 0.37481F, 0.4516F),
+localAngles = new Vector3(18.26073F, 303.4368F, 0F),
+localScale = new Vector3(0.1497F, 0.1497F, 0.1497F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2934,9 +3020,9 @@ localScale = new Vector3(0.16885F, 0.16885F, 0.16885F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayMonstersOnShrineUse"),
 childName = "ThighR",
-localPos = new Vector3(0.0022F, 0.084F, 0.066F),
-localAngles = new Vector3(352.4521F, 260.6884F, 341.5106F),
-localScale = new Vector3(0.0246F, 0.0246F, 0.0246F),
+localPos = new Vector3(0.00525F, 0.364F, 0.27657F),
+localAngles = new Vector3(352.4521F, 260.6884F, 11.82157F),
+localScale = new Vector3(0.13449F, 0.13449F, 0.13449F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2955,9 +3041,9 @@ localScale = new Vector3(0.0246F, 0.0246F, 0.0246F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayRandomDamageZone"),
 childName = "LowerArmL",
-localPos = new Vector3(0.0709F, 0.4398F, 0.0587F),
+localPos = new Vector3(0.40976F, 0.62986F, 0.28772F),
 localAngles = new Vector3(349.218F, 235.9453F, 0F),
-localScale = new Vector3(0.0465F, 0.0465F, 0.0465F),
+localScale = new Vector3(0.20573F, 0.20573F, 0.20573F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -2976,9 +3062,9 @@ localScale = new Vector3(0.0465F, 0.0465F, 0.0465F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayFruit"),
 childName = "Chest",
-localPos = new Vector3(-0.0513F, 0.2348F, -0.1839F),
-localAngles = new Vector3(354.7403F, 305.3714F, 336.9526F),
-localScale = new Vector3(0.2118F, 0.2118F, 0.2118F),
+localPos = new Vector3(0.01587F, -0.03261F, -0.26515F),
+localAngles = new Vector3(342.1497F, 30.33666F, 10.86335F),
+localScale = new Vector3(0.5805F, 0.5805F, 0.5805F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3122,9 +3208,9 @@ localScale = new Vector3(0.4073F, 0.4073F, 0.4073F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayNeuralImplant"),
 childName = "Head",
-localPos = new Vector3(0F, 0.1861F, 0.2328F),
+localPos = new Vector3(0F, -0.8998F, 1.37126F),
 localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(0.2326F, 0.2326F, 0.2326F),
+localScale = new Vector3(1.21629F, 1.21629F, 1.21629F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3143,9 +3229,9 @@ localScale = new Vector3(0.2326F, 0.2326F, 0.2326F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayRadio"),
 childName = "Pelvis",
-localPos = new Vector3(0.0604F, 0.1269F, 0F),
+localPos = new Vector3(0.91272F, 0.75753F, 0F),
 localAngles = new Vector3(0F, 90F, 0F),
-localScale = new Vector3(0.2641F, 0.2641F, 0.2641F),
+localScale = new Vector3(1.85321F, 1.85321F, 1.85321F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3185,9 +3271,9 @@ localScale = new Vector3(2.1862F, 2.1862F, 2.1862F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayPotion"),
 childName = "Pelvis",
-localPos = new Vector3(0.078F, 0.065F, 0F),
+localPos = new Vector3(0.45029F, 0.55185F, -0.66869F),
 localAngles = new Vector3(359.1402F, 0.1068F, 331.8908F),
-localScale = new Vector3(0.0307F, 0.0307F, 0.0307F),
+localScale = new Vector3(0.13235F, 0.13235F, 0.13235F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3205,10 +3291,10 @@ localScale = new Vector3(0.0307F, 0.0307F, 0.0307F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayEffigy"),
-childName = "Pelvis",
-localPos = new Vector3(0.0768F, -0.0002F, 0F),
-localAngles = new Vector3(0F, 270F, 0F),
-localScale = new Vector3(0.2812F, 0.2812F, 0.2812F),
+childName = "HandR",
+localPos = new Vector3(0.24985F, 0.18655F, 0.04036F),
+localAngles = new Vector3(9.95037F, 0.73904F, 274.2693F),
+localScale = new Vector3(1.20442F, 1.20442F, 1.20442F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3248,9 +3334,9 @@ localScale = new Vector3(1F, 1F, 1F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayElephantFigure"),
 childName = "CalfR",
-localPos = new Vector3(0F, 0.3011F, 0.0764F),
+localPos = new Vector3(-0.00001F, 0.36602F, 0.37067F),
 localAngles = new Vector3(77.5634F, 0F, 0F),
-localScale = new Vector3(0.6279F, 0.6279F, 0.6279F),
+localScale = new Vector3(2.3571F, 2.3571F, 2.3571F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3289,10 +3375,10 @@ localScale = new Vector3(0.3304F, 0.3304F, 0.3304F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayEgg"),
-childName = "Pelvis",
-localPos = new Vector3(0.0727F, 0.0252F, 0F),
+childName = "HandR",
+localPos = new Vector3(-0.08898F, 0.46266F, 0.00003F),
 localAngles = new Vector3(270F, 0F, 0F),
-localScale = new Vector3(0.1891F, 0.1891F, 0.1891F),
+localScale = new Vector3(1.94771F, 1.94771F, 1.94771F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3311,9 +3397,9 @@ localScale = new Vector3(0.1891F, 0.1891F, 0.1891F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayWaterPack"),
 childName = "Chest",
-localPos = new Vector3(0F, 0.1996F, -0.0489F),
-localAngles = new Vector3(0F, 180F, 0F),
-localScale = new Vector3(0.0821F, 0.0821F, 0.0821F),
+localPos = new Vector3(0F, -0.19435F, -0.82399F),
+localAngles = new Vector3(0F, 0F, 0F),
+localScale = new Vector3(0.241F, 0.241F, 0.241F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3332,9 +3418,9 @@ localScale = new Vector3(0.0821F, 0.0821F, 0.0821F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayTonic"),
 childName = "Pelvis",
-localPos = new Vector3(0.066F, 0.058F, 0F),
+localPos = new Vector3(0.95965F, 0.66098F, 0F),
 localAngles = new Vector3(0F, 90F, 0F),
-localScale = new Vector3(0.1252F, 0.1252F, 0.1252F),
+localScale = new Vector3(0.51595F, 0.51595F, 0.51595F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3353,9 +3439,9 @@ localScale = new Vector3(0.1252F, 0.1252F, 0.1252F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayVase"),
 childName = "Pelvis",
-localPos = new Vector3(0.0807F, 0.0877F, 0F),
-localAngles = new Vector3(0F, 90F, 0F),
-localScale = new Vector3(0.0982F, 0.0982F, 0.0982F),
+localPos = new Vector3(0.17921F, 0.56568F, 0.69266F),
+localAngles = new Vector3(339.0288F, 198.4974F, 353.1723F),
+localScale = new Vector3(0.44511F, 0.44511F, 0.44511F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3373,10 +3459,10 @@ localScale = new Vector3(0.0982F, 0.0982F, 0.0982F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayMeteor"),
-childName = "Base",
-localPos = new Vector3(0F, -1.7606F, -0.9431F),
+childName = "Root",
+localPos = new Vector3(0F, 3.38107F, -3.00693F),
 localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(1F, 1F, 1F),
+localScale = new Vector3(3.82807F, 3.82807F, 3.82807F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3394,10 +3480,10 @@ localScale = new Vector3(1F, 1F, 1F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplaySawmerang"),
-childName = "Base",
-localPos = new Vector3(0F, -1.7606F, -0.9431F),
-localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(0.1F, 0.1F, 0.1F),
+childName = "Root",
+localPos = new Vector3(0F, 3.48373F, -2.89059F),
+localAngles = new Vector3(312.0747F, 0F, 0F),
+localScale = new Vector3(0.7303F, 0.7303F, 0.7303F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3437,9 +3523,9 @@ localScale = new Vector3(4.73209F, 4.73209F, 4.73209F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayScanner"),
 childName = "Pelvis",
-localPos = new Vector3(0.0857F, 0.0472F, 0.0195F),
-localAngles = new Vector3(270F, 154.175F, 0F),
-localScale = new Vector3(0.0861F, 0.0861F, 0.0861F),
+localPos = new Vector3(0.45459F, 0.17369F, -0.28327F),
+localAngles = new Vector3(311.1287F, 110.0194F, 287.6036F),
+localScale = new Vector3(0.16743F, 0.16743F, 0.16743F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3457,10 +3543,10 @@ localScale = new Vector3(0.0861F, 0.0861F, 0.0861F),
                         {
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayDeathProjectile"),
-childName = "Pelvis",
-localPos = new Vector3(0F, 0.028F, -0.0977F),
-localAngles = new Vector3(0F, 180F, 0F),
-localScale = new Vector3(0.0596F, 0.0596F, 0.0596F),
+childName = "Head",
+localPos = new Vector3(0.52617F, -0.26535F, 0.56573F),
+localAngles = new Vector3(326.2585F, 27.20248F, 344.0664F),
+localScale = new Vector3(0.17002F, 0.17002F, 0.17002F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3479,9 +3565,9 @@ localScale = new Vector3(0.0596F, 0.0596F, 0.0596F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayLifestealOnHit"),
 childName = "Head",
-localPos = new Vector3(-0.2175F, 0.4404F, -0.141F),
-localAngles = new Vector3(44.0939F, 33.5151F, 43.5058F),
-localScale = new Vector3(0.1246F, 0.1246F, 0.1246F),
+localPos = new Vector3(-0.3442F, 0.67587F, -0.34088F),
+localAngles = new Vector3(49.8615F, 23.39927F, 36.09192F),
+localScale = new Vector3(0.28283F, 0.28283F, 0.28283F),
                             limbMask = LimbFlags.None
                         }
                     }
@@ -3500,9 +3586,9 @@ localScale = new Vector3(0.1246F, 0.1246F, 0.1246F),
                             ruleType = ItemDisplayRuleType.ParentedPrefab,
                             followerPrefab = ItemDisplays.LoadDisplay("DisplayTeamWarCry"),
 childName = "Pelvis",
-localPos = new Vector3(0F, 0F, 0.1866F),
+localPos = new Vector3(0F, 0.21244F, 0.77546F),
 localAngles = new Vector3(0F, 0F, 0F),
-localScale = new Vector3(0.1233F, 0.1233F, 0.1233F),
+localScale = new Vector3(0.17297F, 0.17297F, 0.17297F),
                             limbMask = LimbFlags.None
                         }
                     }

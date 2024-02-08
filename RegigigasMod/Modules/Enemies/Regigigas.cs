@@ -31,6 +31,8 @@ namespace RegigigasMod.Modules.Enemies
         internal static ConfigEntry<int> minimumStageCount;
         internal static ConfigEntry<int> spawnCost;
 
+        internal static ConfigEntry<bool> addToOrigination;
+
         public const string bodyName = "RegigigasBody";
 
         public static int bodyRendererIndex; // use this to store the rendererinfo index containing our character's body
@@ -51,6 +53,8 @@ namespace RegigigasMod.Modules.Enemies
 
             enemyEnabled = Modules.Config.EnemyEnableConfig("Regigigas");
             characterEnabled = Modules.Config.CharacterEnableConfig("Regigigas (Playable)");
+
+            addToOrigination = Modules.Config.RiskyArtifactsOriginConfig("Regigigas");
 
             if (enemyEnabled.Value || characterEnabled.Value)
             {
@@ -406,7 +410,7 @@ namespace RegigigasMod.Modules.Enemies
 
         public static void SetupRiskyCompat(CharacterSpawnCard spawnCard)
         {
-            Risky_Artifacts.Artifacts.Origin.AddSpawnCard(spawnCard, Risky_Artifacts.Artifacts.Origin.BossTier.t2);
+            if (addToOrigination.Value) Risky_Artifacts.Artifacts.Origin.AddSpawnCard(spawnCard, Risky_Artifacts.Artifacts.Origin.BossTier.t3);
         }
 
         private static void SetupHurtboxes(GameObject bodyPrefab)

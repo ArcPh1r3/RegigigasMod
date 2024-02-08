@@ -104,6 +104,11 @@ namespace RegigigasMod.Modules
         {
             return RegigigasPlugin.instance.Config.Bind<bool>(new ConfigDefinition(characterName, "Enabled"), false, new ConfigDescription("Set to false to disable this character"));
         }
+
+        internal static ConfigEntry<bool> RiskyArtifactsOriginConfig(string characterName)
+        {
+            return RegigigasPlugin.instance.Config.Bind<bool>(new ConfigDefinition(characterName, "Risky Artifacts: Add to Origination"), true, new ConfigDescription("Add this character to the Orignation boss spawn pool?"));
+        }
     }
 
 

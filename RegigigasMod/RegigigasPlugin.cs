@@ -31,7 +31,7 @@ namespace RegigigasMod
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.4.9";
+        public const string MODVERSION = "1.4.10";
 
         public const string developerPrefix = "ROB";
 
@@ -76,7 +76,6 @@ namespace RegigigasMod
 
         private void Hook()
         {
-            //On.RoR2.CharacterBody.RecalculateStats += CharacterBody_RecalculateStats;
             R2API.RecalculateStatsAPI.GetStatCoefficients += RecalculateStatsAPI_GetStatCoefficients;
         }
 
@@ -94,26 +93,6 @@ namespace RegigigasMod
                 args.attackSpeedMultAdd -= 0.5f; //attackSpeed *= 0.5f;
                 args.damageMultAdd -= 0.5f; //damage *= 0.5f;
             }
-        }
-
-        private void CharacterBody_RecalculateStats(On.RoR2.CharacterBody.orig_RecalculateStats orig, CharacterBody self)
-        {
-            orig(self);
-            //if (self)
-            //{
-            //    if (self.HasBuff(Modules.Buffs.armorBuff))
-            //    {
-            //        self.armor += 500f;
-            //    }
-
-            //    if (self.HasBuff(Modules.Buffs.slowStartBuff))
-            //    {
-            //        self.armor += 20f;
-            //        self.moveSpeed *= 0.5f;
-            //        self.attackSpeed *= 0.5f;
-            //        self.damage *= 0.5f;
-            //    }
-            //}
         }
     }
 }

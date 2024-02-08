@@ -30,7 +30,7 @@ namespace RegigigasMod.Modules
         {
             earthPowerWave = CloneProjectilePrefab("BrotherUltLineProjectileRotateLeft", "EarthPowerProjectile");
 
-            earthPowerWave.GetComponent<ProjectileDamage>().damageType = DamageType.IgniteOnHit;
+            earthPowerWave.GetComponent<ProjectileDamage>().damageType = Config.earthPowerAfterburn ? DamageType.IgniteOnHit : DamageType.Generic;
 
             RegigigasPlugin.DestroyImmediate(earthPowerWave.GetComponent<RotateAroundAxis>());
 

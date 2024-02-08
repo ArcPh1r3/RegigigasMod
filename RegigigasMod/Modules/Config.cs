@@ -8,6 +8,7 @@ namespace RegigigasMod.Modules
     {
         internal static ConfigEntry<float> _shinySpawnRate;
         internal static ConfigEntry<bool> _nerfedEarthPower;
+        internal static ConfigEntry<bool> _earthPowerAfterburn;
         internal static ConfigEntry<bool> _nerfedMelee;
         internal static ConfigEntry<bool> _loreFriendly;
         internal static ConfigEntry<bool> _loreFriendly2;
@@ -17,6 +18,7 @@ namespace RegigigasMod.Modules
 
         internal static float shinySpawnRate;
         internal static bool nerfedEarthPower;
+        internal static bool earthPowerAfterburn;
         internal static bool nerfedMelee;
         internal static bool loreFriendly;
         internal static bool loreFriendly2;
@@ -39,6 +41,14 @@ namespace RegigigasMod.Modules
                                                            "Nerfs the projectile count on Earth Power. Set to false to restore the old unfair values.");
 
             nerfedEarthPower = _nerfedEarthPower.Value;
+
+            _earthPowerAfterburn =
+                RegigigasPlugin.instance.Config.Bind<bool>("Regigigas",
+                                                           "Earth Power Afterburn",
+                                                           false,
+                                                           "Earth Power applies afterburn. Set to true for the original experience.");
+
+            earthPowerAfterburn = _earthPowerAfterburn.Value;
 
             _nerfedMelee =
                 RegigigasPlugin.instance.Config.Bind<bool>("Regigigas",

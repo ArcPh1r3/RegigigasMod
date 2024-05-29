@@ -82,7 +82,7 @@ namespace RegigigasMod.Modules.Components
         {
             if (this.motor)
             {
-                this.gameObject.layer = LayerIndex.fakeActor.intVal;
+                this.gameObject.layer = LayerIndex.defaultLayer.intVal;
                 this.motor.Motor.RebuildCollidableLayers();
             }
 

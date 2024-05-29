@@ -53,6 +53,14 @@ YinDragon - [Skill icons](https://www.deviantart.com/yindragon/art/Pixelmon-Exte
 
 ## Changelog
 
+`1.4.11`
+- Fixed grabbed bodies not having their default collision layer restored after being released, thanks viliger for catching this
+
+`1.4.10`
+Thanks Moffein for this update
+- Disabled Earth Power afterburn, added config to restore it
+- Added config to remove Regigigas from the spawn pool for Artifact of Origination from Moffein's Risky_Artifacts
+
 `1.4.9`
 - Separated lore friendly configs for playable and boss versions, so you can have the boss as Stone Juggernaut and the player as Regigigas if you'd like (thanks Moffein for the suggestion)
 

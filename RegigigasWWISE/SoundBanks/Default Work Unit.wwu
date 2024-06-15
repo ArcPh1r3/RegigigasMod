@@ -17,6 +17,13 @@
 					<ObjectExclusionList/>
 					<GameSyncExclusionList/>
 				</SoundBank>
+				<SoundBank Name="ttar_bank" ID="{080D574A-2D5C-45FC-A173-375F481499A3}">
+					<ObjectInclusionList>
+						<ObjectRef Name="TTar" ID="{092032A8-376B-4844-A54F-65B65F862EA8}" WorkUnitID="{092032A8-376B-4844-A54F-65B65F862EA8}" Origin="Manual" Filter="7"/>
+					</ObjectInclusionList>
+					<ObjectExclusionList/>
+					<GameSyncExclusionList/>
+				</SoundBank>
 			</ChildrenList>
 		</WorkUnit>
 	</SoundBanks>

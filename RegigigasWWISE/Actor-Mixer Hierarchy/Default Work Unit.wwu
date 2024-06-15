@@ -1039,6 +1039,297 @@
 										</Sound>
 									</ChildrenList>
 								</RandomSequenceContainer>
+								<Folder Name="ttar" ID="{BB460ADB-893E-4F51-BBAD-1FA42464CF03}" ShortID="821529815">
+									<ChildrenList>
+										<Sound Name="sfx_ttar_beam_end" ID="{0E3CC152-AFA2-452D-80E5-D6E1F5BB95B5}" ShortID="313752138">
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="sfx_ttar_beam_end" ID="{8E98F067-923C-40BA-B4CE-34951B654620}">
+													<Language>SFX</Language>
+													<AudioFile>sfx_ttar_beam_end.wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="1034003087"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="sfx_ttar_beam_end" ID="{8E98F067-923C-40BA-B4CE-34951B654620}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+										<Sound Name="sfx_ttar_beam_loop" ID="{5CB9C129-EF24-4E18-9051-DE0DAC90D3E9}" ShortID="396114293">
+											<PropertyList>
+												<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+											</PropertyList>
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="sfx_ttar_beam_loop" ID="{C80C8A7F-ECEF-45BC-8D83-BCC83DAAA85F}">
+													<Language>SFX</Language>
+													<AudioFile>sfx_ttar_beam_loop.wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="522464371"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="sfx_ttar_beam_loop" ID="{C80C8A7F-ECEF-45BC-8D83-BCC83DAAA85F}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+										<Sound Name="sfx_ttar_beamcharge_loop" ID="{3D928DAD-D0CE-406F-8CDC-A85759F0711D}" ShortID="458586446">
+											<PropertyList>
+												<Property Name="IsLoopingEnabled" Type="bool" Value="True"/>
+												<Property Name="Volume" Type="Real64">
+													<ValueList>
+														<Value>-10</Value>
+													</ValueList>
+												</Property>
+											</PropertyList>
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="sfx_ttar_beamcharge_loop" ID="{D6294BE1-A799-4D97-A4D4-58E3DEF011FE}">
+													<Language>SFX</Language>
+													<AudioFile>sfx_ttar_beamcharge_loop.wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="57074049"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="sfx_ttar_beamcharge_loop" ID="{D6294BE1-A799-4D97-A4D4-58E3DEF011FE}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+										<Sound Name="sfx_ttar_beamcharge_start" ID="{0C88C0ED-3F9E-4550-8F04-C677F5451D70}" ShortID="250595372">
+											<PropertyList>
+												<Property Name="Volume" Type="Real64">
+													<ValueList>
+														<Value>-7</Value>
+													</ValueList>
+												</Property>
+											</PropertyList>
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="sfx_ttar_beamcharge_start" ID="{9449ACF0-3465-4707-A306-92AB9C2040BD}">
+													<Language>SFX</Language>
+													<AudioFile>sfx_ttar_beamcharge_start.wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="1024366787"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="sfx_ttar_beamcharge_start" ID="{9449ACF0-3465-4707-A306-92AB9C2040BD}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+										<Sound Name="sfx_ttar_death" ID="{5FC86626-5236-44EC-8A6D-606E48C941D2}" ShortID="673080146">
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="sfx_ttar_death" ID="{3F039A0B-68C9-4CE9-80D6-03F99191E79B}">
+													<Language>SFX</Language>
+													<AudioFile>sfx_ttar_death.wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="622968594"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="sfx_ttar_death" ID="{3F039A0B-68C9-4CE9-80D6-03F99191E79B}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+										<Sound Name="sfx_ttar_launch_rock" ID="{0C90E6A9-4F19-4DA2-AAE3-397B66973D51}" ShortID="981331747">
+											<PropertyList>
+												<Property Name="Volume" Type="Real64">
+													<ValueList>
+														<Value>-5</Value>
+													</ValueList>
+												</Property>
+											</PropertyList>
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="sfx_ttar_launch_rock" ID="{07D4E0A6-F813-45B2-A44B-A3CF09E50753}">
+													<Language>SFX</Language>
+													<AudioFile>sfx_ttar_launch_rock.wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="229309862"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="sfx_ttar_launch_rock" ID="{07D4E0A6-F813-45B2-A44B-A3CF09E50753}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+										<Sound Name="sfx_ttar_spawn_roar" ID="{E0A877C1-7550-4CF5-AE35-A01273CAB43E}" ShortID="896263726">
+											<PropertyList>
+												<Property Name="3DSpatialization" Type="int16" Value="1"/>
+												<Property Name="OverridePositioning" Type="bool" Value="True"/>
+												<Property Name="Volume" Type="Real64">
+													<ValueList>
+														<Value>3</Value>
+													</ValueList>
+												</Property>
+											</PropertyList>
+											<ReferenceList>
+												<Reference Name="Attenuation">
+													<ObjectRef Name="Loud" ID="{51F79781-21C6-4BA0-B672-EABA27F6D502}" WorkUnitID="{E9A01ADD-D16C-4AEF-92DB-DCF89FC42AD2}"/>
+												</Reference>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="sfx_ttar_spawn_roar" ID="{9760D643-ED4D-4C9D-AAE2-20D40F1FB253}">
+													<Language>SFX</Language>
+													<AudioFile>sfx_ttar_spawn_roar.wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="241606462"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="sfx_ttar_spawn_roar" ID="{9760D643-ED4D-4C9D-AAE2-20D40F1FB253}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+										<Sound Name="sfx_ttar_sandstorm" ID="{170E36E3-8EC6-4AA2-ADF9-550D00ADF365}" ShortID="742119905">
+											<PropertyList>
+												<Property Name="Volume" Type="Real64">
+													<ValueList>
+														<Value>-15</Value>
+													</ValueList>
+												</Property>
+											</PropertyList>
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="sfx_ttar_sandstorm" ID="{0CD8391B-DB52-4380-9D98-EA70A736F457}">
+													<Language>SFX</Language>
+													<AudioFile>sfx_ttar_sandstorm.wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="189641413"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="sfx_ttar_sandstorm" ID="{0CD8391B-DB52-4380-9D98-EA70A736F457}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+										<Sound Name="sfx_ttar_sandstorm_warning" ID="{3FD00890-290A-4E80-903F-2D2097671921}" ShortID="694726659">
+											<PropertyList>
+												<Property Name="Volume" Type="Real64">
+													<ValueList>
+														<Value>-3</Value>
+													</ValueList>
+												</Property>
+											</PropertyList>
+											<ReferenceList>
+												<Reference Name="Conversion">
+													<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+												</Reference>
+												<Reference Name="OutputBus">
+													<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+												</Reference>
+											</ReferenceList>
+											<ChildrenList>
+												<AudioFileSource Name="sfx_ttar_sandstorm_warning" ID="{C27A7774-19A1-434D-B6C3-AD462E052AB8}">
+													<Language>SFX</Language>
+													<AudioFile>sfx_ttar_sandstorm_warning.wav</AudioFile>
+													<MediaIDList>
+														<MediaID ID="624432106"/>
+													</MediaIDList>
+												</AudioFileSource>
+											</ChildrenList>
+											<ActiveSourceList>
+												<ActiveSource Name="sfx_ttar_sandstorm_warning" ID="{C27A7774-19A1-434D-B6C3-AD462E052AB8}" Platform="Linked"/>
+											</ActiveSourceList>
+										</Sound>
+									</ChildrenList>
+								</Folder>
+								<Sound Name="sfx_regigigas_slowstart_pickup_01" ID="{8B3AC350-3E01-4D85-AFE1-AE03AEAB778A}" ShortID="303997980">
+									<PropertyList>
+										<Property Name="3DSpatialization" Type="int16" Value="1"/>
+										<Property Name="Pitch" Type="int32">
+											<ValueList>
+												<Value>-450</Value>
+											</ValueList>
+										</Property>
+										<Property Name="Volume" Type="Real64">
+											<ValueList>
+												<Value>-3</Value>
+											</ValueList>
+										</Property>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Attenuation">
+											<ObjectRef Name="Default Attenuation" ID="{1C16C885-97A9-48B9-99CA-62239B098C14}" WorkUnitID="{E9A01ADD-D16C-4AEF-92DB-DCF89FC42AD2}"/>
+										</Reference>
+										<Reference Name="Conversion">
+											<ObjectRef Name="Default Conversion Settings" ID="{6D1B890C-9826-4384-BF07-C15223E9FB56}" WorkUnitID="{140D52C2-62AC-4006-AE21-98F493D2358C}"/>
+										</Reference>
+										<Reference Name="OutputBus">
+											<ObjectRef Name="Master Audio Bus" ID="{1514A4D8-1DA6-412A-A17E-75CA0C2149F3}" WorkUnitID="{92A1A0F3-7047-4165-95AE-D5CFCC30AE61}"/>
+										</Reference>
+									</ReferenceList>
+									<ChildrenList>
+										<AudioFileSource Name="sfx_regigigas_slowstart_pickup" ID="{26D8A237-DB20-45BF-88FA-E9E949FF54D6}">
+											<Language>SFX</Language>
+											<AudioFile>sfx_regigigas_slowstart_pickup.wav</AudioFile>
+											<MediaIDList>
+												<MediaID ID="1047157258"/>
+											</MediaIDList>
+										</AudioFileSource>
+									</ChildrenList>
+									<ActiveSourceList>
+										<ActiveSource Name="sfx_regigigas_slowstart_pickup" ID="{26D8A237-DB20-45BF-88FA-E9E949FF54D6}" Platform="Linked"/>
+									</ActiveSourceList>
+								</Sound>
 							</ChildrenList>
 						</ActorMixer>
 						<Sound Name="sfx_regigigas_altcry" ID="{869FCC88-4305-4137-9FC6-0C28E5028047}" ShortID="98332540">

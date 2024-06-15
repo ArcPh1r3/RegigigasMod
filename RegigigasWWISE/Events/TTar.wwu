@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{092032A8-376B-4844-A54F-65B65F862EA8}" SchemaVersion="97">
+	<Events>
+		<WorkUnit Name="TTar" ID="{092032A8-376B-4844-A54F-65B65F862EA8}" PersistMode="Standalone">
+			<ChildrenList>
+				<Event Name="sfx_ttar_beamcharge_start" ID="{E8088C6A-0369-4890-8784-B052330E889F}">
+					<ChildrenList>
+						<Action Name="" ID="{B1805556-82AD-40CB-985D-0A76FBC02AA5}" ShortID="960854208">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_ttar_beamcharge_start" ID="{0C88C0ED-3F9E-4550-8F04-C677F5451D70}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_beamcharge_loop" ID="{93BAF4E6-443B-4E56-BCF8-5A7B39D919C8}">
+					<ChildrenList>
+						<Action Name="" ID="{5D8C75C6-521E-424D-A6B7-9436C4842D27}" ShortID="332113077">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_ttar_beamcharge_loop" ID="{3D928DAD-D0CE-406F-8CDC-A85759F0711D}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_beam_loop" ID="{BEF2A3FE-D825-4157-8840-19A3913AFE44}">
+					<ChildrenList>
+						<Action Name="" ID="{66A4AEF9-FAD2-456F-A645-981A78B1A3B9}" ShortID="757809125">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_ttar_beam_loop" ID="{5CB9C129-EF24-4E18-9051-DE0DAC90D3E9}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_beam_end" ID="{9663F724-7B33-47C1-9342-990075B38BC9}">
+					<ChildrenList>
+						<Action Name="" ID="{0007E940-7159-4FE3-8C0A-6192EE1B98CB}" ShortID="215443761">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_ttar_beam_end" ID="{0E3CC152-AFA2-452D-80E5-D6E1F5BB95B5}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_death" ID="{D16CC37D-D7F4-4402-A760-985F44E5D864}">
+					<ChildrenList>
+						<Action Name="" ID="{4DA62686-FE12-4DBA-8BE7-6FFB45E0FB78}" ShortID="290053885">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_ttar_death" ID="{5FC86626-5236-44EC-8A6D-606E48C941D2}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_launch_rock" ID="{2BD5116A-2CB0-4775-9E37-25B40C01F0FC}">
+					<ChildrenList>
+						<Action Name="" ID="{87DC4169-51FE-4E43-BCC9-BD214EF160DB}" ShortID="894175154">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_ttar_launch_rock" ID="{0C90E6A9-4F19-4DA2-AAE3-397B66973D51}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_rock_hit" ID="{CBF6C3C2-1F28-4D02-A223-CEC58C88FA12}">
+					<ChildrenList>
+						<Action Name="" ID="{6A68C87E-906A-4FC2-82CD-EBC237546859}" ShortID="596861954">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_rock_hit" ID="{1D712C9E-1996-4771-AABB-0DA8B29BE59F}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_rock_spawn" ID="{AAB60FDA-B307-4769-87E6-82BF690ECBFA}">
+					<ChildrenList>
+						<Action Name="" ID="{B829E529-2EE5-4C84-8F92-5DE40656C44E}" ShortID="502790629">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_rock_spawn" ID="{C653AB69-8262-4E3A-9CA8-1BACB24AFFAA}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_slam" ID="{D24CA041-7077-4115-97EB-56A2A17A5990}">
+					<ChildrenList>
+						<Action Name="" ID="{9164B862-1087-4FD4-B122-42EE02869498}" ShortID="413973333">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_slam" ID="{0F539D2C-62F5-4A35-9B10-890740C0F824}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_stomp" ID="{4CFF814D-0321-4C44-B871-56C9560B2B66}">
+					<ChildrenList>
+						<Action Name="" ID="{DCF3C92A-1451-48AA-B17E-9032AD8EEF7F}" ShortID="740143568">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="RegigigasStomp" ID="{8C64BEBB-987F-4491-82D6-0C2BB5F6FC38}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_leap" ID="{618A28FC-CB15-4DD1-A23C-225D7312E7B5}">
+					<ChildrenList>
+						<Action Name="" ID="{2A7560E4-3948-431E-AE81-A5A6C6A55388}" ShortID="902063497">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_leap" ID="{069BC619-DEE3-4C33-BAB9-EACD332C0B0D}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_sand_impact" ID="{2372724B-BED0-4914-89A8-8D41472DA546}">
+					<ChildrenList>
+						<Action Name="" ID="{22B5CBC9-80F3-452C-94EF-77FB1A12F57F}" ShortID="583495582">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_slowstart_pickup_01" ID="{8B3AC350-3E01-4D85-AFE1-AE03AEAB778A}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_rocks_release" ID="{0839F362-A781-4A88-A4E7-129DCEED0DF7}">
+					<ChildrenList>
+						<Action Name="" ID="{D2507EA4-C012-40CF-8422-ABCB4790E2DB}" ShortID="1020512907">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_rocks_release" ID="{27F48A79-B837-4D37-90C0-D10512975446}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_rocks_loop" ID="{533E2BAF-12AC-4630-BDAE-27DA3396B156}">
+					<ChildrenList>
+						<Action Name="" ID="{406E531B-E007-4662-AC81-14629958408B}" ShortID="18152348">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_regigigas_rocks_loop" ID="{12DFD815-FF4D-4202-8BEC-7FECFE712A49}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_spawn_roar" ID="{71C0D985-C206-4E04-9B3B-E6D67BA69E30}">
+					<ChildrenList>
+						<Action Name="" ID="{892F1CBC-8602-4824-905A-548C9C09F9E0}" ShortID="36739643">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_ttar_spawn_roar" ID="{E0A877C1-7550-4CF5-AE35-A01273CAB43E}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_sandstorm_warning" ID="{E7C7CF7B-7594-4D9A-A2EB-BF4E8039F83E}">
+					<ChildrenList>
+						<Action Name="" ID="{D9163DEF-35D9-47E3-B3EE-F3EA1CD61F07}" ShortID="62592332">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_ttar_sandstorm_warning" ID="{3FD00890-290A-4E80-903F-2D2097671921}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="sfx_ttar_sandstorm" ID="{A8DFE3AF-214E-4948-A612-C020F361B001}">
+					<ChildrenList>
+						<Action Name="" ID="{B9FB95BB-3FFA-4161-94AB-A580C391FC7B}" ShortID="298064954">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="sfx_ttar_sandstorm" ID="{170E36E3-8EC6-4AA2-ADF9-550D00ADF365}" WorkUnitID="{FE3FA7C5-9E89-40FE-8C7C-97CE0994E519}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>

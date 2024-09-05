@@ -106,6 +106,12 @@ namespace RegigigasMod.Modules.Components
             }
         }
 
+        public void ForceActivate()
+        {
+            this.ActivateSlowStart();
+            Destroy(this);
+        }
+
         private void ActivateSlowStart()
         {
             Animator anim = this.GetComponent<ModelLocator>().modelTransform.GetComponent<Animator>();
@@ -114,21 +120,21 @@ namespace RegigigasMod.Modules.Components
             this.body.GetComponent<RegigigasFlashController>().Flash();
             Util.PlaySound("sfx_regigigas_release", this.gameObject);
 
+            EffectManager.SpawnEffect(Modules.RegiAssets.slowStartReleasedEffect, new EffectData
+            {
+                origin = this.transform.position + new Vector3(0f, 5, 0f),
+                rotation = Quaternion.identity
+            }, false);
+
+            EffectManager.SpawnEffect(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/GrandparentEggImpact.prefab").WaitForCompletion(), new EffectData
+            {
+                origin = this.transform.position + new Vector3(0f, 5f, 0f),
+                rotation = Quaternion.identity
+            }, false);
+
             if (NetworkServer.active)
             {
                 this.body.AddBuff(Modules.Buffs.fullPowerBuff);
-
-                EffectManager.SpawnEffect(Modules.RegiAssets.slowStartReleasedEffect, new EffectData
-                {
-                    origin = this.transform.position + new Vector3(0f, 5, 0f),
-                    rotation = Quaternion.identity
-                }, true);
-
-                EffectManager.SpawnEffect(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/GrandparentEggImpact.prefab").WaitForCompletion(), new EffectData
-                {
-                    origin = this.transform.position + new Vector3(0f, 5f, 0f),
-                    rotation = Quaternion.identity
-                }, true);
             }
         }
 

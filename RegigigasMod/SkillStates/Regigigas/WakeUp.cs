@@ -1,4 +1,5 @@
 ﻿using EntityStates;
+using RegigigasMod.Modules.Components;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -52,6 +53,17 @@ namespace RegigigasMod.SkillStates.Regigigas
                 if (this.characterBody.skinIndex > 1) soundString = "sfx_regigigas_altcry"; // it's the regirock cry lmao
 
                 Util.PlaySound(soundString, this.gameObject);
+
+                if (!this.characterBody.isPlayerControlled && (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "moon" || UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "moon2"))
+                {
+                    // skip slow start
+                    SlowStartController slowStart = this.GetComponent<SlowStartController>();
+                    if (slowStart)
+                    {
+                        if (NetworkServer.active) this.characterBody.RemoveBuff(Modules.Buffs.slowStartBuff);
+                        slowStart.ForceActivate();
+                    }
+                }
             }
             
             if (base.fixedAge >= WakeUp.duration)

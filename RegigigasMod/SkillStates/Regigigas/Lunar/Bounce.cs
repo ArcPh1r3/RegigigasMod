@@ -70,7 +70,7 @@ namespace RegigigasMod.SkillStates.Regigigas.Lunar
 
                 direction.y = Mathf.Max(direction.y, 1.25f * EntityStates.Croco.Leap.minimumY);
                 Vector3 a = direction.normalized * (1.15f * EntityStates.Croco.Leap.aimVelocity) * (3 + (0.5f * this.moveSpeedStat));
-                Vector3 b = Vector3.up * 5f * EntityStates.Croco.Leap.upwardVelocity;
+                Vector3 b = Vector3.up * 2f * EntityStates.Croco.Leap.upwardVelocity;
                 Vector3 b2 = new Vector3(direction.x, 0f, direction.z).normalized * (0.75f * EntityStates.Croco.Leap.forwardVelocity);
 
                 base.characterMotor.Motor.ForceUnground();

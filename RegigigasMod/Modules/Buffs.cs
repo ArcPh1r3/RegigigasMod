@@ -22,8 +22,8 @@ namespace RegigigasMod.Modules
         internal static void RegisterBuffs()
         {
             armorBuff = AddNewBuff("RegigigasArmorBuff", Resources.Load<Sprite>("Textures/BuffIcons/texBuffGenericShield"), Color.grey, false, false);
-            slowStartBuff = AddNewBuff("RegigigasSlowStartDebuff", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texBuffSlowStart"), Color.yellow, true, false);
-            fullPowerBuff = AddNewBuff("RegigigasFullPowerBuff", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texBuffFullPower"), Color.yellow, false, false);
+            slowStartBuff = AddNewBuff("RegigigasSlowStartDebuff", Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texBuffSlowStart"), Color.yellow, true, false);
+            fullPowerBuff = AddNewBuff("RegigigasFullPowerBuff", Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texBuffFullPower"), Color.yellow, false, false);
         }
 
         // simple helper method

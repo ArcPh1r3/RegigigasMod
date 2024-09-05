@@ -6,13 +6,15 @@ using UnityEngine.Networking;
 using RoR2.Projectile;
 using UnityEngine.AddressableAssets;
 using static RoR2.CameraTargetParams;
+using EntityStates.BrotherMonster;
 
-namespace RegigigasMod.SkillStates.Regigigas
+namespace RegigigasMod.SkillStates.Regigigas.Lunar
 {
     public class Bounce : BaseSkillState
     {
-        public static float minDamageCoefficient = 8f;
-        public static float maxDamageCoefficient = 36f;
+        public static float minDamageCoefficient = 1f;
+        public static float maxDamageCoefficient = 2f;
+        public static float waveDamageCoefficient = 6f;
         public static float leapDuration = 0.6f;
 
         private float duration;
@@ -129,7 +131,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                 Util.PlaySound("sfx_regigigas_slam", base.gameObject);
                 //Util.PlaySound("Play_parent_attack1_slam", base.gameObject);
 
-                float radius = 24f;
+                float radius = 8f;
 
                 EffectData effectData = new EffectData();
                 effectData.origin = base.characterBody.footPosition;
@@ -151,7 +153,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                         crit = this.RollCrit(),
                         damageColorIndex = DamageColorIndex.Default,
                         damageType = DamageType.AOE,
-                        falloffModel = BlastAttack.FalloffModel.None,
+                        falloffModel = BlastAttack.FalloffModel.Linear,
                         inflictor = this.gameObject,
                         losType = BlastAttack.LoSType.None,
                         position = this.characterBody.footPosition,
@@ -160,6 +162,23 @@ namespace RegigigasMod.SkillStates.Regigigas
                         radius = radius,
                         teamIndex = this.GetTeam()
                     }.Fire();
+
+                    this.FireWaves();
+                }
+            }
+        }
+
+        private void FireWaves()
+        {
+            float num = 360f / (float)ExitSkyLeap.waveProjectileCount;
+            Vector3 point = Vector3.ProjectOnPlane(base.inputBank.aimDirection, Vector3.up);
+            Vector3 footPosition = base.characterBody.footPosition;
+            for (int i = 0; i < ExitSkyLeap.waveProjectileCount; i++)
+            {
+                Vector3 forward = Quaternion.AngleAxis(num * (float)i, Vector3.up) * point;
+                if (base.isAuthority)
+                {
+                    ProjectileManager.instance.FireProjectile(ExitSkyLeap.waveProjectilePrefab, footPosition, Util.QuaternionSafeLookRotation(forward), base.gameObject, base.characterBody.damage * Bounce.waveDamageCoefficient, ExitSkyLeap.waveProjectileForce, Util.CheckRoll(base.characterBody.crit, base.characterBody.master), DamageColorIndex.Default, null, -1f);
                 }
             }
         }

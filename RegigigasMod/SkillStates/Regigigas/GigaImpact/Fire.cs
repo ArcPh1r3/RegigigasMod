@@ -50,7 +50,7 @@ namespace RegigigasMod.SkillStates.Regigigas.GigaImpact
 
             base.PlayAnimation("FullBody, Override", "BufferEmpty");
 
-            this.effectInstance = GameObject.Instantiate(Modules.Assets.gigaImpactRushEffect);
+            this.effectInstance = GameObject.Instantiate(Modules.RegiAssets.gigaImpactRushEffect);
             this.effectInstance.transform.parent = this.FindModelChild("Chest");
             this.effectInstance.transform.localPosition = Vector3.zero;
             this.effectInstance.transform.localRotation = Quaternion.identity;

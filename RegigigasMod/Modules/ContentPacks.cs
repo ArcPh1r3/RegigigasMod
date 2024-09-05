@@ -22,10 +22,10 @@ namespace RegigigasMod.Modules
             this.contentPack.identifier = this.identifier;
             contentPack.bodyPrefabs.Add(Prefabs.bodyPrefabs.ToArray());
             contentPack.buffDefs.Add(Buffs.buffDefs.ToArray());
-            contentPack.effectDefs.Add(Assets.effectDefs.ToArray());
+            contentPack.effectDefs.Add(RegiAssets.effectDefs.ToArray());
             contentPack.entityStateTypes.Add(States.entityStates.ToArray());
             contentPack.masterPrefabs.Add(Prefabs.masterPrefabs.ToArray());
-            contentPack.networkSoundEventDefs.Add(Assets.networkSoundEventDefs.ToArray());
+            contentPack.networkSoundEventDefs.Add(RegiAssets.networkSoundEventDefs.ToArray());
             contentPack.projectilePrefabs.Add(Prefabs.projectilePrefabs.ToArray());
             contentPack.skillDefs.Add(Skills.skillDefs.ToArray());
             contentPack.skillFamilies.Add(Skills.skillFamilies.ToArray());

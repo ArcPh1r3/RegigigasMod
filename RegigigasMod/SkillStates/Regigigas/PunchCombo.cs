@@ -31,7 +31,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             //this.swingEffectPrefab = Modules.Assets.punchSwingEffect;
             this.hitEffectPrefab = Resources.Load<GameObject>("Prefabs/Effects/ImpactEffects/PodGroundImpact");
 
-            this.impactSound = Modules.Assets.punchSoundDef.index;
+            this.impactSound = Modules.RegiAssets.punchSoundDef.index;
 
             base.OnEnter();
 

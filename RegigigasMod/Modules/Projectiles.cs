@@ -64,7 +64,7 @@ namespace RegigigasMod.Modules
             //rockProjectile.GetComponent<ProjectileController>().ghostPrefab = Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/GrandparentBoulderGhost.prefab").WaitForCompletion();
 
             rockProjectile.GetComponent<ProjectileImpactExplosion>().bonusBlastForce = Vector3.zero;
-            rockProjectile.GetComponent<ProjectileImpactExplosion>().impactEffect = Assets.rockHitEffect;
+            rockProjectile.GetComponent<ProjectileImpactExplosion>().impactEffect = RegiAssets.rockHitEffect;
     }
         /*
         private static void CreateBomb()
@@ -114,11 +114,11 @@ namespace RegigigasMod.Modules
 
         private static GameObject CreateGhostPrefab(string ghostName)
         {
-            GameObject ghostPrefab = Modules.Assets.mainAssetBundle.LoadAsset<GameObject>(ghostName);
+            GameObject ghostPrefab = Modules.RegiAssets.mainAssetBundle.LoadAsset<GameObject>(ghostName);
             ghostPrefab.AddComponent<NetworkIdentity>();
             ghostPrefab.AddComponent<ProjectileGhostController>();
 
-            Modules.Assets.ConvertAllRenderersToHopooShader(ghostPrefab);
+            Modules.RegiAssets.ConvertAllRenderersToHopooShader(ghostPrefab);
 
             return ghostPrefab;
         }

@@ -33,7 +33,7 @@ namespace RegigigasMod.Modules
 
         internal static void ReadConfig()
         {
-            Config.InitROO(Assets.mainAssetBundle.LoadAsset<Sprite>("texRegigigasPlayerIcon"), "Regi Pokémon, also known as the Legendary Titans, refers to the Legendary Pokémon Regirock, Regice, Registeel, Regigigas, [REDACTED] and [REDACTED].");
+            Config.InitROO(RegiAssets.mainAssetBundle.LoadAsset<Sprite>("texRegigigasPlayerIcon"), "Regi Pokémon, also known as the Legendary Titans, refers to the Legendary Pokémon Regirock, Regice, Registeel, Regigigas, [REDACTED] and [REDACTED].");
 
             _shinySpawnRate = 
                 Config.BindAndOptions("Regigigas", 

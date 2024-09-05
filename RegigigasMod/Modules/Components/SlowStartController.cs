@@ -35,7 +35,7 @@ namespace RegigigasMod.Modules.Components
                 {
                     this.body.AddBuff(Modules.Buffs.slowStartBuff);
 
-                    EffectManager.SpawnEffect(Modules.Assets.slowStartEffect, new EffectData
+                    EffectManager.SpawnEffect(Modules.RegiAssets.slowStartEffect, new EffectData
                     {
                         origin = this.transform.position + new Vector3(0f, 5f, 0f),
                         rotation = Quaternion.identity
@@ -97,7 +97,7 @@ namespace RegigigasMod.Modules.Components
                         if (this.body.GetBuffCount(Modules.Buffs.slowStartBuff) < 10) this.body.AddBuff(Modules.Buffs.slowStartBuff);
                     }
 
-                    EffectManager.SpawnEffect(Modules.Assets.slowStartEffect, new EffectData
+                    EffectManager.SpawnEffect(Modules.RegiAssets.slowStartEffect, new EffectData
                     {
                         origin = this.transform.position + new Vector3(0f, 6f, 0f),
                         rotation = Quaternion.identity
@@ -118,7 +118,7 @@ namespace RegigigasMod.Modules.Components
             {
                 this.body.AddBuff(Modules.Buffs.fullPowerBuff);
 
-                EffectManager.SpawnEffect(Modules.Assets.slowStartReleasedEffect, new EffectData
+                EffectManager.SpawnEffect(Modules.RegiAssets.slowStartReleasedEffect, new EffectData
                 {
                     origin = this.transform.position + new Vector3(0f, 5, 0f),
                     rotation = Quaternion.identity

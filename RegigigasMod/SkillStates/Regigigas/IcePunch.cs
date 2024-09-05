@@ -61,7 +61,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             base.OnHitEnemyAuthority();
 
-            GameObject j = Modules.Assets.punchImpactEffect;
+            GameObject j = Modules.RegiAssets.punchImpactEffect;
             HurtBox[] h = hitResults.ToArray();
             for (int i = 0; i < hitResults.Count; i++)
             {

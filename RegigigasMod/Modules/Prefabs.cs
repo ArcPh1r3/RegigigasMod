@@ -178,13 +178,13 @@ namespace RegigigasMod.Modules
             RegigigasPlugin.DestroyImmediate(main.transform.Find("CameraPivot").gameObject);
             RegigigasPlugin.DestroyImmediate(main.transform.Find("AimOrigin").gameObject);
 
-            if (Modules.Assets.mainAssetBundle.LoadAsset<GameObject>(modelName) == null)
+            if (Modules.RegiAssets.mainAssetBundle.LoadAsset<GameObject>(modelName) == null)
             {
                 Log.Error("Trying to load a null model- check to see if the name in your code matches the name of the object in Unity");
                 return null;
             }
 
-            return GameObject.Instantiate(Modules.Assets.mainAssetBundle.LoadAsset<GameObject>(modelName));
+            return GameObject.Instantiate(Modules.RegiAssets.mainAssetBundle.LoadAsset<GameObject>(modelName));
         }
 
         internal static void SetupCharacterModel(GameObject prefab, CustomRendererInfo[] rendererInfo, int mainRendererIndex)

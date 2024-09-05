@@ -49,7 +49,7 @@ namespace RegigigasMod
             Modules.Config.myConfig = Config;
 
             Log.Init(Logger);
-            Modules.Assets.PopulateAssets();
+            Modules.RegiAssets.PopulateAssets();
             Modules.Config.ReadConfig();
             Modules.CameraParams.InitializeParams();
             Modules.States.RegisterStates();

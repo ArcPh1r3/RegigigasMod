@@ -5,7 +5,8 @@ namespace RegigigasMod.Modules.Components
 {
     public class RegigigasFlashController : MonoBehaviour
     {
-        private float maxEmission = 5f;
+        public float maxEmission = 5f;
+        public float minEmission = 0f;
         private float currentEmission;
         private float lastEmission = 0;
         public float emissionSmoothSpeed = 25f;
@@ -24,7 +25,7 @@ namespace RegigigasMod.Modules.Components
 
         private void Awake()
         {
-            this.childLocator = GetComponent<ModelLocator>().modelTransform.GetComponent<ChildLocator>();// baseRendererInfos[0].defaultMaterial;
+            this.childLocator = this.GetComponent<ModelLocator>().modelTransform.GetComponent<ChildLocator>();// baseRendererInfos[0].defaultMaterial;
             this.currentState = FlashState.None;
         }
 
@@ -32,7 +33,7 @@ namespace RegigigasMod.Modules.Components
 
             this.bodyRend = this.childLocator.FindChildComponent<Renderer>("Model");
             this.bodyBlock = new MaterialPropertyBlock();
-            this.bodyRend.GetPropertyBlock(bodyBlock);
+            this.bodyRend.GetPropertyBlock(this.bodyBlock);
         }
 
         private void FixedUpdate()
@@ -42,13 +43,13 @@ namespace RegigigasMod.Modules.Components
             switch (this.currentState)
             {
                 case FlashState.None:
-                    this.currentEmission = 0f;
+                    this.currentEmission = this.minEmission;
                     break;
                 case FlashState.Down:
                     this.currentEmission -= smoothAmount;
-                    if (this.currentEmission <= 0f)
+                    if (this.currentEmission <= this.minEmission)
                     {
-                        this.currentEmission = 0f;
+                        this.currentEmission = this.minEmission;
                         this.currentState = FlashState.None;
                     }
                     break;
@@ -61,13 +62,16 @@ namespace RegigigasMod.Modules.Components
                     }
                     break;
             }
-            if (lastEmission != currentEmission) {
-                if (this.bodyRend) {
-
+            if (this.lastEmission != this.currentEmission)
+            {
+                if (this.bodyRend)
+                {
                     this.bodyBlock.SetFloat("_EmPower", this.currentEmission);
-                    this.bodyRend.SetPropertyBlock(bodyBlock);
-                }else {
-                    GetRenderer();
+                    this.bodyRend.SetPropertyBlock(this.bodyBlock);
+                }
+                else
+                {
+                    this.GetRenderer();
                 }
             }
             this.lastEmission = this.currentEmission;

@@ -43,6 +43,11 @@ namespace RegigigasMod.Modules
             AddSkill(typeof(Revenge));
             AddSkill(typeof(RevengeEnd));
 
+            AddSkill(typeof(SkillStates.Regigigas.Lunar.Bounce));
+            AddSkill(typeof(SkillStates.Regigigas.Lunar.BounceStart));
+            AddSkill(typeof(SkillStates.Regigigas.Lunar.Punch));
+            AddSkill(typeof(SkillStates.Regigigas.Lunar.Stomp));
+
             AddSkill(typeof(GigaImpactOld));
         }
     }

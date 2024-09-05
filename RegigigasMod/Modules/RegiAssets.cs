@@ -14,7 +14,7 @@ using RoR2.Projectile;
 
 namespace RegigigasMod.Modules
 {
-    internal static class Assets
+    internal static class RegiAssets
     {
         internal static AssetBundle mainAssetBundle;
         internal static AssetBundle secondaryAssetBundle;
@@ -155,7 +155,7 @@ namespace RegigigasMod.Modules
 
             i.transform.localScale = Vector3.one * 3f;
 
-            Assets.AddNewEffectDef(i);
+            RegiAssets.AddNewEffectDef(i);
 
             return i;
         }
@@ -272,7 +272,7 @@ namespace RegigigasMod.Modules
             if (!commandoMat) commandoMat = Resources.Load<GameObject>("Prefabs/CharacterBodies/CommandoBody").GetComponentInChildren<CharacterModel>().baseRendererInfos[0].defaultMaterial;
 
             Material mat = UnityEngine.Object.Instantiate<Material>(commandoMat);
-            Material tempMat = Assets.secondaryAssetBundle.LoadAsset<Material>(materialName);
+            Material tempMat = RegiAssets.secondaryAssetBundle.LoadAsset<Material>(materialName);
 
             if (!tempMat) return commandoMat;
 
@@ -292,7 +292,7 @@ namespace RegigigasMod.Modules
             if (!commandoMat) commandoMat = Resources.Load<GameObject>("Prefabs/CharacterBodies/CommandoBody").GetComponentInChildren<CharacterModel>().baseRendererInfos[0].defaultMaterial;
 
             Material mat = UnityEngine.Object.Instantiate<Material>(commandoMat);
-            Material tempMat = Assets.mainAssetBundle.LoadAsset<Material>(materialName);
+            Material tempMat = RegiAssets.mainAssetBundle.LoadAsset<Material>(materialName);
 
             if (!tempMat) return commandoMat;
 
@@ -309,17 +309,17 @@ namespace RegigigasMod.Modules
 
         public static Material CreateMaterial(string materialName)
         {
-            return Assets.CreateMaterial(materialName, 0f);
+            return RegiAssets.CreateMaterial(materialName, 0f);
         }
 
         public static Material CreateMaterial(string materialName, float emission)
         {
-            return Assets.CreateMaterial(materialName, emission, Color.black);
+            return RegiAssets.CreateMaterial(materialName, emission, Color.black);
         }
 
         public static Material CreateMaterial(string materialName, float emission, Color emissionColor)
         {
-            return Assets.CreateMaterial(materialName, emission, emissionColor, 0f);
+            return RegiAssets.CreateMaterial(materialName, emission, emissionColor, 0f);
         }
     }
 }

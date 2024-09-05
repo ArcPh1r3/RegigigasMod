@@ -46,6 +46,11 @@ namespace RegigigasMod.Modules.Enemies
         // orb
         internal static GameObject slowStartOrb;
 
+        // skilldefs
+        public static SkillDef lunarPunchSkillDef;
+        public static SkillDef lunarStompSkillDef;
+        public static SkillDef lunarBounceSkillDef;
+
         internal static UnlockableDef masteryUnlockableDef;
 
         internal static bool lateInit = false;
@@ -104,9 +109,9 @@ namespace RegigigasMod.Modules.Enemies
 
             slowStartOrb.transform.Find("VFX").Find("PulseGlow").GetComponent<ParticleSystemRenderer>().material = Addressables.LoadAssetAsync<Material>("RoR2/Base/Grandparent/matGrandParentSunGlow.mat").WaitForCompletion();
 
-            slowStartOrb.GetComponent<OrbEffect>().endEffect = Modules.Assets.slowStartPickupEffect;
+            slowStartOrb.GetComponent<OrbEffect>().endEffect = Modules.RegiAssets.slowStartPickupEffect;
 
-            Modules.Assets.AddNewEffectDef(slowStartOrb);
+            Modules.RegiAssets.AddNewEffectDef(slowStartOrb);
         }
 
         private static GameObject CreateBodyPrefab(bool isPlayer)
@@ -141,8 +146,8 @@ namespace RegigigasMod.Modules.Enemies
                 bodyName = name,
                 bodyNameToken = _nameToken,
                 bodyColor = charColor,
-                characterPortrait = Modules.Assets.LoadCharacterIcon(iconName),
-                crosshair = Modules.Assets.ancientPowerCrosshairPrefab,
+                characterPortrait = Modules.RegiAssets.LoadCharacterIcon(iconName),
+                crosshair = Modules.RegiAssets.ancientPowerCrosshairPrefab,
                 damage = 40f,
                 healthGrowth = 1260f,
                 healthRegen = 0f,
@@ -282,7 +287,7 @@ namespace RegigigasMod.Modules.Enemies
             }
             else
             {
-                bodyMat = Modules.Assets.CreateMaterial("matRegigigas", 0f, Color.white);
+                bodyMat = Modules.RegiAssets.CreateMaterial("matRegigigas", 0f, Color.white);
             }
 
             bodyRendererIndex = 1;
@@ -302,7 +307,7 @@ namespace RegigigasMod.Modules.Enemies
             // this is so incredibly fucking jank but it's for the logbook fix
             if (isLoreFriendly)
             {
-                ((SkinnedMeshRenderer)newPrefab.GetComponentInChildren<CharacterModel>().baseRendererInfos[1].renderer).sharedMesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt");
+                ((SkinnedMeshRenderer)newPrefab.GetComponentInChildren<CharacterModel>().baseRendererInfos[1].renderer).sharedMesh = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt");
             }
 
             newPrefab.GetComponentInChildren<CharacterModel>().gameObject.AddComponent<Modules.Components.RegiSkinPicker>();
@@ -622,25 +627,30 @@ namespace RegigigasMod.Modules.Enemies
             skillLocator.passiveSkill.enabled = true;
             skillLocator.passiveSkill.skillNameToken = prefix + "_REGIGIGAS_BODY_PASSIVE_NAME";
             skillLocator.passiveSkill.skillDescriptionToken = prefix + "_REGIGIGAS_BODY_PASSIVE_DESCRIPTION";
-            skillLocator.passiveSkill.icon = Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texSlowStartIcon");
+            skillLocator.passiveSkill.icon = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texSlowStartIcon");
 
             #region Primary
+            if (!lunarPunchSkillDef)
+            {
+                lunarPunchSkillDef = Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(SkillStates.Regigigas.Lunar.Punch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false);
+            }
+
             if (isPlayer)
             {
-                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewDrainPunchIcon"), false));
-                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
-                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(IcePunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false));
-                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(MachPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_MACHPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_MACHPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
+                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texNewDrainPunchIcon"), false));
+                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
+                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(IcePunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false));
+                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(MachPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_MACHPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_MACHPUNCH_DESCRIPTION", Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
             }
             else
             {
                 if (Modules.Config.nerfedMelee)
                 {
-                    Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(IcePunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false));
+                    Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(IcePunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false));
                 }
                 else
                 {
-                    Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
+                    Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.RegiAssets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
                 }
             }
             #endregion
@@ -651,7 +661,7 @@ namespace RegigigasMod.Modules.Enemies
                 skillName = prefix + "_REGIGIGAS_BODY_SECONDARY_EARTHQUAKE_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_SECONDARY_EARTHQUAKE_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SECONDARY_EARTHQUAKE_DESCRIPTION",
-                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texEarthPowerIcon"),
+                skillIcon = Modules.RegiAssets.mainAssetBundle.LoadAsset<Sprite>("texEarthPowerIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(Stomp)),
                 activationStateMachineName = "Body",
                 baseMaxStock = 1,
@@ -670,12 +680,39 @@ namespace RegigigasMod.Modules.Enemies
                 stockToConsume = 1,
             });
 
+            if (!lunarStompSkillDef)
+            {
+                lunarStompSkillDef = Modules.Skills.CreateSkillDef(new SkillDefInfo
+                {
+                    skillName = prefix + "_REGIGIGAS_BODY_SECONDARY_EARTHQUAKE_NAME",
+                    skillNameToken = prefix + "_REGIGIGAS_BODY_SECONDARY_EARTHQUAKE_NAME",
+                    skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SECONDARY_EARTHQUAKE_DESCRIPTION",
+                    skillIcon = Modules.RegiAssets.mainAssetBundle.LoadAsset<Sprite>("texEarthPowerIcon"),
+                    activationState = new EntityStates.SerializableEntityStateType(typeof(SkillStates.Regigigas.Lunar.Stomp)),
+                    activationStateMachineName = "Body",
+                    baseMaxStock = 1,
+                    baseRechargeInterval = 8f,
+                    beginSkillCooldownOnSkillEnd = true,
+                    canceledFromSprinting = false,
+                    forceSprintDuringState = false,
+                    fullRestockOnAssign = true,
+                    interruptPriority = EntityStates.InterruptPriority.Any,
+                    resetCooldownTimerOnUse = false,
+                    isCombatSkill = true,
+                    mustKeyPress = false,
+                    cancelSprintingOnActivation = true,
+                    rechargeStock = 1,
+                    requiredStock = 1,
+                    stockToConsume = 1,
+                });
+            }
+
             SkillDef ancientPowerSkillDef = Modules.Skills.CreateSkillDef(new SkillDefInfo
             {
                 skillName = prefix + "_REGIGIGAS_BODY_SECONDARY_ANCIENTPOWER_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_SECONDARY_ANCIENTPOWER_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SECONDARY_ANCIENTPOWER_DESCRIPTION",
-                skillIcon = Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewAncientPowerIcon"),
+                skillIcon = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texNewAncientPowerIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(ChargeAncientPower)),
                 activationStateMachineName = "Weapon",
                 baseMaxStock = 5,
@@ -699,7 +736,7 @@ namespace RegigigasMod.Modules.Enemies
                 skillName = prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION",
-                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"),
+                skillIcon = Modules.RegiAssets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)),
                 activationStateMachineName = "Body",
                 baseMaxStock = 1,
@@ -728,7 +765,7 @@ namespace RegigigasMod.Modules.Enemies
                 skillName = prefix + "_REGIGIGAS_BODY_UTILITY_REVENGE_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_UTILITY_REVENGE_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_UTILITY_REVENGE_DESCRIPTION",
-                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texRevengeIcon"),
+                skillIcon = Modules.RegiAssets.mainAssetBundle.LoadAsset<Sprite>("texRevengeIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(Revenge)),
                 activationStateMachineName = "Body",
                 baseMaxStock = 1,
@@ -756,7 +793,7 @@ namespace RegigigasMod.Modules.Enemies
                 skillName = prefix + "_REGIGIGAS_BODY_SPECIAL_SLAM_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_SPECIAL_SLAM_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SPECIAL_SLAM_DESCRIPTION",
-                skillIcon = Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texHeavySlamIcon"),
+                skillIcon = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texHeavySlamIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(BounceStart)),
                 activationStateMachineName = "Weapon",
                 baseMaxStock = 1,
@@ -780,7 +817,7 @@ namespace RegigigasMod.Modules.Enemies
                 skillName = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
                 skillNameToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_DESCRIPTION",
-                skillIcon = Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewGigaImpactIcon"),
+                skillIcon = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texNewGigaImpactIcon"),
                 activationState = new EntityStates.SerializableEntityStateType(typeof(SkillStates.Regigigas.GigaImpact.Channel)),
                 activationStateMachineName = "Body",
                 baseMaxStock = 1,
@@ -798,6 +835,33 @@ namespace RegigigasMod.Modules.Enemies
                 requiredStock = 1,
                 stockToConsume = 1
             });
+
+            if (!lunarBounceSkillDef)
+            {
+                lunarBounceSkillDef = Modules.Skills.CreateSkillDef(new SkillDefInfo
+                {
+                    skillName = prefix + "_REGIGIGAS_BODY_SPECIAL_SLAM_NAME",
+                    skillNameToken = prefix + "_REGIGIGAS_BODY_SPECIAL_SLAM_NAME",
+                    skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SPECIAL_SLAM_DESCRIPTION",
+                    skillIcon = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texHeavySlamIcon"),
+                    activationState = new EntityStates.SerializableEntityStateType(typeof(SkillStates.Regigigas.Lunar.BounceStart)),
+                    activationStateMachineName = "Weapon",
+                    baseMaxStock = 1,
+                    baseRechargeInterval = 16f,
+                    beginSkillCooldownOnSkillEnd = true,
+                    canceledFromSprinting = false,
+                    forceSprintDuringState = false,
+                    fullRestockOnAssign = true,
+                    interruptPriority = EntityStates.InterruptPriority.Skill,
+                    resetCooldownTimerOnUse = false,
+                    isCombatSkill = true,
+                    mustKeyPress = false,
+                    cancelSprintingOnActivation = true,
+                    rechargeStock = 1,
+                    requiredStock = 1,
+                    stockToConsume = 1
+                });
+            }
 
             if (isPlayer)
             {
@@ -829,7 +893,7 @@ namespace RegigigasMod.Modules.Enemies
             // this should work right
             #region DefaultSkin
             SkinDef defaultSkin = Modules.Skins.CreateSkinDef(RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_DEFAULT_SKIN_NAME",
-                Assets.secondaryAssetBundle.LoadAsset<Sprite>("texDefaultSkinIcon"),
+                RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texDefaultSkinIcon"),
                 defaultRenderers,
                 mainRenderer,
                 model);
@@ -840,7 +904,7 @@ namespace RegigigasMod.Modules.Enemies
                 {
                     new SkinDef.MeshReplacement
                     {
-                        mesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt"),
+                        mesh = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt"),
                         renderer = mainRenderer
                     }
                 };
@@ -851,10 +915,10 @@ namespace RegigigasMod.Modules.Enemies
 
             #region MasterySkin
             SkinDef masterySkin = Modules.Skins.CreateSkinDef(RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_MONSOON_SKIN_NAME",
-                Assets.secondaryAssetBundle.LoadAsset<Sprite>("texMasterySkinIcon"),
+                RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texMasterySkinIcon"),
                 SkinRendererInfos(defaultRenderers, new Material[]
                 {
-                    Modules.Assets.CreateMaterial("matRegigigasShiny", 0f, Color.white)
+                    Modules.RegiAssets.CreateMaterial("matRegigigasShiny", 0f, Color.white)
                 }),
                 mainRenderer,
                 model,
@@ -866,7 +930,7 @@ namespace RegigigasMod.Modules.Enemies
                 {
                     new SkinDef.MeshReplacement
                     {
-                        mesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt"),
+                        mesh = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt"),
                         renderer = mainRenderer
                     }
                 };
@@ -882,10 +946,10 @@ namespace RegigigasMod.Modules.Enemies
 
             #region BowserSkin
             SkinDef bowserSkin = Modules.Skins.CreateSkinDef(RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_BOWSER_SKIN_NAME",
-                Assets.secondaryAssetBundle.LoadAsset<Sprite>("texBowserSkin"),
+                RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texBowserSkin"),
                 SkinRendererInfos(defaultRenderers, new Material[]
                 {
-                    Modules.Assets.CreateMaterial2("matBowser", 0f, Color.black, 1f)
+                    Modules.RegiAssets.CreateMaterial2("matBowser", 0f, Color.black, 1f)
                 }),
                 mainRenderer,
                 model);
@@ -894,7 +958,7 @@ namespace RegigigasMod.Modules.Enemies
             {
                     new SkinDef.MeshReplacement
                     {
-                        mesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshBowser"),
+                        mesh = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Mesh>("meshBowser"),
                         renderer = mainRenderer
                     }
             };

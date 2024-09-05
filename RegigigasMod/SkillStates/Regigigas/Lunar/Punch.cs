@@ -9,11 +9,11 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
 
-namespace RegigigasMod.SkillStates.Regigigas
+namespace RegigigasMod.SkillStates.Regigigas.Lunar
 {
-    public class DrainPunch : PunchCombo
+    public class Punch : PunchCombo
     {
-        internal new static float damageCoefficientOverride = 2.8f;
+        internal new static float damageCoefficientOverride = 1.2f;
 
         private GameObject chargeEffectInstance;
 
@@ -21,17 +21,18 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             base.OnEnter();
 
-            this.attack.damage = DrainPunch.damageCoefficientOverride * this.damageStat;
+            this.attack.damage = Punch.damageCoefficientOverride * this.damageStat;
+            this.attack.damageType = DamageType.CrippleOnHit;
 
             string muzzleString = "HandL";
             if (this.swingIndex == 1) muzzleString = "HandR";
-            this.chargeEffectInstance = GameObject.Instantiate(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Grandparent/ChargeGrandParentSunHands.prefab").WaitForCompletion());
+            this.chargeEffectInstance = GameObject.Instantiate(Addressables.LoadAssetAsync<GameObject>("RoR2/Base/Mage/ChargeMageIceBomb.prefab").WaitForCompletion());
             this.chargeEffectInstance.transform.parent = this.FindModelChild(muzzleString);
             this.chargeEffectInstance.transform.localPosition = new Vector3(0f, 0f, 0f);
             this.chargeEffectInstance.transform.localRotation = Quaternion.identity;
             this.chargeEffectInstance.transform.localScale = Vector3.one;
 
-            this.chargeEffectInstance.GetComponentInChildren<ObjectScaleCurve>().timeMax = 0.75f * (this.duration * this.attackStartTime);
+            //this.chargeEffectInstance.GetComponentInChildren<ObjectScaleCurve>().timeMax = 0.75f * (this.duration * this.attackStartTime);
         }
 
         public override void OnExit()
@@ -45,7 +46,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             int index = this.swingIndex + 1;
             if (index == 3) index = 1;
 
-            this.outer.SetNextState(new DrainPunch
+            this.outer.SetNextState(new Punch
             {
                 swingIndex = index
             });
@@ -56,15 +57,14 @@ namespace RegigigasMod.SkillStates.Regigigas
             if (this.chargeEffectInstance) EntityState.Destroy(this.chargeEffectInstance);
         }
 
-        protected override void OnHitEnemyAuthority() {
+        protected override void OnHitEnemyAuthority()
+        {
             base.OnHitEnemyAuthority();
 
             GameObject j = Modules.RegiAssets.punchImpactEffect;
             HurtBox[] h = hitResults.ToArray();
             for (int i = 0; i < hitResults.Count; i++)
             {
-                handleLifeSteal(healthComponent, damageCoefficientOverride * this.damageStat * 0.25f);
-
                 EffectData effectData = new EffectData();
                 effectData.scale = 4f;
 
@@ -76,18 +76,6 @@ namespace RegigigasMod.SkillStates.Regigigas
 
                     EffectManager.SpawnEffect(j, effectData, true);
                 }
-            }
-        }
-
-        private void handleLifeSteal(HealthComponent healthComponent, float healAmount) {
-
-            if (NetworkServer.active) {
-
-                healthComponent.Heal(healAmount, default(ProcChainMask));
-
-            } else {
-
-                new Modules.NetMessages.SyncLifeSteal(characterBody.networkIdentity.netId, healAmount).Send(NetworkDestination.Clients);
             }
         }
     }

@@ -1,7 +1,6 @@
 ﻿using EntityStates;
 using RoR2;
 using UnityEngine;
-using UnityEngine.Networking;
 using RegigigasMod.Modules.Components;
 using System.Linq;
 
@@ -104,6 +103,10 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             bool meetsConditions = true;
 
+            if (targetBody.HasBuff(RoR2Content.Buffs.Intangible)) meetsConditions = false;
+            if (targetBody.HasBuff(RoR2Content.Buffs.HiddenInvincibility)) meetsConditions = false;
+            if (targetBody.HasBuff(RoR2Content.Buffs.Cloak)) meetsConditions = false;
+            if (targetBody.HasBuff(RoR2Content.Buffs.CloakSpeed)) meetsConditions = false;
             if (targetBody.hullClassification == HullClassification.BeetleQueen) meetsConditions = false;
 
             return meetsConditions;

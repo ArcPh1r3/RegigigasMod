@@ -51,6 +51,9 @@
     <Reference Include="Decalicious">
       <HintPath>libs\Decalicious.dll</HintPath>
     </Reference>
+    <Reference Include="RiskOfOptions">
+      <HintPath>libs\RiskOfOptions.dll</HintPath>
+    </Reference>
     <Reference Include="Risky_Artifacts">
       <HintPath>libs\Risky_Artifacts.dll</HintPath>
     </Reference>

@@ -63,7 +63,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             HurtBox[] h = hitResults.ToArray();
             for (int i = 0; i < hitResults.Count; i++)
             {
-                handleLifeSteal(healthComponent, damageCoefficientOverride * this.damageStat * 0.5f);
+                handleLifeSteal(healthComponent, damageCoefficientOverride * this.damageStat * 0.25f);
 
                 EffectData effectData = new EffectData();
                 effectData.scale = 4f;

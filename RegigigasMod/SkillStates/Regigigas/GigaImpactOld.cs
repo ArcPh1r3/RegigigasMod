@@ -11,7 +11,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         public static float impactAttackRadius = 12f;
         public static float impactAttackForce = 500f;
         public static float impactAttackBonusForce = -1000f;
-        public static float impactAttackDamageCoefficient = 32f;
+        public static float impactAttackDamageCoefficient = 14f;
 
         public static float blastAttackRadius = 32f;
         public static float blastAttackForce = 2000f;

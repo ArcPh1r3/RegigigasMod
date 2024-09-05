@@ -12,6 +12,7 @@ using UnityEngine;
 namespace RegigigasMod
 {
     [BepInDependency("com.Moffein.RiskyArtifacts", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("com.rune580.riskofoptions", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("com.bepis.r2api", BepInDependency.DependencyFlags.HardDependency)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInPlugin(MODUID, MODNAME, MODVERSION)]
@@ -31,23 +32,25 @@ namespace RegigigasMod
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.4.11";
+        public const string MODVERSION = "1.5.0";
 
         public const string developerPrefix = "ROB";
 
         public static RegigigasPlugin instance;
 
-        public static bool riskyArtifactsInstalled;
+        public static bool riskyArtifactsInstalled => BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.Moffein.RiskyArtifacts");
+        public static bool rooInstalled => BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.rune580.riskofoptions");
+        public static bool peakInstalled => BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.JestAnAnimator.LoreFriendRegigigas");
 
         private void Awake()
         {
             instance = this;
 
-            riskyArtifactsInstalled = BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.Moffein.RiskyArtifacts");
+            Modules.Config.myConfig = Config;
 
             Log.Init(Logger);
-            Modules.Config.ReadConfig();
             Modules.Assets.PopulateAssets();
+            Modules.Config.ReadConfig();
             Modules.CameraParams.InitializeParams();
             Modules.States.RegisterStates();
             Modules.Buffs.RegisterBuffs();

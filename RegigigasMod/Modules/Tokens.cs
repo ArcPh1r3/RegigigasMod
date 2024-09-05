@@ -23,7 +23,7 @@ namespace RegigigasMod.Modules
             string lore2 = "There is an enduring legend that states this golem towed continents with ropes.";
 
             LanguageAPI.Add(prefix + "NAME", "Regigigas");
-            LanguageAPI.Add(prefix + "NAME2", "Stone Juggernaut");
+            LanguageAPI.Add(prefix + "NAME2", "Stone Gigas");
             LanguageAPI.Add(prefix + "DESCRIPTION", desc);
             LanguageAPI.Add(prefix + "SUBTITLE", "Weary Colossus");
             LanguageAPI.Add(prefix + "LORE", lore);
@@ -59,7 +59,7 @@ namespace RegigigasMod.Modules
             LanguageAPI.Add(prefix + "PRIMARY_MACHPUNCH_DESCRIPTION", $"Punch really fast for <style=cIsDamage>{SkillStates.Regigigas.MachPunch.damageCoefficientOverride * 100f}% damage</style>.");
 
             LanguageAPI.Add(prefix + "PRIMARY_DRAINPUNCH_NAME", "Drain Punch");
-            LanguageAPI.Add(prefix + "PRIMARY_DRAINPUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>{SkillStates.Regigigas.DrainPunch.damageCoefficientOverride * 100f}% damage</style>, <style=cIsHealing>healing for 50% of damage dealt</style>.");
+            LanguageAPI.Add(prefix + "PRIMARY_DRAINPUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>{SkillStates.Regigigas.DrainPunch.damageCoefficientOverride * 100f}% damage</style>, <style=cIsHealing>healing for 25% of damage dealt</style>.");
 
             LanguageAPI.Add(prefix + "PRIMARY_ICEPUNCH_NAME", "Ice Punch");
             LanguageAPI.Add(prefix + "PRIMARY_ICEPUNCH_DESCRIPTION", $"Punch for <style=cIsDamage>{SkillStates.Regigigas.IcePunch.damageCoefficientOverride * 100f}% damage</style>, <style=cIsUtility>freezing enemies hit</style>.");

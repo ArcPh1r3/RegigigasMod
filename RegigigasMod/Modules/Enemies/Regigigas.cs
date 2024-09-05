@@ -12,6 +12,7 @@ using RegigigasMod.Modules.Misc;
 using RoR2.Orbs;
 using UnityEngine.Networking;
 using UnityEngine.AddressableAssets;
+using System;
 
 namespace RegigigasMod.Modules.Enemies
 {
@@ -46,6 +47,8 @@ namespace RegigigasMod.Modules.Enemies
         internal static GameObject slowStartOrb;
 
         internal static UnlockableDef masteryUnlockableDef;
+
+        internal static bool lateInit = false;
 
         internal void CreateCharacter()
         {
@@ -123,8 +126,8 @@ namespace RegigigasMod.Modules.Enemies
             if (isLoreFriendly)
             {
                 charColor = Color.grey;
-                iconName = "StoneJuggernautEnemy";
-                if (isPlayer) iconName = "StoneJuggernaut";
+                iconName = "StoneGigasEnemy";
+                if (isPlayer) iconName = "StoneGigas";
             }
 
             string _nameToken = RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME";
@@ -301,6 +304,8 @@ namespace RegigigasMod.Modules.Enemies
             {
                 ((SkinnedMeshRenderer)newPrefab.GetComponentInChildren<CharacterModel>().baseRendererInfos[1].renderer).sharedMesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshRegigigasAlt");
             }
+
+            newPrefab.GetComponentInChildren<CharacterModel>().gameObject.AddComponent<Modules.Components.RegiSkinPicker>();
             #endregion
 
             CreateHitboxes(newPrefab);
@@ -625,7 +630,6 @@ namespace RegigigasMod.Modules.Enemies
                 Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(DrainPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_DRAINPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewDrainPunchIcon"), false));
                 Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(PunchCombo)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_PUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
                 Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(IcePunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_ICEPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texIcePunchIcon"), false));
-                Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)), "Body", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION", Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"), false));
                 Modules.Skills.AddPrimarySkills(prefab, Modules.Skills.CreatePrimarySkillDef(new EntityStates.SerializableEntityStateType(typeof(MachPunch)), "Weapon", prefix + "_REGIGIGAS_BODY_PRIMARY_MACHPUNCH_NAME", prefix + "_REGIGIGAS_BODY_PRIMARY_MACHPUNCH_DESCRIPTION", Modules.Assets.secondaryAssetBundle.LoadAsset<Sprite>("texNewPunchIcon"), false));
             }
             else
@@ -690,8 +694,32 @@ namespace RegigigasMod.Modules.Enemies
                 stockToConsume = 0,
             });
 
-            if (isPlayer) Modules.Skills.AddSecondarySkills(prefab, ancientPowerSkillDef, earthPowerSkillDef);
-            else Modules.Skills.AddSecondarySkills(prefab, earthPowerSkillDef, ancientPowerSkillDef);
+            SkillDef crushGripSkillDef = Modules.Skills.CreateSkillDef(new SkillDefInfo
+            {
+                skillName = prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME",
+                skillNameToken = prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_NAME",
+                skillDescriptionToken = prefix + "_REGIGIGAS_BODY_PRIMARY_GRAB_DESCRIPTION",
+                skillIcon = Modules.Assets.mainAssetBundle.LoadAsset<Sprite>("texCrushGripIcon"),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(GrabAttempt)),
+                activationStateMachineName = "Body",
+                baseMaxStock = 1,
+                baseRechargeInterval = 5f,
+                beginSkillCooldownOnSkillEnd = true,
+                canceledFromSprinting = false,
+                forceSprintDuringState = false,
+                fullRestockOnAssign = true,
+                interruptPriority = EntityStates.InterruptPriority.Skill,
+                resetCooldownTimerOnUse = false,
+                isCombatSkill = true,
+                mustKeyPress = false,
+                cancelSprintingOnActivation = true,
+                rechargeStock = 1,
+                requiredStock = 1,
+                stockToConsume = 1
+            });
+
+            if (isPlayer) Modules.Skills.AddSecondarySkills(prefab, ancientPowerSkillDef, earthPowerSkillDef, crushGripSkillDef);
+            else Modules.Skills.AddSecondarySkills(prefab, earthPowerSkillDef, ancientPowerSkillDef, crushGripSkillDef);
             #endregion
 
             #region Utility
@@ -773,8 +801,8 @@ namespace RegigigasMod.Modules.Enemies
 
             if (isPlayer)
             {
-                Modules.Skills.AddSpecialSkills(prefab, impact2SkillDef, revengeSkillDef);
-                Modules.Skills.AddUtilitySkills(prefab, impactSkillDef);
+                Modules.Skills.AddSpecialSkills(prefab, impact2SkillDef);
+                Modules.Skills.AddUtilitySkills(prefab, impactSkillDef, revengeSkillDef);
             }
             else
             {
@@ -798,6 +826,7 @@ namespace RegigigasMod.Modules.Enemies
 
             List<SkinDef> skins = new List<SkinDef>();
 
+            // this should work right
             #region DefaultSkin
             SkinDef defaultSkin = Modules.Skins.CreateSkinDef(RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_DEFAULT_SKIN_NAME",
                 Assets.secondaryAssetBundle.LoadAsset<Sprite>("texDefaultSkinIcon"),
@@ -849,28 +878,6 @@ namespace RegigigasMod.Modules.Enemies
             }
 
             skins.Add(masterySkin);
-            #endregion
-
-            #region JuggernautSkin
-            /*SkinDef juggernautSkin = Modules.Skins.CreateSkinDef(RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_JUGGERNAUT_SKIN_NAME",
-                Assets.secondaryAssetBundle.LoadAsset<Sprite>("texJuggernautSkin"),
-                SkinRendererInfos(defaultRenderers, new Material[]
-                {
-                    Addressables.LoadAssetAsync<Material>("RoR2/Base/Golem/matGolem.mat").WaitForCompletion()
-                }),
-                mainRenderer,
-                model);
-
-            juggernautSkin.meshReplacements = new SkinDef.MeshReplacement[]
-            {
-                    new SkinDef.MeshReplacement
-                    {
-                        mesh = Modules.Assets.secondaryAssetBundle.LoadAsset<Mesh>("meshJuggernaut"),
-                        renderer = mainRenderer
-                    }
-            };
-
-            skins.Add(juggernautSkin);*/
             #endregion
 
             #region BowserSkin
@@ -3621,6 +3628,74 @@ localScale = new Vector3(0.17297F, 0.17297F, 0.17297F),
 
             On.RoR2.CharacterBody.AddBuff_BuffIndex += CharacterBody_AddBuff_BuffIndex;
             On.RoR2.CharacterBody.AddTimedBuff_BuffDef_float += CharacterBody_AddTimedBuff_BuffDef_float;
+            On.RoR2.UI.MainMenu.MainMenuController.Awake += MainMenuController_Awake;
+        }
+
+        private static void MainMenuController_Awake(On.RoR2.UI.MainMenu.MainMenuController.orig_Awake orig, RoR2.UI.MainMenu.MainMenuController self)
+        {
+            if (!lateInit)
+            {
+                lateInit = true;
+                if (characterPrefab && survivorPrefab)
+                {
+                    // make sure skins are shared..
+                    CharacterModel characterModel = characterPrefab.GetComponentInChildren<CharacterModel>();
+                    List<SkinDef> newSkins = new List<SkinDef>();
+                    foreach (SkinDef i in survivorPrefab.GetComponentInChildren<ModelSkinController>().skins)
+                    {
+                        newSkins.Add(CopySkinDef(i, characterModel));
+                    }
+                    characterPrefab.GetComponentInChildren<ModelSkinController>().skins = newSkins.ToArray();
+                    // this sucks.
+                }
+            }
+            orig(self);
+        }
+
+        private static SkinDef CopySkinDef(SkinDef skinDef, CharacterModel characterModel)
+        {
+            CharacterModel.RendererInfo[] rendererInfos = new CharacterModel.RendererInfo[skinDef.rendererInfos.Length];
+            SkinDef.MeshReplacement[] meshReplacements = new SkinDef.MeshReplacement[skinDef.meshReplacements.Length];
+
+            // hardcoded and straight up unholy. it just works.
+            if (skinDef.rendererInfos.Length > 0)
+            {
+                skinDef.rendererInfos.CopyTo(rendererInfos, 0);
+                for (int i = 0; i < rendererInfos.Length; i++)
+                {
+                    rendererInfos[i].renderer = characterModel.mainSkinnedMeshRenderer;
+                }
+            }
+
+            if (skinDef.meshReplacements.Length > 0)
+            {
+                skinDef.meshReplacements.CopyTo(meshReplacements, 0);
+                for (int i = 0; i < meshReplacements.Length; i++)
+                {
+                    meshReplacements[i].renderer = characterModel.mainSkinnedMeshRenderer;
+                }
+            }
+            // easier would be asking lui to update that mod to add the skins to the enemy body as well, but it is what it is
+
+            LoadoutAPI.SkinDefInfo skinDefInfo = new LoadoutAPI.SkinDefInfo
+            {
+                BaseSkins = Array.Empty<SkinDef>(),
+                GameObjectActivations = new SkinDef.GameObjectActivation[0],
+                Icon = skinDef.icon,
+                MeshReplacements = meshReplacements,
+                MinionSkinReplacements = new SkinDef.MinionSkinReplacement[0],
+                Name = skinDef.name,
+                NameToken = skinDef.nameToken,
+                ProjectileGhostReplacements = new SkinDef.ProjectileGhostReplacement[0],
+                RendererInfos = rendererInfos,
+                RootObject = characterModel.gameObject,
+                UnlockableDef = null
+            };
+
+            // this is so fucking bad
+            // GOD
+
+            return LoadoutAPI.CreateNewSkinDef(skinDefInfo);
         }
 
         private static void CharacterBody_AddTimedBuff_BuffDef_float(On.RoR2.CharacterBody.orig_AddTimedBuff_BuffDef_float orig, CharacterBody self, BuffDef buffDef, float duration) {

@@ -32,6 +32,29 @@ namespace RegigigasMod.SkillStates.Regigigas.Lunar
         public override void OnEnter()
         {
             base.OnEnter();
+            if (base.isAuthority)
+            {
+                new BlastAttack
+                {
+                    attacker = this.gameObject,
+                    attackerFiltering = AttackerFiltering.NeverHitSelf,
+                    baseDamage = 0f,
+                    baseForce = 2000f,
+                    bonusForce = Vector3.up * 200f,
+                    crit = false,
+                    damageColorIndex = DamageColorIndex.Default,
+                    damageType = DamageType.Generic,
+                    falloffModel = BlastAttack.FalloffModel.Linear,
+                    inflictor = this.gameObject,
+                    losType = BlastAttack.LoSType.None,
+                    position = this.characterBody.footPosition,
+                    procChainMask = default(ProcChainMask),
+                    procCoefficient = 1.0f,
+                    radius = 10f,
+                    teamIndex = this.GetTeam()
+                }.Fire();
+            }
+
             this.duration = Bounce.leapDuration / (0.75f + (0.25f * this.attackSpeedStat));
             this.hasLanded = false;
             base.characterMotor.jumpCount = base.characterBody.maxJumpCount;
@@ -137,7 +160,7 @@ namespace RegigigasMod.SkillStates.Regigigas.Lunar
                 effectData.origin = base.characterBody.footPosition;
                 effectData.scale = radius;
 
-                EffectManager.SpawnEffect(Modules.RegiAssets.slamImpactEffect, effectData, false);
+                EffectManager.SpawnEffect(EntityStates.BrotherMonster.WeaponSlam.slamImpactEffect, effectData, false);
 
                 if (base.isAuthority)
                 {

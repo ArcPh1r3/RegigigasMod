@@ -52,6 +52,7 @@ namespace RegigigasMod.SkillStates.BaseStates
         {
             base.OnEnter();
             this.duration = this.baseDuration / this.attackSpeedStat;
+            if (!this.characterBody.isPlayerControlled) this.duration *= 2f;
             this.earlyExitTime = this.baseEarlyExitTime / this.attackSpeedStat;
             this.hasFired = false;
             this.animator = base.GetModelAnimator();

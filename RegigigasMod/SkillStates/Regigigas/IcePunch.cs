@@ -22,7 +22,7 @@ namespace RegigigasMod.SkillStates.Regigigas
             base.OnEnter();
 
             this.attack.damage = IcePunch.damageCoefficientOverride * this.damageStat;
-            this.attack.damageType = DamageType.Freeze2s;
+            this.attack.damageType = DamageTypeCombo.GenericPrimary | DamageType.Freeze2s;
 
             string muzzleString = "HandL";
             if (this.swingIndex == 1) muzzleString = "HandR";

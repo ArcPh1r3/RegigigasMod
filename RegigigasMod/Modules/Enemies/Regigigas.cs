@@ -818,7 +818,7 @@ namespace RegigigasMod.Modules.Enemies
                 skillNameToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_NAME",
                 skillDescriptionToken = prefix + "_REGIGIGAS_BODY_SPECIAL_IMPACT_DESCRIPTION",
                 skillIcon = Modules.RegiAssets.secondaryAssetBundle.LoadAsset<Sprite>("texNewGigaImpactIcon"),
-                activationState = new EntityStates.SerializableEntityStateType(typeof(SkillStates.Regigigas.GigaImpact.Channel)),
+                activationState = new EntityStates.SerializableEntityStateType(typeof(SkillStates.Regigigas.GigaImpact.Fire)),
                 activationStateMachineName = "Body",
                 baseMaxStock = 1,
                 baseRechargeInterval = 16f,
@@ -963,7 +963,7 @@ namespace RegigigasMod.Modules.Enemies
                     }
             };
 
-            skins.Add(bowserSkin);
+            //skins.Add(bowserSkin);
             #endregion
 
             skinController.skins = skins.ToArray();
@@ -3805,11 +3805,11 @@ localScale = new Vector3(0.17297F, 0.17297F, 0.17297F),
                     {
                         if (attackerBody.baseNameToken == RegigigasPlugin.developerPrefix + "_REGIGIGAS_BODY_NAME")
                         {
-                            if (damageInfo.damageType.HasFlag(DamageType.BlightOnHit))
+                            /*if (damageInfo.damageType.HasFlag(DamageType.BlightOnHit))
                             {
                                 damageInfo.damageType = DamageType.Generic;
                                 isHealing = true;
-                            }
+                            }*/
                         }
                     }
                 }

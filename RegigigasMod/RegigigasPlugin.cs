@@ -32,7 +32,7 @@ namespace RegigigasMod
     {
         public const string MODUID = "com.rob.RegigigasMod";
         public const string MODNAME = "RegigigasMod";
-        public const string MODVERSION = "1.5.0";
+        public const string MODVERSION = "1.6.0";
 
         public const string developerPrefix = "ROB";
 
@@ -40,7 +40,7 @@ namespace RegigigasMod
 
         public static bool riskyArtifactsInstalled => BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.Moffein.RiskyArtifacts");
         public static bool rooInstalled => BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.rune580.riskofoptions");
-        public static bool peakInstalled => BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.JestAnAnimator.LoreFriendRegigigas");
+        //public static bool peakInstalled => BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("com.JestAnAnimator.LoreFriendRegigigas");
 
         private void Awake()
         {

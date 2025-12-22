@@ -53,6 +53,12 @@ namespace RegigigasMod.SkillStates.Regigigas
                 this.outer.SetNextState(new Bounce());
                 return;
             }
+
+            if (base.isAuthority && !this.isGrounded)
+            {
+                this.outer.SetNextState(new Bounce());
+                return;
+            }
         }
 
         public override InterruptPriority GetMinimumInterruptPriority()

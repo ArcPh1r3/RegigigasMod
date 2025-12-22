@@ -20,7 +20,7 @@ namespace RegigigasMod.SkillStates.Regigigas
 
             this.earlyExitTime = 0.3f / this.attackSpeedStat;
             this.attack.damage = MachPunch.damageCoefficientOverride * this.damageStat;
-            this.attack.damageType = DamageType.Generic;
+            this.attack.damageType = DamageTypeCombo.GenericPrimary;
             this.attack.pushAwayForce = -100f;
 
             /*string muzzleString = "HandL";

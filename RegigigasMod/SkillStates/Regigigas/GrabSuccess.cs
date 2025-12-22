@@ -79,7 +79,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                     crit = false,
                     damage = GrabSuccess.damagePercentage * this.target.healthComponent.fullCombinedHealth,
                     damageColorIndex = DamageColorIndex.WeakPoint,
-                    damageType = DamageType.BypassArmor,
+                    damageType = DamageType.BypassArmor | DamageTypeCombo.GenericSecondary,
                     force = Vector3.zero,
                     inflictor = this.gameObject,
                     position = this.target.transform.position,

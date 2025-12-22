@@ -13,7 +13,7 @@ namespace RegigigasMod.SkillStates.Regigigas
         {
             this.hitboxName = "Punch";
 
-            this.damageType = DamageType.Stun1s;
+            this.damageType = DamageTypeCombo.GenericPrimary | DamageType.Stun1s;
             this.damageCoefficient = PunchCombo.damageCoefficientOverride;
             this.procCoefficient = 1f;
             this.pushForce = 3500f;

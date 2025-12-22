@@ -150,7 +150,7 @@ namespace RegigigasMod.SkillStates.Regigigas
                         bonusForce = Vector3.up * 2000f,
                         crit = this.RollCrit(),
                         damageColorIndex = DamageColorIndex.Default,
-                        damageType = DamageType.AOE,
+                        damageType = DamageType.AOE | DamageType.Stun1s | DamageTypeCombo.GenericUtility,
                         falloffModel = BlastAttack.FalloffModel.None,
                         inflictor = this.gameObject,
                         losType = BlastAttack.LoSType.None,

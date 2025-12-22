@@ -66,6 +66,7 @@ namespace RegigigasMod.SkillStates.Regigigas.GigaImpact
             this.rushBlastAttack.falloffModel = BlastAttack.FalloffModel.None;
             this.rushBlastAttack.damageColorIndex = DamageColorIndex.Default;
             this.rushBlastAttack.attackerFiltering = AttackerFiltering.NeverHitSelf;
+            this.rushBlastAttack.damageType = DamageType.IgniteOnHit | DamageTypeCombo.GenericSpecial;
 
             EffectData effectData = new EffectData();
             effectData.origin = this.characterBody.footPosition;
@@ -168,6 +169,7 @@ namespace RegigigasMod.SkillStates.Regigigas.GigaImpact
                 blastAttack.falloffModel = BlastAttack.FalloffModel.None;
                 blastAttack.damageColorIndex = DamageColorIndex.Default;
                 blastAttack.attackerFiltering = AttackerFiltering.NeverHitSelf;
+                blastAttack.damageType = DamageType.IgniteOnHit | DamageType.Stun1s | DamageTypeCombo.GenericSpecial;
                 blastAttack.Fire();
             }
         }
